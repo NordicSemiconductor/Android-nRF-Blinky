@@ -7,8 +7,8 @@ A simplified Nordic LED Button Service containing two characteristics to turn on
 
 ### Note:
 
-Android 4.3 or newer is required.
+*Android 4.3 or newer is required.
 
-Tested on Samsung S3 with Android 4.3 and on Nexus 5, 6 and 9 with lollipop and Marshmallow.
+*Tested on Samsung S3 with Android 4.3 and on Nexus 5, 6 and 9 with lollipop and Marshmallow.
 
-Location Services need to be enabled for scanning from android 6.0 Marshmallow and in addition, runtime persmission ACCESS_COARSE_LOCATION is also required.
+*Location Services need to be enabled for scanning from android 6.0 Marshmallow and in addition, runtime persmission ACCESS_COARSE_LOCATION is also required.
