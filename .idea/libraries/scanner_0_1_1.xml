@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="scanner-0.1.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/no.nordicsemi.android.support.v18/scanner/0.1.1/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/no.nordicsemi.android.support.v18/scanner/0.1.1/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/no.nordicsemi.android.support.v18/scanner/0.1.1/5fc0012b4b78c23452fe364dcc032004b06658fe/scanner-0.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
