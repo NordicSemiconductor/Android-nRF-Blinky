@@ -171,7 +171,12 @@ public class MainActivity extends AppCompatActivity implements PermissionRationa
 			registerReceiver(mLocationProviderChangedReceiver, new IntentFilter(LocationManager.MODE_CHANGED_ACTION));
 			connectToGoogleApiClient();
 		} else {
-			startLeScan();
+			if (!isBleEnabled()) {
+				final Intent bluetoothEnable = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				startActivityForResult(bluetoothEnable, REQUEST_ENABLE_BT);
+			} else {
+				startLeScan();
+			}
 		}
 	}
 
@@ -220,7 +225,12 @@ public class MainActivity extends AppCompatActivity implements PermissionRationa
 					else
 						createLocationRequestForResult();
 				} else {
-					checkForLocationPermissionsAndScan();
+					if (!isBleEnabled()) {
+						final Intent bluetoothEnable = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+						startActivityForResult(bluetoothEnable, REQUEST_ENABLE_BT);
+					} else {
+						startLeScan();
+					}
 				}
 				return true;
 			case R.id.action_stop_scan:
