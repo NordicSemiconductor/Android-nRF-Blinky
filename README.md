@@ -1,4 +1,4 @@
-# nRF Blinky
+# nRF BLINKY
 nRF Blinky is an application developed targeting an audience of developers who are new to Bluetooth Smart. This is a simple application with two basic features to turn on LED 1 on the nRF DK and to recieve the Button 1 press event from a nRF DK on the nRF Blinky Application.
 
 ## Nordic LED Button Service
