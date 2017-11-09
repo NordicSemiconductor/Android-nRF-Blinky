@@ -37,7 +37,7 @@
 	</style>
 
 	<style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
-		<item name="android:windowBackground">@drawable/background_image</item>
+		<item name="android:windowBackground">@color/background</item>
 		<item name="colorPrimary">@color/colorPrimary</item>
 		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
 		<item name="colorAccent">@color/colorAccent</item>

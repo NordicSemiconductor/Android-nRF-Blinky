@@ -63,8 +63,8 @@
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_below="@+id/appbar_layout"
 		android:layout_above="@+id/button_blinky"
+		android:layout_below="@+id/appbar_layout"
 		android:layout_marginBottom="16dp"
 		android:layout_marginTop="16dp">
 
@@ -82,9 +82,9 @@
 		android:id="@+id/button_blinky"
 		android:layout_width="200dp"
 		android:layout_height="wrap_content"
+		android:layout_above="@+id/action_connect"
 		android:layout_centerHorizontal="true"
 		android:layout_marginBottom="40dp"
-		android:layout_above="@+id/action_connect"
 		android:background="@drawable/rounded_button"
 		android:gravity="center"
 		android:text="@string/turn_on"
@@ -101,7 +101,6 @@
 		android:text="@string/action_connect"/>
 
 	<ImageView
-		android:id="@+id/img_background_title"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"

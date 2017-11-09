@@ -63,8 +63,8 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_below="@+id/appbar_layout"
 		android:layout_above="@+id/action_connect"
+		android:layout_below="@+id/appbar_layout"
 		android:layout_marginBottom="16dp"
 		android:layout_marginTop="16dp"
 		android:gravity="center_vertical"
@@ -72,22 +72,21 @@
 
 		<Space
 			android:layout_width="0dp"
-			android:layout_weight="1"
-			android:layout_height="wrap_content"/>
+			android:layout_height="wrap_content"
+			android:layout_weight="1"/>
 
 		<ImageView
 			android:id="@+id/img_bulb"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_centerInParent="true"
 			android:layout_gravity="center"
 			android:scaleType="centerInside"
 			android:src="@drawable/bulb_off"/>
 
 		<Space
 			android:layout_width="0dp"
-			android:layout_weight="1"
-			android:layout_height="wrap_content"/>
+			android:layout_height="wrap_content"
+			android:layout_weight="1"/>
 
 		<Button
 			android:id="@+id/button_blinky"
@@ -100,8 +99,8 @@
 
 		<Space
 			android:layout_width="0dp"
-			android:layout_weight="1"
-			android:layout_height="wrap_content"/>
+			android:layout_height="wrap_content"
+			android:layout_weight="1"/>
 	</LinearLayout>
 
 	<Button
@@ -115,7 +114,6 @@
 		android:text="@string/action_connect"/>
 
 	<ImageView
-		android:id="@+id/img_background_title"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
