@@ -39,4 +39,5 @@ dependencies {
     // Brings the new BluetoothLeScanner API to older platforms
     implementation 'no.nordicsemi.android.support.v18:scanner:1.0.0'
     // Log Bluetooth LE events in nRF Logger
+    implementation 'no.nordicsemi.android:log:2.1.1'
 }

@@ -27,8 +27,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 
+import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.UUID;
 
 import no.nordicsemi.android.blinky.profile.BleManager;
@@ -58,7 +58,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	private final BleManagerGattCallback mGattCallback = new BleManagerGattCallback() {
 
 		@Override
-		protected Queue<Request> initGatt(final BluetoothGatt gatt) {
+		protected Deque<Request> initGatt(final BluetoothGatt gatt) {
 			final LinkedList<Request> requests = new LinkedList<>();
 			requests.push(Request.newEnableNotificationsRequest(mButtonCharacteristic));
 			return requests;
