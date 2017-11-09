@@ -52,20 +52,12 @@ public class SplashScreenActivity extends Activity {
 
 		final Handler handler = new Handler();
 
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				view.setAnimation(alpha);
-			}
-		}, 700);
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				final Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-				startActivity(intent);
-				finish();
-			}
+		handler.postDelayed(() -> view.setAnimation(alpha), 700);
+		handler.postDelayed(() -> {
+			final Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			startActivity(intent);
+			finish();
 		}, DURATION);
 	}
 

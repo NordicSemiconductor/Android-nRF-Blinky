@@ -112,14 +112,14 @@ public class MainActivity extends AppCompatActivity implements PermissionRationa
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setTitle(R.string.app_name);
 
 		mParentView = findViewById(R.id.container);
 		mScannerHandler = new Handler();
 
-		final ListView listBleDevices = (ListView) findViewById(R.id.list_view_ble_devices);
+		final ListView listBleDevices = findViewById(R.id.list_view_ble_devices);
 		listBleDevices.setAdapter(mBleDeviceListAdapter = new BleDeviceAdapter());
 		listBleDevices.setOnItemClickListener(this);
 
@@ -157,10 +157,11 @@ public class MainActivity extends AppCompatActivity implements PermissionRationa
 					.addOnConnectionFailedListener(this)
 					.build();
 		}
-		if (!mGoogleApiClient.isConnected())
+		if (!mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.connect();
-		else
+		} else {
 			createLocationRequestForResult();
+		}
 	}
 
 	@Override
@@ -289,33 +290,30 @@ public class MainActivity extends AppCompatActivity implements PermissionRationa
 				.setAlwaysShow(true);
 		final PendingResult<LocationSettingsResult> result =
 				LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-		result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-			@Override
-			public void onResult(final LocationSettingsResult locationSettingsResult) {
-				final LocationSettingsStates states = locationSettingsResult.getLocationSettingsStates();
-				if (states.isLocationUsable()) {
-					checkForLocationPermissionsAndScan();
-					return;
-				}
+		result.setResultCallback(locationSettingsResult -> {
+			final LocationSettingsStates states = locationSettingsResult.getLocationSettingsStates();
+			if (states.isLocationUsable()) {
+				checkForLocationPermissionsAndScan();
+				return;
+			}
 
-				final Status status = locationSettingsResult.getStatus();
-				switch (status.getStatusCode()) {
-					case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-						locationServicesRequestApproved = false;
-						try {
-							status.startResolutionForResult(MainActivity.this, REQUEST_LOCATION_SERVICES);
-						} catch (final IntentSender.SendIntentException e) {
-							Log.e(TAG, "Exception occurred", e);
-						}
-						break;
-					case LocationSettingsStatusCodes.SUCCESS:
-						locationServicesRequestApproved = true;
-						checkForLocationPermissionsAndScan();
-						break;
-					case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-						showPermissionRationaleFragment(R.string.rationale_location_cancel_message, REQUEST_EMPTY);
-						break;
-				}
+			final Status status = locationSettingsResult.getStatus();
+			switch (status.getStatusCode()) {
+				case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+					locationServicesRequestApproved = false;
+					try {
+						status.startResolutionForResult(MainActivity.this, REQUEST_LOCATION_SERVICES);
+					} catch (final IntentSender.SendIntentException e) {
+						Log.e(TAG, "Exception occurred", e);
+					}
+					break;
+				case LocationSettingsStatusCodes.SUCCESS:
+					locationServicesRequestApproved = true;
+					checkForLocationPermissionsAndScan();
+					break;
+				case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+					showPermissionRationaleFragment(R.string.rationale_location_cancel_message, REQUEST_EMPTY);
+					break;
 			}
 		});
 	}
@@ -386,12 +384,7 @@ public class MainActivity extends AppCompatActivity implements PermissionRationa
 		invalidateOptionsMenu();
 	}
 
-	private Runnable mStopScanningTask = new Runnable() {
-		@Override
-		public void run() {
-			stopLeScan();
-		}
-	};
+	private Runnable mStopScanningTask = () -> stopLeScan();
 
 	private ScanCallback scanCallback = new ScanCallback() {
 		@Override
@@ -422,12 +415,9 @@ public class MainActivity extends AppCompatActivity implements PermissionRationa
 	private void showError(final String error, boolean showAction) {
 		final Snackbar snackbar = Snackbar.make(mParentView, error, Snackbar.LENGTH_LONG);
 		if (showAction)
-			snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.colorPrimary)).setAction(R.string.action_settings, new View.OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-					startActivity(intent);
-				}
+			snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.colorPrimary)).setAction(R.string.action_settings, v -> {
+				final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+				startActivity(intent);
 			});
 		snackbar.show();
 	}

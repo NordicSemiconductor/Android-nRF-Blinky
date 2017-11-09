@@ -50,6 +50,8 @@ import android.widget.ImageView;
 
 import no.nordicsemi.android.blinky.profile.BleProfileService;
 import no.nordicsemi.android.blinky.service.BlinkyService;
+import no.nordicsemi.android.log.ILogSession;
+import no.nordicsemi.android.log.Logger;
 
 public class ControlBlinkyActivity extends AppCompatActivity {
 	private BlinkyService.BlinkyBinder mBlinkyDevice;
@@ -57,10 +59,11 @@ public class ControlBlinkyActivity extends AppCompatActivity {
 	private ImageView mImageBulb;
 	private View mParentView;
 	private View mBackgroundView;
+	private ILogSession mLogSession;
 
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
+		public void onServiceConnected(final ComponentName name, final IBinder service) {
 			mBlinkyDevice = (BlinkyService.BlinkyBinder) service;
 
 			if (mBlinkyDevice.isConnected()) {
@@ -85,7 +88,7 @@ public class ControlBlinkyActivity extends AppCompatActivity {
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName name) {
+		public void onServiceDisconnected(final ComponentName name) {
 			mBlinkyDevice = null;
 		}
 	};
@@ -95,52 +98,53 @@ public class ControlBlinkyActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_control_device);
 
-		Intent i = getIntent();
+		final Intent i = getIntent();
 		final String deviceName = i.getStringExtra(BlinkyService.EXTRA_DEVICE_NAME);
 		final String deviceAddress = i.getStringExtra(BlinkyService.EXTRA_DEVICE_ADDRESS);
 
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setTitle(deviceName);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		mActionOnOff = (Button) findViewById(R.id.button_blinky);
-		mActionConnect = (Button) findViewById(R.id.action_connect);
-		mImageBulb = (ImageView) findViewById(R.id.img_bulb);
+		mActionOnOff = findViewById(R.id.button_blinky);
+		mActionConnect = findViewById(R.id.action_connect);
+		mImageBulb = findViewById(R.id.img_bulb);
 		mBackgroundView = findViewById(R.id.background_view);
 		mParentView = findViewById(R.id.relative_layout_control);
 
-		mActionOnOff.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (mBlinkyDevice != null && mBlinkyDevice.isConnected()) {
-					if (mActionOnOff.getText().equals(getString(R.string.turn_on))) {
-						mBlinkyDevice.send(true);
-					} else {
-						mBlinkyDevice.send(false);
-					}
+		mActionOnOff.setOnClickListener(v -> {
+			if (mBlinkyDevice != null && mBlinkyDevice.isConnected()) {
+				if (mActionOnOff.getText().equals(getString(R.string.turn_on))) {
+					mBlinkyDevice.send(true);
 				} else {
-					showError(getString(R.string.please_connect));
+					mBlinkyDevice.send(false);
 				}
+			} else {
+				showError(getString(R.string.please_connect));
 			}
 		});
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(mBlinkyUpdateReceiver, makeGattUpdateIntentFilter());
+		mLogSession = Logger.newSession(getApplicationContext(), null, deviceAddress, deviceName);
 
+		// The device may not be in the range but the service will try to connect to it if it reach it
+		Logger.d(mLogSession, "Creating service...");
 		final Intent intent = new Intent(this, BlinkyService.class);
 		intent.putExtra(BlinkyService.EXTRA_DEVICE_ADDRESS, deviceAddress);
+		intent.putExtra(BleProfileService.EXTRA_DEVICE_NAME, deviceName);
+		if (mLogSession != null)
+			intent.putExtra(BleProfileService.EXTRA_LOG_URI, mLogSession.getSessionUri());
 		startService(intent);
+		Logger.d(mLogSession, "Binding to the service...");
 		bindService(intent, mServiceConnection, 0);
 
-		mActionConnect.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (mBlinkyDevice != null && mBlinkyDevice.isConnected()) {
-					mBlinkyDevice.disconnect();
-				} else {
-					startService(intent);
-					bindService(intent, mServiceConnection, 0);
-				}
+		mActionConnect.setOnClickListener(v -> {
+			if (mBlinkyDevice != null && mBlinkyDevice.isConnected()) {
+				mBlinkyDevice.disconnect();
+			} else {
+				startService(intent);
+				bindService(intent, mServiceConnection, 0);
 			}
 		});
 	}
@@ -150,8 +154,9 @@ public class ControlBlinkyActivity extends AppCompatActivity {
 		switch (item.getItemId()) {
 			case android.R.id.home:
 				onBackPressed();
+				return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -164,11 +169,13 @@ public class ControlBlinkyActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		Logger.d(mLogSession, "Unbinding from the service...");
 		unbindService(mServiceConnection);
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mBlinkyUpdateReceiver);
 
 		mServiceConnection = null;
 		mBlinkyDevice = null;
+		Logger.d(mLogSession, "Activity unbound from the service");
 	}
 
 	private BroadcastReceiver mBlinkyUpdateReceiver = new BroadcastReceiver() {

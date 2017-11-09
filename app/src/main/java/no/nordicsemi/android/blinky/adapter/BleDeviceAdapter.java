@@ -88,8 +88,8 @@ public class BleDeviceAdapter extends BaseAdapter {
 		if (convertView == null) {
 			convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem_device, null);
 			viewHolder = new ViewHolder();
-			viewHolder.deviceAddress = (TextView) convertView.findViewById(R.id.device_address);
-			viewHolder.deviceName = (TextView) convertView.findViewById(R.id.device_name);
+			viewHolder.deviceAddress = convertView.findViewById(R.id.device_address);
+			viewHolder.deviceName = convertView.findViewById(R.id.device_name);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();

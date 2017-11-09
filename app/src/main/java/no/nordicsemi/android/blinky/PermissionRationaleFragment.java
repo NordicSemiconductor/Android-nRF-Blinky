@@ -23,7 +23,6 @@ package no.nordicsemi.android.blinky;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -74,19 +73,11 @@ public class PermissionRationaleFragment extends DialogFragment {
 		final Bundle args = getArguments();
 		final StringBuilder text = new StringBuilder(getString(args.getInt(ARG_TEXT)));
 		return new AlertDialog.Builder(getActivity()).setTitle(R.string.rationale_title).setMessage(text)
-				.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						mListener.onCancelRequestPermission();
-					}
-				})
-				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(final DialogInterface dialog, final int which) {
-						if (getParentFragment() instanceof PermissionDialogListener)
-							mListener = (PermissionDialogListener) getParentFragment();
-						mListener.onRequestPermission(args.getInt(ARG_PERMISSION));
-					}
+				.setNegativeButton(R.string.cancel, (dialog, which) -> mListener.onCancelRequestPermission())
+				.setPositiveButton(R.string.ok, (dialog, which) -> {
+					if (getParentFragment() instanceof PermissionDialogListener)
+						mListener = (PermissionDialogListener) getParentFragment();
+					mListener.onRequestPermission(args.getInt(ARG_PERMISSION));
 				}).create();
 	}
 }
