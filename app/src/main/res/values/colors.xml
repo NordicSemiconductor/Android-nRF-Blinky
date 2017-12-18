@@ -34,6 +34,4 @@
     <color name="colorPrimaryDark">#0081B7</color>
     <color name="colorAccent">#0081B7</color>
     <color name="background">#FFF5F5F5</color>
-    <color name="textColorWhite">#FFFFFF</color>
-    <color name="background_yellow">#88fff944</color>
 </resources>

@@ -42,7 +42,7 @@ public class SplashScreenActivity extends Activity {
 	private static final int DURATION = 1000;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash_screen);
 
@@ -51,10 +51,9 @@ public class SplashScreenActivity extends Activity {
 		alpha.setDuration(200);
 
 		final Handler handler = new Handler();
-
 		handler.postDelayed(() -> view.setAnimation(alpha), 700);
 		handler.postDelayed(() -> {
-			final Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+			final Intent intent = new Intent(SplashScreenActivity.this, ScannerActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			startActivity(intent);
 			finish();

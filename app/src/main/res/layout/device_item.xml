@@ -29,33 +29,56 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<RelativeLayout android:id="@+id/relativeSplash"
+<RelativeLayout
+	android:id="@+id/device_container"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:paddingLeft="@dimen/activity_horizontal_margin"
-	android:paddingRight="@dimen/activity_horizontal_margin"
-	android:paddingTop="@dimen/activity_vertical_margin"
-	tools:context=".SplashScreenActivity"
+	android:layout_height="wrap_content"
+	android:background="@android:color/white"
+	android:paddingBottom="@dimen/item_padding_bottom"
+	android:paddingEnd="@dimen/activity_horizontal_margin"
+	android:paddingStart="@dimen/activity_horizontal_margin"
+	android:paddingTop="@dimen/item_padding_top"
 	tools:ignore="ContentDescription">
 
 	<ImageView
+		android:id="@+id/img_bluetooth"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_centerHorizontal="true"
-		android:layout_gravity="center"
-		android:layout_marginTop="70dp"
+		android:layout_centerVertical="true"
+		android:background="@drawable/ic_device_bg"
 		android:scaleType="center"
-		android:src="@drawable/nordic_logo"/>
+		android:src="@drawable/ic_device_other"/>
+
+	<TextView
+		android:id="@+id/device_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/img_bluetooth"
+		android:paddingEnd="@dimen/activity_horizontal_margin"
+		android:paddingStart="@dimen/activity_horizontal_margin"
+		android:textSize="24sp"
+		tools:text="Nordic_Blinky"/>
+
+	<TextView
+		android:id="@+id/device_address"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/device_name"
+		android:layout_toRightOf="@id/img_bluetooth"
+		android:paddingEnd="@dimen/activity_horizontal_margin"
+		android:paddingStart="@dimen/activity_horizontal_margin"
+		android:textSize="12sp"
+		tools:text="AA:BB:CC:DD:EE:FF"/>
 
 	<ImageView
+		android:id="@+id/rssi"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_centerHorizontal="true"
-		android:layout_gravity="center"
-		android:layout_marginBottom="6dp"
-		android:scaleType="center"
-		android:src="@drawable/background_title"/>
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:src="@drawable/ic_rssi_bar"
+		tools:ignore="contentDescription"
+		tools:src="@drawable/ic_rssi_3_bars"/>
 </RelativeLayout>

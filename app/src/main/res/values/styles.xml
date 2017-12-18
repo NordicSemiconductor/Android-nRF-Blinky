@@ -29,11 +29,16 @@
   -->
 
 <resources>
+	<style name="Widget" />
+
+	<style name="Widget.ScannerSubtitle">
+		<item name="android:textColor">?android:textColorSecondary</item>
+		<item name="android:textStyle">bold</item>
+	</style>
 
 	<!-- Base application theme. -->
 	<style name="AppTheme" parent="AppTheme.Base">
 		<!-- Customize your theme here. -->
-
 	</style>
 
 	<style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
@@ -46,11 +51,4 @@
 	<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
 	<style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
-
-	<style name="Widget.Connect" parent="@android:style/Widget.Holo.Light.Button">
-		<item name="android:background">@drawable/button</item>
-		<item name="android:textColor">#FFFFFF</item>
-		<item name="android:paddingLeft">40dp</item>
-		<item name="android:paddingRight">40dp</item>
-	</style>
 </resources>

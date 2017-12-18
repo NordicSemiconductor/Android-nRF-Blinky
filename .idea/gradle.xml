@@ -8,10 +8,12 @@
         <option name="gradleJvm" value="1.7" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/../Android-BLE-Library/ble" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
+        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
