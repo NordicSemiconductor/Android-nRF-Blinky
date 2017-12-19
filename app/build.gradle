@@ -8,8 +8,9 @@ android {
         applicationId "no.nordicsemi.android.nrfblinky"
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 4
-        versionName "2.0.1"
+        versionCode 5
+        versionName "2.0.2"
+        resConfigs "en"
     }
 
     buildTypes {
