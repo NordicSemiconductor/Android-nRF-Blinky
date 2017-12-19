@@ -29,58 +29,55 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<RelativeLayout
-	android:id="@+id/device_container"
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="@android:color/white"
-	android:paddingBottom="@dimen/item_padding_bottom"
+	android:orientation="vertical"
 	android:paddingEnd="@dimen/activity_horizontal_margin"
 	android:paddingStart="@dimen/activity_horizontal_margin"
-	android:paddingTop="@dimen/item_padding_top"
 	tools:ignore="ContentDescription">
 
 	<ImageView
-		android:id="@+id/icon"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_centerVertical="true"
-		android:background="@drawable/ic_device_bg"
-		android:scaleType="center"
-		android:src="@drawable/ic_device_other"/>
+		android:layout_gravity="center_horizontal"
+		android:padding="@dimen/activity_horizontal_margin"
+		android:src="@drawable/ic_bluetooth_searching"/>
 
 	<TextView
-		android:id="@+id/device_name"
-		android:layout_width="wrap_content"
+		style="@style/Widget.ScannerSubtitle"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_toRightOf="@id/icon"
-		android:layout_toLeftOf="@+id/rssi"
-		android:layout_marginEnd="@dimen/activity_horizontal_margin"
-		android:layout_marginStart="@dimen/activity_horizontal_margin"
-		android:textSize="24sp"
-		android:singleLine="true"
-		android:ellipsize="end"
-		tools:text="Nordic_Blinky"/>
+		android:gravity="center_horizontal"
+		android:text="@string/blinky_guide_title"/>
 
 	<TextView
-		android:id="@+id/device_address"
-		android:layout_width="wrap_content"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/device_name"
-		android:layout_toRightOf="@id/icon"
-		android:layout_marginEnd="@dimen/activity_horizontal_margin"
-		android:layout_marginStart="@dimen/activity_horizontal_margin"
-		android:textSize="12sp"
-		tools:text="AA:BB:CC:DD:EE:FF"/>
+		android:layout_marginTop="@dimen/activity_vertical_margin"
+		android:text="@string/blinky_guide_info"/>
 
-	<ImageView
-		android:id="@+id/rssi"
-		android:layout_width="wrap_content"
+	<LinearLayout
+		android:id="@+id/no_location"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:layout_centerVertical="true"
-		android:src="@drawable/ic_rssi_bar"
-		tools:src="@drawable/ic_rssi_3_bars"/>
-</RelativeLayout>
+		android:orientation="vertical"
+		android:visibility="invisible">
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/activity_vertical_margin"
+			android:text="@string/blinky_guide_location_info"/>
+
+		<Button
+			android:id="@+id/action_enable_location"
+			style="@style/Widget.AppCompat.Button.Borderless.Colored"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:text="@string/blinky_guide_location_action"/>
+	</LinearLayout>
+</LinearLayout>
