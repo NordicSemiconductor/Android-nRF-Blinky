@@ -32,8 +32,6 @@ package no.nordicsemi.android.blinky.viewmodels;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -55,39 +53,18 @@ import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
 public class ScannerViewModel extends AndroidViewModel {
 
-	/** LiveData object to notify the scanning state changes to MainActivity. */
-	private final MutableLiveData<Boolean> mScanningLiveData = new MutableLiveData<>();
+	/** MutableLiveData containing the scanner state to notify MainActivity. */
+	private final ScannerLiveData mScannerLiveData;
 
-	/** Live data object to notify the Bluetooth state to MainActivity. */
-	private final MutableLiveData<Boolean> mBluetoothStateLiveData = new MutableLiveData<>();
-
-	/** MutableLiveData containing changes to location service provider to notify MainActivity. */
-	private final MutableLiveData<Boolean> mLocationServicesStateLiveData = new MutableLiveData<>();
-
-	/** MutableLiveData BleDeviceAdapter containing BLE devices to notify MainActivity. */
-	private final DevicesLiveData mDevicesLiveData = new DevicesLiveData();
+	public ScannerLiveData getScannerState() {
+		return mScannerLiveData;
+	}
 
 	public ScannerViewModel(final Application application) {
 		super(application);
 
-		mScanningLiveData.setValue(false);
+		mScannerLiveData = new ScannerLiveData(Utils.isBleEnabled(), Utils.isLocationEnabled(application));
 		registerBroadcastReceivers(application);
-	}
-
-	public LiveData<Boolean> getScanningState() {
-		return mScanningLiveData;
-	}
-
-	public LiveData<Boolean> getBluetoothState() {
-		return mBluetoothStateLiveData;
-	}
-
-	public LiveData<Boolean> getLocationServicesState() {
-		return mLocationServicesStateLiveData;
-	}
-
-	public DevicesLiveData getDevices() {
-		return mDevicesLiveData;
 	}
 
 	@Override
@@ -100,11 +77,15 @@ public class ScannerViewModel extends AndroidViewModel {
 		}
 	}
 
+	public void refresh() {
+		mScannerLiveData.refresh();
+	}
+
 	/**
-	 * Start scanning for bluetooth devices.
+	 * Start scanning for Bluetooth devices.
 	 */
 	public void startScan() {
-		if (mScanningLiveData.getValue()) {
+		if (mScannerLiveData.isScanning()) {
 			return;
 		}
 
@@ -126,7 +107,7 @@ public class ScannerViewModel extends AndroidViewModel {
 
 		final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
 		scanner.startScan(filters, settings, scanCallback);
-		mScanningLiveData.setValue(true);
+		mScannerLiveData.scanningStarted();
 	}
 
 	/**
@@ -135,7 +116,7 @@ public class ScannerViewModel extends AndroidViewModel {
 	public void stopScan() {
 		final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
 		scanner.stopScan(scanCallback);
-		mScanningLiveData.setValue(false);
+		mScannerLiveData.scanningStopped();
 	}
 
 	private final ScanCallback scanCallback = new ScanCallback() {
@@ -145,7 +126,7 @@ public class ScannerViewModel extends AndroidViewModel {
 			if (Utils.isLocationRequired(getApplication()) && !Utils.isLocationEnabled(getApplication()))
 				Utils.markLocationNotRequired(getApplication());
 
-			mDevicesLiveData.onDeviceDiscovered(result);
+			mScannerLiveData.deviceDiscovered(result);
 		}
 
 		@Override
@@ -156,6 +137,7 @@ public class ScannerViewModel extends AndroidViewModel {
 		@Override
 		public void onScanFailed(final int errorCode) {
 			// TODO This should be handled
+			mScannerLiveData.scanningStopped();
 		}
 	};
 
@@ -176,7 +158,7 @@ public class ScannerViewModel extends AndroidViewModel {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final boolean enabled = Utils.isLocationEnabled(context);
-			mLocationServicesStateLiveData.postValue(enabled);
+			mScannerLiveData.setLocationEnabled(enabled);
 		}
 	};
 
@@ -191,14 +173,13 @@ public class ScannerViewModel extends AndroidViewModel {
 
 			switch (state) {
 				case BluetoothAdapter.STATE_ON:
-					mBluetoothStateLiveData.postValue(true);
+					mScannerLiveData.bluetoothEnabled();
 					break;
 				case BluetoothAdapter.STATE_TURNING_OFF:
 				case BluetoothAdapter.STATE_OFF:
 					if (previousState != BluetoothAdapter.STATE_TURNING_OFF && previousState != BluetoothAdapter.STATE_OFF) {
 						stopScan();
-						mDevicesLiveData.clear();
-						mBluetoothStateLiveData.postValue(false);
+						mScannerLiveData.bluetoothDisabled();
 					}
 					break;
 			}

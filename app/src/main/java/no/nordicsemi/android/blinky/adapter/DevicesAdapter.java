@@ -45,7 +45,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import no.nordicsemi.android.blinky.ScannerActivity;
 import no.nordicsemi.android.blinky.R;
-import no.nordicsemi.android.blinky.viewmodels.DevicesLiveData;
+import no.nordicsemi.android.blinky.viewmodels.ScannerLiveData;
 
 public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHolder> {
 	private final ScannerActivity mContext;
@@ -61,10 +61,10 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 		mOnItemClickListener = (OnItemClickListener) context;
 	}
 
-	public DevicesAdapter(final ScannerActivity activity, final DevicesLiveData devicesLiveData) {
+	public DevicesAdapter(final ScannerActivity activity, final ScannerLiveData scannerLiveData) {
 		mContext = activity;
-		mDevices = devicesLiveData.getDevices();
-		devicesLiveData.observe(activity, devices -> {
+		mDevices = scannerLiveData.getDevices();
+		scannerLiveData.observe(activity, devices -> {
 			final Integer i = devices.getUpdatedDeviceIndex();
 			if (i != null)
 				notifyItemChanged(i);

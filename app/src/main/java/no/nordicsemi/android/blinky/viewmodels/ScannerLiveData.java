@@ -31,6 +31,8 @@
 package no.nordicsemi.android.blinky.viewmodels;
 
 import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +47,52 @@ import no.nordicsemi.android.support.v18.scanner.ScanResult;
  * are updated and observers are also notified. Observer may check {@link #getUpdatedDeviceIndex()}
  * to find out the index of the updated device.
  */
-public class DevicesLiveData extends LiveData<DevicesLiveData> {
+public class ScannerLiveData extends LiveData<ScannerLiveData> {
 	private final List<ExtendedBluetoothDevice> mDevices = new ArrayList<>();
 	private Integer mUpdatedDeviceIndex;
+	private boolean mScanningStarted;
+	private boolean mBluetoothEnabled;
+	private boolean mLocationEnabled;
 
-	/* package */ void onDeviceDiscovered(final ScanResult result) {
+	/* package */ ScannerLiveData(final boolean bluetoothEnabled, final boolean locationEnabled) {
+		mScanningStarted = false;
+		mBluetoothEnabled = bluetoothEnabled;
+		mLocationEnabled = locationEnabled;
+		postValue(this);
+	}
+
+	/* package */ void refresh() {
+		postValue(this);
+	}
+
+	/* package */ void scanningStarted() {
+		mScanningStarted = true;
+		postValue(this);
+	}
+
+	/* package */ void scanningStopped() {
+		mScanningStarted = false;
+		postValue(this);
+	}
+
+	/* package */ void bluetoothEnabled() {
+		mBluetoothEnabled = true;
+		postValue(this);
+	}
+
+	/* package */ void bluetoothDisabled() {
+		mBluetoothEnabled = false;
+		mUpdatedDeviceIndex = null;
+		mDevices.clear();
+		postValue(this);
+	}
+
+	/* package */ void setLocationEnabled(final boolean enabled) {
+		mLocationEnabled = enabled;
+		postValue(this);
+	}
+
+	/* package */ void deviceDiscovered(final ScanResult result) {
 		ExtendedBluetoothDevice device;
 
 		final int index = indexOf(result);
@@ -69,20 +112,10 @@ public class DevicesLiveData extends LiveData<DevicesLiveData> {
 	}
 
 	/**
-	 * Clears the list and notifies the observers if the list wasn't empty before.
-	 */
-	/* package */ void clear() {
-		final boolean wasEmpty = mDevices.isEmpty();
-		mUpdatedDeviceIndex = null;
-		mDevices.clear();
-		if (!wasEmpty)
-			postValue(this);
-	}
-
-	/**
 	 * Returns the list of devices.
 	 * @return current list of devices discovered
 	 */
+	@NonNull
 	public List<ExtendedBluetoothDevice> getDevices() {
 		return mDevices;
 	}
@@ -90,6 +123,7 @@ public class DevicesLiveData extends LiveData<DevicesLiveData> {
 	/**
 	 * Returns null if a new device was added, or an index of the updated device.
 	 */
+	@Nullable
 	public Integer getUpdatedDeviceIndex() {
 		final Integer i = mUpdatedDeviceIndex;
 		mUpdatedDeviceIndex = null;
@@ -97,10 +131,31 @@ public class DevicesLiveData extends LiveData<DevicesLiveData> {
 	}
 
 	/**
-	 * Returns whether the list is empty, or not.
+	 * Returns whether the list is empty.
 	 */
 	public boolean isEmpty() {
 		return mDevices.isEmpty();
+	}
+
+	/**
+	 * Returns whether scanning is in progress.
+	 */
+	public boolean isScanning() {
+		return mScanningStarted;
+	}
+
+	/**
+	 * Returns whether Bluetooth adapter is enabled.
+	 */
+	public boolean isBluetoothEnabled() {
+		return mBluetoothEnabled;
+	}
+
+	/**
+	 * Returns whether Location is enabled.
+	 */
+	public boolean isLocationEnabled() {
+		return mLocationEnabled;
 	}
 
 	/**
