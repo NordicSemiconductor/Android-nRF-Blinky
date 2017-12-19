@@ -52,6 +52,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 	private final List<ExtendedBluetoothDevice> mDevices;
 	private OnItemClickListener mOnItemClickListener;
 
+	@FunctionalInterface
 	public interface OnItemClickListener {
 		void onItemClick(final ExtendedBluetoothDevice device);
 	}
@@ -60,10 +61,10 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 		mOnItemClickListener = (OnItemClickListener) context;
 	}
 
-	public DevicesAdapter(final ScannerActivity context, final DevicesLiveData devicesLiveData) {
-		mContext = context;
+	public DevicesAdapter(final ScannerActivity activity, final DevicesLiveData devicesLiveData) {
+		mContext = activity;
 		mDevices = devicesLiveData.getDevices();
-		devicesLiveData.observe(context, devices -> {
+		devicesLiveData.observe(activity, devices -> {
 			final Integer i = devices.getUpdatedDeviceIndex();
 			if (i != null)
 				notifyItemChanged(i);
