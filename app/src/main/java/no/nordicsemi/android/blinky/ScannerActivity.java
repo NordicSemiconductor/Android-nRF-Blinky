@@ -117,6 +117,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 
 	@OnClick(R.id.action_grant_location_permission)
 	public void onGrantLocationPermissionClicked() {
+		Utils.markLocationPermissionRequested(this);
 		ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_ACCESS_COARSE_LOCATION);
 	}
 

@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 
 public class Utils {
 	private static final String PREFS_LOCATION_NOT_REQUIRED = "location_not_required";
+	private static final String PREFS_PERMISSION_REQUESTED = "permission_requested";
 
 	/**
 	 * Checks whether Bluetooth is enabled.
@@ -33,8 +34,18 @@ public class Utils {
 		return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 	}
 
+	/**
+	 * Returns true if location permission has been requested at least twice and
+	 * user denied it, and checked 'Don't ask again'.
+	 * @param activity the activity
+	 * @return true if permission has been denied and the popup will not come up any more, false otherwise
+	 */
 	public static boolean isLocationPermissionDeniedForever(final Activity activity) {
-		return !isLocationPermissionsGranted(activity) && !ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION);
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+
+		return !isLocationPermissionsGranted(activity) // Location permission must be denied
+				&& preferences.getBoolean(PREFS_PERMISSION_REQUESTED, false) // Permission must have been requested before
+				&& !ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_COARSE_LOCATION); // This method should return false
 	}
 
 	/**
@@ -76,6 +87,18 @@ public class Utils {
 	public static void markLocationNotRequired(final Context context) {
 		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		preferences.edit().putBoolean(PREFS_LOCATION_NOT_REQUIRED, false).apply();
+	}
+
+	/**
+	 * The first time an app requests a permission there is no 'Don't ask again' checkbox and
+	 * {@link ActivityCompat#shouldShowRequestPermissionRationale(Activity, String)} returns false.
+	 * This situation is similar to a permission being denied forever, so to distinguish both cases
+	 * a flag needs to be saved.
+	 * @param context the context
+	 */
+	public static void markLocationPermissionRequested(final Context context) {
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		preferences.edit().putBoolean(PREFS_PERMISSION_REQUESTED, true).apply();
 	}
 
 	public static boolean isMarshmallowOrAbove() {
