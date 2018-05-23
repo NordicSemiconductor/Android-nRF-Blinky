@@ -26,26 +26,22 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.UUID;
 
 import no.nordicsemi.android.ble.BleManager;
+import no.nordicsemi.android.ble.Request;
 import no.nordicsemi.android.log.LogContract;
 
 public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
-	/**
-	 * Nordic Blinky Service UUID
-	 */
+	/** Nordic Blinky Service UUID. */
 	public final static UUID LBS_UUID_SERVICE = UUID.fromString("00001523-1212-efde-1523-785feabcd123");
-	/**
-	 * BUTTON characteristic UUID
-	 */
+	/** BUTTON characteristic UUID. */
 	private final static UUID LBS_UUID_BUTTON_CHAR = UUID.fromString("00001524-1212-efde-1523-785feabcd123");
-	/**
-	 * LED characteristic UUID
-	 */
+	/** LED characteristic UUID. */
 	private final static UUID LBS_UUID_LED_CHAR = UUID.fromString("00001525-1212-efde-1523-785feabcd123");
 
 	private BluetoothGattCharacteristic mButtonCharacteristic, mLedCharacteristic;
@@ -54,6 +50,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 		super(context);
 	}
 
+	@NonNull
 	@Override
 	protected BleManagerGattCallback getGattCallback() {
 		return mGattCallback;
