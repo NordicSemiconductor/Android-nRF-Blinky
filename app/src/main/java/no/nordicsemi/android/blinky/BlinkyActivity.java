@@ -40,10 +40,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import no.nordicsemi.android.blinky.adapter.ExtendedBluetoothDevice;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
 
+@SuppressWarnings("ConstantConditions")
 public class BlinkyActivity extends AppCompatActivity {
 	public static final String EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE";
 
@@ -83,7 +85,13 @@ public class BlinkyActivity extends AppCompatActivity {
 		viewModel.getConnectionState().observe(this, connectionState::setText);
 		viewModel.isConnected().observe(this, connected -> {
 			if (!connected) {
+				Toast.makeText(this, R.string.state_disconnected, Toast.LENGTH_SHORT).show();
 				finish();
+			}
+		});
+		viewModel.isSupported().observe(this, supported -> {
+			if (!supported) {
+				Toast.makeText(this, R.string.state_not_supported, Toast.LENGTH_SHORT).show();
 			}
 		});
 		viewModel.getLEDState().observe(this, isOn -> {

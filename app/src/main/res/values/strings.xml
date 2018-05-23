@@ -68,4 +68,6 @@
 	<string name="state_discovering_services">Discovering services…</string>
 	<string name="state_initializing">Initializing…</string>
 	<string name="state_discovering_services_completed">%s ready</string>
+	<string name="state_not_supported">Device does not have required services.</string>
+	<string name="state_disconnected">Device disconnected.</string>
 </resources>

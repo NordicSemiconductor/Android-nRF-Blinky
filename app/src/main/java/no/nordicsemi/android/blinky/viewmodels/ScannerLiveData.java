@@ -47,6 +47,7 @@ import no.nordicsemi.android.support.v18.scanner.ScanResult;
  * are updated and observers are also notified. Observer may check {@link #getUpdatedDeviceIndex()}
  * to find out the index of the updated device.
  */
+@SuppressWarnings("unused")
 public class ScannerLiveData extends LiveData<ScannerLiveData> {
 	private final List<ExtendedBluetoothDevice> mDevices = new ArrayList<>();
 	private Integer mUpdatedDeviceIndex;

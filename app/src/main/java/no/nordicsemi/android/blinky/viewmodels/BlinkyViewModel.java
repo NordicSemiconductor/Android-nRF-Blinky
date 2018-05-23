@@ -56,6 +56,9 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	// Flag to determine if the device is connected
 	private final MutableLiveData<Boolean> mIsConnected = new MutableLiveData<>();
 
+	// Flag to determine if the device has required services
+	private final SingleLiveEvent<Boolean> mIsSupported = new SingleLiveEvent<>();
+
 	// Flag to determine if the device is ready
 	private final MutableLiveData<Void> mOnDeviceReady = new MutableLiveData<>();
 
@@ -83,6 +86,10 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 
 	public LiveData<Boolean> getLEDState() {
 		return mLEDState;
+	}
+
+	public LiveData<Boolean> isSupported() {
+		return mIsSupported;
 	}
 
 	public BlinkyViewModel(@NonNull final Application application) {
@@ -165,6 +172,7 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 
 	@Override
 	public void onDeviceReady(final BluetoothDevice device) {
+		mIsSupported.postValue(true);
 		mConnectionState.postValue(getApplication().getString(R.string.state_discovering_services_completed, device.getName()));
 		mOnDeviceReady.postValue(null);
 	}
@@ -197,6 +205,6 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 
 	@Override
 	public void onDeviceNotSupported(final BluetoothDevice device) {
-		// TODO implement
+		mIsSupported.postValue(false);
 	}
 }
