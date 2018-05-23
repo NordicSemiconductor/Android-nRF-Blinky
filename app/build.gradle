@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.1"
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "no.nordicsemi.android.nrfblinky"
@@ -34,11 +34,13 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:27.0.2'
-    implementation 'com.android.support:design:27.0.2'
-    implementation 'com.android.support:recyclerview-v7:27.0.2'
-    implementation 'com.android.support:cardview-v7:27.0.2'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    // Lifecycle extensions
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
     // Butter Knife
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
@@ -46,8 +48,6 @@ dependencies {
     implementation 'no.nordicsemi.android.support.v18:scanner:1.0.0'
     // Log Bluetooth LE events in nRF Logger
     implementation 'no.nordicsemi.android:log:2.1.1'
-    // Lifecycle extensions
-    implementation 'android.arch.lifecycle:extensions:1.0.0'
     // BLE library
     implementation project(':ble')
 }
