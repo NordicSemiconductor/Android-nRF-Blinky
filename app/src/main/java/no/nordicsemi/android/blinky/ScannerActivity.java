@@ -44,6 +44,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -89,6 +90,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 		recyclerView.setLayoutManager(new LinearLayoutManager(this));
 		final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
 		recyclerView.addItemDecoration(dividerItemDecoration);
+		((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 		final DevicesAdapter adapter = new DevicesAdapter(this, mScannerViewModel.getScannerState());
 		adapter.setOnItemClickListener(this);
 		recyclerView.setAdapter(adapter);
