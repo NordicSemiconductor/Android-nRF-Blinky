@@ -139,8 +139,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 			return;
 
 		final byte[] command = new byte[] {(byte) (onOff ? 1 : 0)};
-		mLedCharacteristic.setValue(command);
-		log(LogContract.Log.Level.WARNING, "Turning LED " + (onOff ? "ON" : "OFF") + "...");
-		writeCharacteristic(mLedCharacteristic);
+		log(LogContract.Log.Level.VERBOSE, "Turning LED " + (onOff ? "ON" : "OFF") + "...");
+		writeCharacteristic(mLedCharacteristic, command);
 	}
 }
