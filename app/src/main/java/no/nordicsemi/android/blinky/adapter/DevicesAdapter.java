@@ -44,8 +44,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import no.nordicsemi.android.blinky.ScannerActivity;
 import no.nordicsemi.android.blinky.R;
+import no.nordicsemi.android.blinky.ScannerActivity;
 import no.nordicsemi.android.blinky.viewmodels.ScannerLiveData;
 
 @SuppressWarnings("unused")

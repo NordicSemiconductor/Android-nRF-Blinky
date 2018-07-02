@@ -34,9 +34,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 
 public class SplashScreenActivity extends Activity {
 	private static final int DURATION = 1000;
