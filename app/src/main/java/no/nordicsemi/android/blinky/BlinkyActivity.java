@@ -42,7 +42,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import no.nordicsemi.android.blinky.adapter.ExtendedBluetoothDevice;
+import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
 
 @SuppressWarnings("ConstantConditions")
@@ -55,7 +55,7 @@ public class BlinkyActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_blinky);
 
 		final Intent intent = getIntent();
-		final ExtendedBluetoothDevice device = intent.getParcelableExtra(EXTRA_DEVICE);
+		final DiscoveredBluetoothDevice device = intent.getParcelableExtra(EXTRA_DEVICE);
 		final String deviceName = device.getName();
 		final String deviceAddress = device.getAddress();
 

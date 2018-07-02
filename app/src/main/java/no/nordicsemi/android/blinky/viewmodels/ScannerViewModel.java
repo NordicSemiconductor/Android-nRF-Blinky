@@ -38,32 +38,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.LocationManager;
-import android.os.ParcelUuid;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import no.nordicsemi.android.blinky.profile.BlinkyManager;
 import no.nordicsemi.android.blinky.utils.Utils;
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
-import no.nordicsemi.android.support.v18.scanner.ScanFilter;
 import no.nordicsemi.android.support.v18.scanner.ScanResult;
 import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
 public class ScannerViewModel extends AndroidViewModel {
+	/** MutableLiveData containing the list of devices. */
+	private final DevicesLiveData mDevicesLiveData;
+	/** MutableLiveData containing the scanner state. */
+	private final ScannerStateLiveData mScannerStateLiveData;
 
-	/** MutableLiveData containing the scanner state to notify MainActivity. */
-	private final ScannerLiveData mScannerLiveData;
+	public DevicesLiveData getDevices() {
+		return mDevicesLiveData;
+	}
 
-	public ScannerLiveData getScannerState() {
-		return mScannerLiveData;
+	public ScannerStateLiveData getScannerState() {
+		return mScannerStateLiveData;
 	}
 
 	public ScannerViewModel(final Application application) {
 		super(application);
 
-		mScannerLiveData = new ScannerLiveData(Utils.isBleEnabled(), Utils.isLocationEnabled(application));
+		mScannerStateLiveData = new ScannerStateLiveData(Utils.isBleEnabled(),
+				Utils.isLocationEnabled(application));
+		mDevicesLiveData = new DevicesLiveData(true, false);
 		registerBroadcastReceivers(application);
 	}
 
@@ -78,36 +81,29 @@ public class ScannerViewModel extends AndroidViewModel {
 	}
 
 	public void refresh() {
-		mScannerLiveData.refresh();
+		mScannerStateLiveData.refresh();
 	}
 
 	/**
 	 * Start scanning for Bluetooth devices.
 	 */
 	public void startScan() {
-		if (mScannerLiveData.isScanning()) {
+		if (mScannerStateLiveData.isScanning()) {
 			return;
 		}
 
 		// Scanning settings
 		final ScanSettings settings = new ScanSettings.Builder()
 				.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-				// Refresh the devices list every second
-				.setReportDelay(0)
+				.setReportDelay(500)
+				.setUseHardwareBatchingIfSupported(false)
 				// Hardware filtering has some issues on selected devices
 				.setUseHardwareFilteringIfSupported(false)
-				// Samsung S6 and S6 Edge report equal value of RSSI for all devices. In this app we ignore the RSSI.
-					/*.setUseHardwareBatchingIfSupported(false)*/
 				.build();
 
-		// Let's use the filter to scan only for Blinky devices
-		final ParcelUuid uuid = new ParcelUuid(BlinkyManager.LBS_UUID_SERVICE);
-		final List<ScanFilter> filters = new ArrayList<>();
-		filters.add(new ScanFilter.Builder().setServiceUuid(uuid).build());
-
 		final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
-		scanner.startScan(filters, settings, scanCallback);
-		mScannerLiveData.scanningStarted();
+		scanner.startScan(null, settings, scanCallback);
+		mScannerStateLiveData.scanningStarted();
 	}
 
 	/**
@@ -116,28 +112,45 @@ public class ScannerViewModel extends AndroidViewModel {
 	public void stopScan() {
 		final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
 		scanner.stopScan(scanCallback);
-		mScannerLiveData.scanningStopped();
+		mScannerStateLiveData.scanningStopped();
 	}
 
 	private final ScanCallback scanCallback = new ScanCallback() {
 		@Override
 		public void onScanResult(final int callbackType, final ScanResult result) {
+			// This callback will be called only if the scan report delay is not set or is set to 0.
+
 			// If the packet has been obtained while Location was disabled, mark Location as not required
 			if (Utils.isLocationRequired(getApplication()) && !Utils.isLocationEnabled(getApplication()))
 				Utils.markLocationNotRequired(getApplication());
 
-			mScannerLiveData.deviceDiscovered(result);
+			if (mDevicesLiveData.deviceDiscovered(result)) {
+				mDevicesLiveData.applyFilter();
+				mScannerStateLiveData.recordFound();
+			}
 		}
 
 		@Override
 		public void onBatchScanResults(final List<ScanResult> results) {
-			// Batch scan is disabled (report delay = 0)
+			// This callback will be called only if the report delay set above is greater then 0.
+
+			// If the packet has been obtained while Location was disabled, mark Location as not required
+			if (Utils.isLocationRequired(getApplication()) && !Utils.isLocationEnabled(getApplication()))
+				Utils.markLocationNotRequired(getApplication());
+
+			boolean atLeastOneMatchedFilter = false;
+			for (final ScanResult result : results)
+				atLeastOneMatchedFilter = mDevicesLiveData.deviceDiscovered(result) || atLeastOneMatchedFilter;
+			if (atLeastOneMatchedFilter) {
+				mDevicesLiveData.applyFilter();
+				mScannerStateLiveData.recordFound();
+			}
 		}
 
 		@Override
 		public void onScanFailed(final int errorCode) {
 			// TODO This should be handled
-			mScannerLiveData.scanningStopped();
+			mScannerStateLiveData.scanningStopped();
 		}
 	};
 
@@ -158,7 +171,7 @@ public class ScannerViewModel extends AndroidViewModel {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 			final boolean enabled = Utils.isLocationEnabled(context);
-			mScannerLiveData.setLocationEnabled(enabled);
+			mScannerStateLiveData.setLocationEnabled(enabled);
 		}
 	};
 
@@ -173,13 +186,13 @@ public class ScannerViewModel extends AndroidViewModel {
 
 			switch (state) {
 				case BluetoothAdapter.STATE_ON:
-					mScannerLiveData.bluetoothEnabled();
+					mScannerStateLiveData.bluetoothEnabled();
 					break;
 				case BluetoothAdapter.STATE_TURNING_OFF:
 				case BluetoothAdapter.STATE_OFF:
 					if (previousState != BluetoothAdapter.STATE_TURNING_OFF && previousState != BluetoothAdapter.STATE_OFF) {
 						stopScan();
-						mScannerLiveData.bluetoothDisabled();
+						mScannerStateLiveData.bluetoothDisabled();
 					}
 					break;
 			}

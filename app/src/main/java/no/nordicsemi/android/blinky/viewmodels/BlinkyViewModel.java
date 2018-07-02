@@ -38,7 +38,7 @@ import android.bluetooth.BluetoothDevice;
 import android.support.annotation.NonNull;
 
 import no.nordicsemi.android.blinky.R;
-import no.nordicsemi.android.blinky.adapter.ExtendedBluetoothDevice;
+import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.profile.BlinkyManager;
 import no.nordicsemi.android.blinky.profile.BlinkyManagerCallbacks;
 import no.nordicsemi.android.log.LogSession;
@@ -98,16 +98,16 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	}
 
 	/**
-	 * Connect to peripheral
+	 * Connect to peripheral.
 	 */
-	public void connect(final ExtendedBluetoothDevice device) {
+	public void connect(final DiscoveredBluetoothDevice device) {
 		final LogSession logSession = Logger.newSession(getApplication(), null, device.getAddress(), device.getName());
 		mBlinkyManager.setLogger(logSession);
 		mBlinkyManager.connect(device.getDevice()).enqueue();
 	}
 
 	/**
-	 * Disconnect from peripheral
+	 * Disconnect from peripheral.
 	 */
 	private void disconnect() {
 		mBlinkyManager.disconnect().enqueue();

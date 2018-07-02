@@ -32,6 +32,7 @@ package no.nordicsemi.android.blinky.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -46,32 +47,32 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import no.nordicsemi.android.blinky.R;
 import no.nordicsemi.android.blinky.ScannerActivity;
-import no.nordicsemi.android.blinky.viewmodels.ScannerLiveData;
+import no.nordicsemi.android.blinky.viewmodels.DevicesLiveData;
 
 @SuppressWarnings("unused")
 public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHolder> {
-	private final ScannerActivity mContext;
-	private final List<ExtendedBluetoothDevice> mDevices;
+	private final Context mContext;
+	private List<DiscoveredBluetoothDevice> mDevices;
 	private OnItemClickListener mOnItemClickListener;
 
 	@FunctionalInterface
 	public interface OnItemClickListener {
-		void onItemClick(final ExtendedBluetoothDevice device);
+		void onItemClick(final DiscoveredBluetoothDevice device);
 	}
 
-	public void setOnItemClickListener(final Context context) {
-		mOnItemClickListener = (OnItemClickListener) context;
+	public void setOnItemClickListener(final OnItemClickListener listener) {
+		mOnItemClickListener = listener;
 	}
 
-	public DevicesAdapter(final ScannerActivity activity, final ScannerLiveData scannerLiveData) {
+	@SuppressWarnings("ConstantConditions")
+	public DevicesAdapter(final ScannerActivity activity, final DevicesLiveData devicesLiveData) {
 		mContext = activity;
-		mDevices = scannerLiveData.getDevices();
-		scannerLiveData.observe(activity, devices -> {
-			final Integer i = devices.getUpdatedDeviceIndex();
-			if (i != null)
-				notifyItemChanged(i);
-			else
-				notifyDataSetChanged();
+		setHasStableIds(true);
+		devicesLiveData.observe(activity, devices -> {
+			DiffUtil.DiffResult result = DiffUtil.calculateDiff(
+					new DeviceDiffCallback(mDevices, devices), false);
+			mDevices = devices;
+			result.dispatchUpdatesTo(this);
 		});
 	}
 
@@ -84,7 +85,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 
 	@Override
 	public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-		final ExtendedBluetoothDevice device = mDevices.get(position);
+		final DiscoveredBluetoothDevice device = mDevices.get(position);
 		final String deviceName = device.getName();
 
 		if (!TextUtils.isEmpty(deviceName))
@@ -98,12 +99,12 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 
 	@Override
 	public long getItemId(final int position) {
-		return position;
+		return mDevices.get(position).hashCode();
 	}
 
 	@Override
 	public int getItemCount() {
-		return mDevices.size();
+		return mDevices != null ? mDevices.size() : 0;
 	}
 
 	public boolean isEmpty() {

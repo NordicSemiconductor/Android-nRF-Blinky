@@ -31,31 +31,18 @@
 package no.nordicsemi.android.blinky.viewmodels;
 
 import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import no.nordicsemi.android.blinky.adapter.ExtendedBluetoothDevice;
-import no.nordicsemi.android.support.v18.scanner.ScanResult;
 
 /**
- * This class keeps the current list of discovered Bluetooth LE devices matching filter.
- * If a new device has been found it is added to the list and the LiveData i observers are
- * notified. If a packet from a device that's already in the list is found, the RSSI and name
- * are updated and observers are also notified. Observer may check {@link #getUpdatedDeviceIndex()}
- * to find out the index of the updated device.
+ * This class keeps the current state of the scanner.
  */
 @SuppressWarnings("unused")
-public class ScannerLiveData extends LiveData<ScannerLiveData> {
-	private final List<ExtendedBluetoothDevice> mDevices = new ArrayList<>();
-	private Integer mUpdatedDeviceIndex;
+public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
 	private boolean mScanningStarted;
+	private boolean mHasRecords;
 	private boolean mBluetoothEnabled;
 	private boolean mLocationEnabled;
 
-	/* package */ ScannerLiveData(final boolean bluetoothEnabled, final boolean locationEnabled) {
+	/* package */ ScannerStateLiveData(final boolean bluetoothEnabled, final boolean locationEnabled) {
 		mScanningStarted = false;
 		mBluetoothEnabled = bluetoothEnabled;
 		mLocationEnabled = locationEnabled;
@@ -81,10 +68,9 @@ public class ScannerLiveData extends LiveData<ScannerLiveData> {
 		postValue(this);
 	}
 
-	/* package */ void bluetoothDisabled() {
+	/* package */ synchronized void bluetoothDisabled() {
 		mBluetoothEnabled = false;
-		mUpdatedDeviceIndex = null;
-		mDevices.clear();
+		mHasRecords = false;
 		postValue(this);
 	}
 
@@ -93,49 +79,9 @@ public class ScannerLiveData extends LiveData<ScannerLiveData> {
 		postValue(this);
 	}
 
-	/* package */ void deviceDiscovered(final ScanResult result) {
-		ExtendedBluetoothDevice device;
-
-		final int index = indexOf(result);
-		if (index == -1) {
-			device = new ExtendedBluetoothDevice(result);
-			mDevices.add(device);
-			mUpdatedDeviceIndex = null;
-		} else {
-			device = mDevices.get(index);
-			mUpdatedDeviceIndex = index;
-		}
-		// Update RSSI and name
-		device.setRssi(result.getRssi());
-		device.setName(result.getScanRecord().getDeviceName());
-
+	/* package */ void recordFound() {
+		mHasRecords = true;
 		postValue(this);
-	}
-
-	/**
-	 * Returns the list of devices.
-	 * @return current list of devices discovered
-	 */
-	@NonNull
-	public List<ExtendedBluetoothDevice> getDevices() {
-		return mDevices;
-	}
-
-	/**
-	 * Returns null if a new device was added, or an index of the updated device.
-	 */
-	@Nullable
-	public Integer getUpdatedDeviceIndex() {
-		final Integer i = mUpdatedDeviceIndex;
-		mUpdatedDeviceIndex = null;
-		return i;
-	}
-
-	/**
-	 * Returns whether the list is empty.
-	 */
-	public boolean isEmpty() {
-		return mDevices.isEmpty();
 	}
 
 	/**
@@ -143,6 +89,13 @@ public class ScannerLiveData extends LiveData<ScannerLiveData> {
 	 */
 	public boolean isScanning() {
 		return mScanningStarted;
+	}
+
+	/**
+	 * Returns whether any records matching filter criteria has been found.
+	 */
+	public boolean hasRecords() {
+		return mHasRecords;
 	}
 
 	/**
@@ -160,18 +113,10 @@ public class ScannerLiveData extends LiveData<ScannerLiveData> {
 	}
 
 	/**
-	 * Finds the index of existing devices on the scan results list.
-	 *
-	 * @param result scan result
-	 * @return index of -1 if not found
+	 * Notifies the observer that scanner has no records to show.
 	 */
-	private int indexOf(final ScanResult result) {
-		int i = 0;
-		for (final ExtendedBluetoothDevice device : mDevices) {
-			if (device.matches(result))
-				return i;
-			i++;
-		}
-		return -1;
+	public void clearRecords() {
+		mHasRecords = false;
+		postValue(this);
 	}
 }

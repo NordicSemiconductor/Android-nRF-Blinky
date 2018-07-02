@@ -53,9 +53,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.nordicsemi.android.blinky.adapter.DevicesAdapter;
-import no.nordicsemi.android.blinky.adapter.ExtendedBluetoothDevice;
+import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.utils.Utils;
-import no.nordicsemi.android.blinky.viewmodels.ScannerLiveData;
+import no.nordicsemi.android.blinky.viewmodels.ScannerStateLiveData;
 import no.nordicsemi.android.blinky.viewmodels.ScannerViewModel;
 
 public class ScannerActivity extends AppCompatActivity implements DevicesAdapter.OnItemClickListener {
@@ -91,9 +91,16 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 		final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
 		recyclerView.addItemDecoration(dividerItemDecoration);
 		((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
-		final DevicesAdapter adapter = new DevicesAdapter(this, mScannerViewModel.getScannerState());
+		final DevicesAdapter adapter = new DevicesAdapter(this, mScannerViewModel.getDevices());
 		adapter.setOnItemClickListener(this);
 		recyclerView.setAdapter(adapter);
+	}
+
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		mScannerViewModel.getDevices().clear();
+		mScannerViewModel.getScannerState().clearRecords();
 	}
 
 	@Override
@@ -103,7 +110,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 	}
 
 	@Override
-	public void onItemClick(final ExtendedBluetoothDevice device) {
+	public void onItemClick(final DiscoveredBluetoothDevice device) {
 		final Intent controlBlinkIntent = new Intent(this, BlinkyActivity.class);
 		controlBlinkIntent.putExtra(BlinkyActivity.EXTRA_DEVICE, device);
 		startActivity(controlBlinkIntent);
@@ -147,7 +154,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 	/**
 	 * Start scanning for Bluetooth devices or displays a message based on the scanner state.
 	 */
-	private void startScan(final ScannerLiveData state) {
+	private void startScan(final ScannerStateLiveData state) {
 		// First, check the Location permission. This is required on Marshmallow onwards in order to scan for Bluetooth LE devices.
 		if (Utils.isLocationPermissionsGranted(this)) {
 			mNoLocationPermissionView.setVisibility(View.GONE);
@@ -160,7 +167,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 				mScannerViewModel.startScan();
 				mScanningView.setVisibility(View.VISIBLE);
 
-				if (state.isEmpty()) {
+				if (!state.hasRecords()) {
 					mEmptyView.setVisibility(View.VISIBLE);
 
 					if (!Utils.isLocationRequired(this) || Utils.isLocationEnabled(this)) {
