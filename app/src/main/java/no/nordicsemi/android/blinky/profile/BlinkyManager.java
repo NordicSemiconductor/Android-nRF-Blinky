@@ -22,18 +22,20 @@
 
 package no.nordicsemi.android.blinky.profile;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.UUID;
 
 import no.nordicsemi.android.ble.BleManager;
-import no.nordicsemi.android.ble.Request;
+import no.nordicsemi.android.ble.data.Data;
+import no.nordicsemi.android.blinky.profile.callback.BlinkyButtonDataCallback;
+import no.nordicsemi.android.blinky.profile.callback.BlinkyLedDataCallback;
+import no.nordicsemi.android.blinky.profile.data.BlinkyLED;
 import no.nordicsemi.android.log.LogContract;
 
 public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
@@ -64,17 +66,62 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	}
 
 	/**
-	 * BluetoothGatt callbacks for connection/disconnection, service discovery, receiving indication, etc
+	 * The Button callback will be notified when a notification from Button characteristic
+	 * has been received, or its data was read.
+	 * <p>
+	 * If the data received are valid (single byte equal to 0x00 or 0x01), the
+	 * {@link BlinkyButtonDataCallback#onButtonStateChanged} will be called.
+	 * Otherwise, the {@link BlinkyButtonDataCallback#onInvalidDataReceived(BluetoothDevice, Data)}
+	 * will be called with the data received.
 	 */
-	private final BleManagerGattCallback mGattCallback = new BleManagerGattCallback() {
+	private	final BlinkyButtonDataCallback mButtonCallback = new BlinkyButtonDataCallback() {
+		@Override
+		public void onButtonStateChanged(final BluetoothDevice device, final boolean pressed) {
+			log(LogContract.Log.Level.APPLICATION, "Button " + (pressed ? "pressed" : "released"));
+			mCallbacks.onButtonStateChanged(device, pressed);
+		}
 
 		@Override
-		protected Deque<Request> initGatt(final BluetoothGatt gatt) {
-			final LinkedList<Request> requests = new LinkedList<>();
-			requests.push(Request.newReadRequest(mLedCharacteristic));
-			requests.push(Request.newReadRequest(mButtonCharacteristic));
-			requests.push(Request.newEnableNotificationsRequest(mButtonCharacteristic));
-			return requests;
+		public void onInvalidDataReceived(@NonNull final BluetoothDevice device, @NonNull final Data data) {
+			log(LogContract.Log.Level.WARNING, "Invalid data received: " + data);
+		}
+	};
+
+	/**
+	 * The LED callback will be notified when the LED state was read or sent to the target device.
+	 * <p>
+	 * This callback implements both {@link no.nordicsemi.android.ble.callback.DataReceivedCallback}
+	 * and {@link no.nordicsemi.android.ble.callback.DataSentCallback} and calls the same
+	 * method on success.
+	 * <p>
+	 * If the data received were invalid, the
+	 * {@link BlinkyLedDataCallback#onInvalidDataReceived(BluetoothDevice, Data)} will be
+	 * called.
+	 */
+	private final BlinkyLedDataCallback mLedCallback = new BlinkyLedDataCallback() {
+		@Override
+		public void onLedStateChanged(final BluetoothDevice device, final boolean on) {
+			log(LogContract.Log.Level.APPLICATION, "LED " + (on ? "ON" : "OFF"));
+			mCallbacks.onLedStateChanged(device, on);
+		}
+
+		@Override
+		public void onInvalidDataReceived(@NonNull final BluetoothDevice device, @NonNull final Data data) {
+			// Data can only invalid if we read them. We assume the app always sends correct data.
+			log(LogContract.Log.Level.WARNING, "Invalid data received: " + data);
+		}
+	};
+
+	/**
+	 * BluetoothGatt callbacks object.
+	 */
+	private final BleManagerGattCallback mGattCallback = new BleManagerGattCallback() {
+		@Override
+		protected void initialize() {
+			setNotificationCallback(mButtonCharacteristic).with(mButtonCallback);
+			readCharacteristic(mLedCharacteristic).with(mLedCallback).enqueue();
+			readCharacteristic(mButtonCharacteristic).with(mButtonCallback).enqueue();
+			enableNotifications(mButtonCharacteristic).enqueue();
 		}
 
 		@Override
@@ -99,47 +146,20 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 			mButtonCharacteristic = null;
 			mLedCharacteristic = null;
 		}
-
-		@Override
-		protected void onCharacteristicRead(final BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic) {
-			final int data = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
-			if (characteristic == mLedCharacteristic) {
-				final boolean ledOn = data == 0x01;
-				log(LogContract.Log.Level.APPLICATION, "LED " + (ledOn ? "ON" : "OFF"));
-				mCallbacks.onDataSent(ledOn);
-			} else {
-				final boolean buttonPressed = data == 0x01;
-				log(LogContract.Log.Level.APPLICATION, "Button " + (buttonPressed ? "pressed" : "released"));
-				mCallbacks.onDataReceived(buttonPressed);
-			}
-		}
-
-		@Override
-		public void onCharacteristicWrite(final BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic) {
-			// This method is only called for LED characteristic
-			final int data = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
-			final boolean ledOn = data == 0x01;
-			log(LogContract.Log.Level.APPLICATION, "LED " + (ledOn ? "ON" : "OFF"));
-			mCallbacks.onDataSent(ledOn);
-		}
-
-		@Override
-		public void onCharacteristicNotified(final BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic) {
-			// This method is only called for Button characteristic
-			final int data = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
-			final boolean buttonPressed = data == 0x01;
-			log(LogContract.Log.Level.APPLICATION, "Button " + (buttonPressed ? "pressed" : "released"));
-			mCallbacks.onDataReceived(buttonPressed);
-		}
 	};
 
-	public void send(final boolean onOff) {
+	/**
+	 * Sends a request to the device to turn the LED on or off.
+	 *
+	 * @param on true to turn the LED on, false to turn it off.
+	 */
+	public void send(final boolean on) {
 		// Are we connected?
 		if (mLedCharacteristic == null)
 			return;
 
-		final byte[] command = new byte[] {(byte) (onOff ? 1 : 0)};
-		log(LogContract.Log.Level.VERBOSE, "Turning LED " + (onOff ? "ON" : "OFF") + "...");
-		writeCharacteristic(mLedCharacteristic, command);
+		log(LogContract.Log.Level.VERBOSE, "Turning LED " + (on ? "ON" : "OFF") + "...");
+		writeCharacteristic(mLedCharacteristic, on ? BlinkyLED.turnOn() : BlinkyLED.turnOff())
+				.with(mLedCallback).enqueue();
 	}
 }

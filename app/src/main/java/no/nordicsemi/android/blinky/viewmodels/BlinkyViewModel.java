@@ -34,8 +34,6 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
 import android.bluetooth.BluetoothDevice;
 import android.support.annotation.NonNull;
 
@@ -43,7 +41,6 @@ import no.nordicsemi.android.blinky.R;
 import no.nordicsemi.android.blinky.adapter.ExtendedBluetoothDevice;
 import no.nordicsemi.android.blinky.profile.BlinkyManager;
 import no.nordicsemi.android.blinky.profile.BlinkyManagerCallbacks;
-import no.nordicsemi.android.log.ILogSession;
 import no.nordicsemi.android.log.LogSession;
 import no.nordicsemi.android.log.Logger;
 
@@ -106,14 +103,14 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	public void connect(final ExtendedBluetoothDevice device) {
 		final LogSession logSession = Logger.newSession(getApplication(), null, device.getAddress(), device.getName());
 		mBlinkyManager.setLogger(logSession);
-		mBlinkyManager.connect(device.getDevice());
+		mBlinkyManager.connect(device.getDevice()).enqueue();
 	}
 
 	/**
 	 * Disconnect from peripheral
 	 */
 	private void disconnect() {
-		mBlinkyManager.disconnect();
+		mBlinkyManager.disconnect().enqueue();
 	}
 
 	public void toggleLED(final boolean onOff) {
@@ -130,13 +127,13 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	}
 
 	@Override
-	public void onDataReceived(final boolean state) {
-		mButtonState.postValue(state);
+	public void onButtonStateChanged(final BluetoothDevice device, final boolean pressed) {
+		mButtonState.postValue(pressed);
 	}
 
 	@Override
-	public void onDataSent(final boolean state) {
-		mLEDState.postValue(state);
+	public void onLedStateChanged(final BluetoothDevice device, final boolean on) {
+		mLEDState.postValue(on);
 	}
 
 	@Override
@@ -161,7 +158,7 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	}
 
 	@Override
-	public void onLinklossOccur(final BluetoothDevice device) {
+	public void onLinkLossOccurred(final BluetoothDevice device) {
 		mIsConnected.postValue(false);
 	}
 
@@ -178,23 +175,17 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	}
 
 	@Override
-	public boolean shouldEnableBatteryLevelNotifications(final BluetoothDevice device) {
-		// Blinky doesn't have Battery Service
-		return false;
-	}
-
-	@Override
-	public void onBatteryValueReceived(final BluetoothDevice device, final int value) {
-		// Blinky doesn't have Battery Service
-	}
-
-	@Override
 	public void onBondingRequired(final BluetoothDevice device) {
 		// Blinky does not require bonding
 	}
 
 	@Override
 	public void onBonded(final BluetoothDevice device) {
+		// Blinky does not require bonding
+	}
+
+	@Override
+	public void onBondingFailed(final BluetoothDevice device) {
 		// Blinky does not require bonding
 	}
 
