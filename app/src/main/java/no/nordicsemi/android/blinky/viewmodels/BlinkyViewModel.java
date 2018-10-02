@@ -95,7 +95,10 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	public void connect(final DiscoveredBluetoothDevice device) {
 		final LogSession logSession = Logger.newSession(getApplication(), null, device.getAddress(), device.getName());
 		mBlinkyManager.setLogger(logSession);
-		mBlinkyManager.connect(device.getDevice()).enqueue();
+		mBlinkyManager.connect(device.getDevice())
+				.retry(3, 100)
+				.useAutoConnect(false)
+				.enqueue();
 	}
 
 	/**

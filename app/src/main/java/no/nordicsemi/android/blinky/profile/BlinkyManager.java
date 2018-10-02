@@ -58,13 +58,6 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 		return mGattCallback;
 	}
 
-	@Override
-	protected boolean shouldAutoConnect() {
-		// If you want to connect to the device using autoConnect flag = true, return true here.
-		// Read the documentation of this method.
-		return super.shouldAutoConnect();
-	}
-
 	/**
 	 * The Button callback will be notified when a notification from Button characteristic
 	 * has been received, or its data was read.
