@@ -69,7 +69,7 @@ public class BlinkyActivity extends AppCompatActivity {
 		final TextView connectionState = findViewById(R.id.connection_state);
 		final View content = findViewById(R.id.device_container);
 
-		led.setOnClickListener(view -> viewModel.toggleLED(led.isChecked()));
+		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.toggleLED(isChecked));
 		viewModel.isDeviceReady().observe(this, deviceReady -> {
 			progressContainer.setVisibility(View.GONE);
 			content.setVisibility(View.VISIBLE);
