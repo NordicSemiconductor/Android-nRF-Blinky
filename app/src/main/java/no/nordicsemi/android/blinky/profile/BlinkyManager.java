@@ -28,6 +28,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.UUID;
 
@@ -37,6 +38,8 @@ import no.nordicsemi.android.blinky.profile.callback.BlinkyButtonDataCallback;
 import no.nordicsemi.android.blinky.profile.callback.BlinkyLedDataCallback;
 import no.nordicsemi.android.blinky.profile.data.BlinkyLED;
 import no.nordicsemi.android.log.LogContract;
+import no.nordicsemi.android.log.LogSession;
+import no.nordicsemi.android.log.Logger;
 
 public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	/** Nordic Blinky Service UUID. */
@@ -47,6 +50,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	private final static UUID LBS_UUID_LED_CHAR = UUID.fromString("00001525-1212-efde-1523-785feabcd123");
 
 	private BluetoothGattCharacteristic mButtonCharacteristic, mLedCharacteristic;
+	private LogSession mLogSession;
 
 	public BlinkyManager(final Context context) {
 		super(context);
@@ -56,6 +60,19 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	@Override
 	protected BleManagerGattCallback getGattCallback() {
 		return mGattCallback;
+	}
+
+	/**
+	 * Sets the log session to be used for low level logging.
+	 * @param session the session, or null, if nRF Logger is not installed.
+	 */
+	public void setLogger(@Nullable final LogSession session) {
+		this.mLogSession = session;
+	}
+
+	@Override
+	public void log(final int priority, @NonNull final String message) {
+		Logger.log(mLogSession, priority, message);
 	}
 
 	/**
