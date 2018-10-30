@@ -49,5 +49,5 @@ dependencies {
     // Log Bluetooth LE events in nRF Logger
     implementation 'no.nordicsemi.android:log:2.1.1'
     // BLE library
-    implementation 'no.nordicsemi.android:ble:2.0-beta5'
+    implementation 'no.nordicsemi.android:ble:2.0-beta6'
 }
