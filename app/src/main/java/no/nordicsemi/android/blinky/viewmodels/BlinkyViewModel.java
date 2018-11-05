@@ -108,9 +108,9 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 		mBlinkyManager.disconnect().enqueue();
 	}
 
-	public void toggleLED(final boolean onOff) {
-		mBlinkyManager.send(onOff);
-		mLEDState.setValue(onOff);
+	public void toggleLED(final boolean isOn) {
+		mBlinkyManager.send(isOn);
+		mLEDState.setValue(isOn);
 	}
 
 	@Override
@@ -132,65 +132,65 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	}
 
 	@Override
-	public void onDeviceConnecting(final BluetoothDevice device) {
+	public void onDeviceConnecting(@NonNull final BluetoothDevice device) {
 		mConnectionState.postValue(getApplication().getString(R.string.state_connecting));
 	}
 
 	@Override
-	public void onDeviceConnected(final BluetoothDevice device) {
+	public void onDeviceConnected(@NonNull final BluetoothDevice device) {
 		mIsConnected.postValue(true);
 		mConnectionState.postValue(getApplication().getString(R.string.state_discovering_services));
 	}
 
 	@Override
-	public void onDeviceDisconnecting(final BluetoothDevice device) {
+	public void onDeviceDisconnecting(@NonNull final BluetoothDevice device) {
 		mIsConnected.postValue(false);
 	}
 
 	@Override
-	public void onDeviceDisconnected(final BluetoothDevice device) {
+	public void onDeviceDisconnected(@NonNull final BluetoothDevice device) {
 		mIsConnected.postValue(false);
 	}
 
 	@Override
-	public void onLinkLossOccurred(final BluetoothDevice device) {
+	public void onLinkLossOccurred(@NonNull final BluetoothDevice device) {
 		mIsConnected.postValue(false);
 	}
 
 	@Override
-	public void onServicesDiscovered(final BluetoothDevice device, final boolean optionalServicesFound) {
+	public void onServicesDiscovered(@NonNull final BluetoothDevice device, final boolean optionalServicesFound) {
 		mConnectionState.postValue(getApplication().getString(R.string.state_initializing));
 	}
 
 	@Override
-	public void onDeviceReady(final BluetoothDevice device) {
+	public void onDeviceReady(@NonNull final BluetoothDevice device) {
 		mIsSupported.postValue(true);
 		mConnectionState.postValue(getApplication().getString(R.string.state_discovering_services_completed, device.getName()));
 		mOnDeviceReady.postValue(null);
 	}
 
 	@Override
-	public void onBondingRequired(final BluetoothDevice device) {
+	public void onBondingRequired(@NonNull final BluetoothDevice device) {
 		// Blinky does not require bonding
 	}
 
 	@Override
-	public void onBonded(final BluetoothDevice device) {
+	public void onBonded(@NonNull final BluetoothDevice device) {
 		// Blinky does not require bonding
 	}
 
 	@Override
-	public void onBondingFailed(final BluetoothDevice device) {
+	public void onBondingFailed(@NonNull final BluetoothDevice device) {
 		// Blinky does not require bonding
 	}
 
 	@Override
-	public void onError(final BluetoothDevice device, final String message, final int errorCode) {
+	public void onError(@NonNull final BluetoothDevice device, @NonNull final String message, final int errorCode) {
 		// TODO implement
 	}
 
 	@Override
-	public void onDeviceNotSupported(final BluetoothDevice device) {
+	public void onDeviceNotSupported(@NonNull final BluetoothDevice device) {
 		mIsSupported.postValue(false);
 	}
 }

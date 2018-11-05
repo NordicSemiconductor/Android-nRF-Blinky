@@ -28,6 +28,8 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.UUID;
 
@@ -37,6 +39,8 @@ import no.nordicsemi.android.blinky.profile.callback.BlinkyButtonDataCallback;
 import no.nordicsemi.android.blinky.profile.callback.BlinkyLedDataCallback;
 import no.nordicsemi.android.blinky.profile.data.BlinkyLED;
 import no.nordicsemi.android.log.LogContract;
+import no.nordicsemi.android.log.LogSession;
+import no.nordicsemi.android.log.Logger;
 
 public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	/** Nordic Blinky Service UUID. */
@@ -47,6 +51,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	private final static UUID LBS_UUID_LED_CHAR = UUID.fromString("00001525-1212-efde-1523-785feabcd123");
 
 	private BluetoothGattCharacteristic mButtonCharacteristic, mLedCharacteristic;
+	private LogSession mLogSession;
 
 	public BlinkyManager(final Context context) {
 		super(context);
@@ -56,6 +61,34 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	@Override
 	protected BleManagerGattCallback getGattCallback() {
 		return mGattCallback;
+	}
+
+	/**
+	 * Sets the log session to be used for low level logging.
+	 * @param session the session, or null, if nRF Logger is not installed.
+	 */
+	public void setLogger(@Nullable final LogSession session) {
+		this.mLogSession = session;
+	}
+
+	@Override
+	public void log(final int priority, @NonNull final String message) {
+		// The priority is a Log.X constant, while the Logger accepts it's log levels.
+		Logger.log(mLogSession, priorityToLevel(priority), message);
+	}
+
+	private int priorityToLevel(final int priority) {
+		switch (priority) {
+			case LogContract.Log.Level.APPLICATION:
+				return LogContract.Log.Level.APPLICATION;
+			case Log.ERROR:
+			case Log.ASSERT: return LogContract.Log.Level.ERROR;
+			case Log.INFO: return LogContract.Log.Level.INFO;
+			case Log.WARN: return LogContract.Log.Level.WARNING;
+			case Log.VERBOSE: return LogContract.Log.Level.VERBOSE;
+			case Log.DEBUG:
+			default: return LogContract.Log.Level.DEBUG;
+		}
 	}
 
 	/**
@@ -118,7 +151,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 		}
 
 		@Override
-		public boolean isRequiredServiceSupported(final BluetoothGatt gatt) {
+		public boolean isRequiredServiceSupported(@NonNull final BluetoothGatt gatt) {
 			final BluetoothGattService service = gatt.getService(LBS_UUID_SERVICE);
 			if (service != null) {
 				mButtonCharacteristic = service.getCharacteristic(LBS_UUID_BUTTON_CHAR);
