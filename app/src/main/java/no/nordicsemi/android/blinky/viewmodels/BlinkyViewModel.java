@@ -108,9 +108,9 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 		mBlinkyManager.disconnect().enqueue();
 	}
 
-	public void toggleLED(final boolean onOff) {
-		mBlinkyManager.send(onOff);
-		mLEDState.setValue(onOff);
+	public void toggleLED(final boolean isOn) {
+		mBlinkyManager.send(isOn);
+		mLEDState.setValue(isOn);
 	}
 
 	@Override
