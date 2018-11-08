@@ -11,6 +11,8 @@ android {
         versionCode 8
         versionName "2.3.0"
         resConfigs "en"
+
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
