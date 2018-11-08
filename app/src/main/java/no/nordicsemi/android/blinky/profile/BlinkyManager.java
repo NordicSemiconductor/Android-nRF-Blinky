@@ -74,21 +74,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	@Override
 	public void log(final int priority, @NonNull final String message) {
 		// The priority is a Log.X constant, while the Logger accepts it's log levels.
-		Logger.log(mLogSession, priorityToLevel(priority), message);
-	}
-
-	private int priorityToLevel(final int priority) {
-		switch (priority) {
-			case LogContract.Log.Level.APPLICATION:
-				return LogContract.Log.Level.APPLICATION;
-			case Log.ERROR:
-			case Log.ASSERT: return LogContract.Log.Level.ERROR;
-			case Log.INFO: return LogContract.Log.Level.INFO;
-			case Log.WARN: return LogContract.Log.Level.WARNING;
-			case Log.VERBOSE: return LogContract.Log.Level.VERBOSE;
-			case Log.DEBUG:
-			default: return LogContract.Log.Level.DEBUG;
-		}
+		Logger.log(mLogSession, LogContract.Log.Level.fromPriority(priority), message);
 	}
 
 	/**
