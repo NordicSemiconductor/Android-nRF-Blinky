@@ -1,1 +1,6 @@
 include ':app'
+
+// To include BLE Library project as a module, clone it to Android-BLE-Library folder and
+// uncomment the following lines. Also, uncomment the dependency in gradle.build file.
+// include ':ble'
+// project(':ble').projectDir = file('../Android-BLE-Library/ble')
