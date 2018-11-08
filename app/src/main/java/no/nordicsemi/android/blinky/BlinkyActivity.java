@@ -92,14 +92,4 @@ public class BlinkyActivity extends AppCompatActivity {
 		});
 		viewModel.getButtonState().observe(this, pressed -> buttonState.setText(pressed ? R.string.button_pressed : R.string.button_released));
 	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				onBackPressed();
-				return true;
-		}
-		return false;
-	}
 }

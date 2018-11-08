@@ -63,7 +63,8 @@
 		</activity>
 		<activity
 			android:name=".BlinkyActivity"
-			android:launchMode="singleTop">
+			android:launchMode="singleTop"
+			android:parentActivityName=".ScannerActivity">
 		</activity>
 
 	</application>
