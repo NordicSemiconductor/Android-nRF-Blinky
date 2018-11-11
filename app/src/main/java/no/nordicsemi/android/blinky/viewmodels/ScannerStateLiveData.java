@@ -22,7 +22,7 @@
 
 package no.nordicsemi.android.blinky.viewmodels;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 
 /**
  * This class keeps the current state of the scanner.
