@@ -55,11 +55,15 @@
 		If you are sure your Blinky is advertising and it doesn\'t show up here, click the button below to enable Location.</string>
 	<string name="blinky_guide_location_action">Enable</string>
 
+	<string name="not_supported_title">DEVICE NOT SUPPORTED</string>
+	<string name="not_supported_info">1. The Blinky service hasn\'t been found on the device\'s attribute table.
+		\n\n2. Make sure the DK is flashed with the correct firmware.
+		\n\n3. If you used the DK with another firmware before, the old services might have been cached by the system.</string>
+	<string name="not_supported_action">Fix and try again</string>
+
 	<string name="state_scanning">Scanning…</string>
 	<string name="state_connecting">Connecting…</string>
 	<string name="state_discovering_services">Discovering services…</string>
 	<string name="state_initializing">Initializing…</string>
-	<string name="state_discovering_services_completed">%s ready</string>
-	<string name="state_not_supported">Device does not have required services.</string>
 	<string name="state_disconnected">Device disconnected.</string>
 </resources>

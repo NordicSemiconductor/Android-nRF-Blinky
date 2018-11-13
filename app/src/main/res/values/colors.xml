@@ -26,7 +26,9 @@
 	<color name="colorPrimary">@color/nordicBlue</color>
 	<color name="colorPrimaryDark">@color/nordicBlueDark</color>
 	<color name="colorAccent">@color/nordicLake</color>
-	<color name="background">@color/lightGray</color>
+	<color name="colorBackground">@color/lightGray</color>
+	<color name="colorSignalStrength">@color/nordicDarkGray</color>
+	<color name="colorDeviceIcon">@color/nordicBlue</color>
 
 	<!--
 		Nordic logo on splash screen.

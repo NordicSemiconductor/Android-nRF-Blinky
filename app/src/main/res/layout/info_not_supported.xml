@@ -37,37 +37,28 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
 		android:padding="@dimen/activity_horizontal_margin"
-		app:srcCompat="@drawable/ic_location_off"/>
+		app:srcCompat="@drawable/ic_alert"/>
 
 	<TextView
 		style="@style/Widget.ScannerSubtitle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:gravity="center_horizontal"
-		android:text="@string/location_permission_title"/>
+		android:text="@string/not_supported_title"/>
 
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginBottom="@dimen/activity_vertical_margin"
 		android:layout_marginTop="@dimen/activity_vertical_margin"
-		android:text="@string/location_permission_info"/>
+		android:text="@string/not_supported_info"/>
 
 	<Button
-		android:id="@+id/action_grant_location_permission"
+		android:id="@+id/action_clear_cache"
 		style="@style/Widget.MaterialComponents.Button"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
-		android:text="@string/location_permission_action"/>
+		android:layout_marginTop="@dimen/activity_vertical_margin"
+		android:text="@string/not_supported_action"/>
 
-	<Button
-		android:id="@+id/action_permission_settings"
-		style="@style/Widget.MaterialComponents.Button"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
-		android:text="@string/location_permission_settings"
-		android:visibility="gone"
-		tools:visibility="visible"/>
 </LinearLayout>

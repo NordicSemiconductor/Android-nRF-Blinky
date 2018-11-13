@@ -20,31 +20,17 @@
   ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<resources>
-	<style name="Widget" />
-
-	<style name="Widget.ScannerSubtitle">
-		<item name="android:textColor">?android:textColorSecondary</item>
-		<item name="android:textStyle">bold</item>
-	</style>
-
-	<!-- Base application theme. -->
-	<style name="AppTheme" parent="AppTheme.Base">
-		<!-- Customize your theme here. -->
-	</style>
-
-	<style name="AppTheme.Base" parent="Theme.MaterialComponents.Light.NoActionBar">
-		<item name="android:windowBackground">@color/colorBackground</item>
-		<item name="colorPrimary">@color/colorPrimary</item>
-		<item name="colorPrimaryDark">@color/colorPrimary</item>
-		<item name="colorAccent">@color/colorAccent</item>
-	</style>
-
-	<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
-
-	<style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light"/>
-
-	<style name="AppTheme.SplashScreen">
-		<item name="colorPrimaryDark">@android:color/transparent</item>
-	</style>
-</resources>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+	android:width="24dp"
+	android:height="24dp"
+	android:tint="@color/colorSignalStrength"
+	android:viewportHeight="24.0"
+	android:viewportWidth="24.0">
+	<path
+		android:fillAlpha=".3"
+		android:fillColor="#FF000000"
+		android:pathData="M12.01,21.49L23.64,7c-0.45,-0.34 -4.93,-4 -11.64,-4C5.28,3 0.81,6.66 0.36,7l11.63,14.49 0.01,0.01 0.01,-0.01z"/>
+	<path
+		android:fillColor="#FF000000"
+		android:pathData="M4.79,12.52l7.2,8.98H12l0.01,-0.01 7.2,-8.98C18.85,12.24 16.1,10 12,10s-6.85,2.24 -7.21,2.52z"/>
+</vector>

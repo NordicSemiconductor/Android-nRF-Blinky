@@ -53,6 +53,8 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 
 	private BluetoothGattCharacteristic mButtonCharacteristic, mLedCharacteristic;
 	private LogSession mLogSession;
+	private boolean mSupported;
+	private boolean mLedOn;
 
 	public BlinkyManager(@NonNull final Context context) {
 		super(context);
@@ -76,6 +78,11 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	public void log(final int priority, @NonNull final String message) {
 		// The priority is a Log.X constant, while the Logger accepts it's log levels.
 		Logger.log(mLogSession, LogContract.Log.Level.fromPriority(priority), message);
+	}
+
+	@Override
+	protected boolean shouldClearCacheWhenDisconnected() {
+		return !mSupported;
 	}
 
 	/**
@@ -117,6 +124,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 		@Override
 		public void onLedStateChanged(@NonNull final BluetoothDevice device,
 									  final boolean on) {
+			mLedOn = on;
 			log(LogContract.Log.Level.APPLICATION, "LED " + (on ? "ON" : "OFF"));
 			mCallbacks.onLedStateChanged(device, on);
 		}
@@ -155,7 +163,8 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 				writeRequest = (rxProperties & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0;
 			}
 
-			return mButtonCharacteristic != null && mLedCharacteristic != null && writeRequest;
+			mSupported = mButtonCharacteristic != null && mLedCharacteristic != null && writeRequest;
+			return mSupported;
 		}
 
 		@Override
@@ -173,6 +182,10 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	public void send(final boolean on) {
 		// Are we connected?
 		if (mLedCharacteristic == null)
+			return;
+
+		// No need to change?
+		if (mLedOn == on)
 			return;
 
 		log(Log.VERBOSE, "Turning LED " + (on ? "ON" : "OFF") + "...");

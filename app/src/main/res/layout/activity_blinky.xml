@@ -57,7 +57,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_below="@+id/appbar_layout"
-		android:visibility="gone">
+		android:visibility="gone"
+		tools:visibility="visible">
 
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -183,6 +184,8 @@
 		android:layout_centerInParent="true"
 		android:gravity="center_horizontal"
 		android:orientation="vertical"
+		android:visibility="gone"
+		tools:visibility="visible"
 		android:padding="@dimen/activity_horizontal_margin">
 
 		<TextView
@@ -200,4 +203,13 @@
 			android:layout_height="wrap_content"
 			android:indeterminate="true"/>
 	</LinearLayout>
+
+	<include
+		android:id="@+id/not_supported"
+		layout="@layout/info_not_supported"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:visibility="gone"
+		tools:visibility="visible"/>
 </RelativeLayout>

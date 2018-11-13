@@ -38,6 +38,7 @@ import no.nordicsemi.android.log.Logger;
 
 public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCallbacks {
 	private final BlinkyManager mBlinkyManager;
+	private BluetoothDevice mDevice;
 
 	// Connection states Connecting, Connected, Disconnecting, Disconnected etc.
 	private final MutableLiveData<String> mConnectionState = new MutableLiveData<>();
@@ -46,7 +47,7 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	private final MutableLiveData<Boolean> mIsConnected = new MutableLiveData<>();
 
 	// Flag to determine if the device has required services
-	private final SingleLiveEvent<Boolean> mIsSupported = new SingleLiveEvent<>();
+	private final MutableLiveData<Boolean> mIsSupported = new MutableLiveData<>();
 
 	// Flag to determine if the device is ready
 	private final MutableLiveData<Void> mOnDeviceReady = new MutableLiveData<>();
@@ -93,20 +94,36 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	/**
 	 * Connect to peripheral.
 	 */
-	public void connect(final DiscoveredBluetoothDevice device) {
-		final LogSession logSession
-				= Logger.newSession(getApplication(), null, device.getAddress(), device.getName());
-		mBlinkyManager.setLogger(logSession);
-		mBlinkyManager.connect(device.getDevice())
-				.retry(3, 100)
-				.useAutoConnect(false)
-				.enqueue();
+	public void connect(@NonNull final DiscoveredBluetoothDevice device) {
+		// Prevent from calling again when called again (screen orientation changed)
+		if (mDevice == null) {
+			mDevice = device.getDevice();
+			final LogSession logSession
+					= Logger.newSession(getApplication(), null, device.getAddress(), device.getName());
+			mBlinkyManager.setLogger(logSession);
+			reconnect();
+		}
+	}
+
+	/**
+	 * Reconnects to previously connected device.
+	 * If this device was not supported, its services were cleared on disconnection, so
+	 * reconnection may help.
+	 */
+	public void reconnect() {
+		if (mDevice != null) {
+			mBlinkyManager.connect(mDevice)
+					.retry(3, 100)
+					.useAutoConnect(false)
+					.enqueue();
+		}
 	}
 
 	/**
 	 * Disconnect from peripheral.
 	 */
 	private void disconnect() {
+		mDevice = null;
 		mBlinkyManager.disconnect().enqueue();
 	}
 
@@ -168,7 +185,7 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	@Override
 	public void onDeviceReady(@NonNull final BluetoothDevice device) {
 		mIsSupported.postValue(true);
-		mConnectionState.postValue(getApplication().getString(R.string.state_discovering_services_completed, device.getName()));
+		mConnectionState.postValue(null);
 		mOnDeviceReady.postValue(null);
 	}
 
@@ -195,6 +212,7 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 
 	@Override
 	public void onDeviceNotSupported(@NonNull final BluetoothDevice device) {
+		mConnectionState.postValue(null);
 		mIsSupported.postValue(false);
 	}
 }

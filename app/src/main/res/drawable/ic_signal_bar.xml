@@ -20,31 +20,20 @@
   ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<resources>
-	<style name="Widget" />
-
-	<style name="Widget.ScannerSubtitle">
-		<item name="android:textColor">?android:textColorSecondary</item>
-		<item name="android:textStyle">bold</item>
-	</style>
-
-	<!-- Base application theme. -->
-	<style name="AppTheme" parent="AppTheme.Base">
-		<!-- Customize your theme here. -->
-	</style>
-
-	<style name="AppTheme.Base" parent="Theme.MaterialComponents.Light.NoActionBar">
-		<item name="android:windowBackground">@color/colorBackground</item>
-		<item name="colorPrimary">@color/colorPrimary</item>
-		<item name="colorPrimaryDark">@color/colorPrimary</item>
-		<item name="colorAccent">@color/colorAccent</item>
-	</style>
-
-	<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
-
-	<style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light"/>
-
-	<style name="AppTheme.SplashScreen">
-		<item name="colorPrimaryDark">@android:color/transparent</item>
-	</style>
-</resources>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:drawable="@drawable/ic_signal_0_bar"
+		android:maxLevel="10"/>
+	<item
+		android:drawable="@drawable/ic_signal_1_bar"
+		android:maxLevel="28"/>
+	<item
+		android:drawable="@drawable/ic_signal_2_bar"
+		android:maxLevel="45"/>
+	<item
+		android:drawable="@drawable/ic_signal_3_bar"
+		android:maxLevel="65"/>
+	<item
+		android:drawable="@drawable/ic_signal_4_bar"
+		android:maxLevel="100"/>
+</level-list>

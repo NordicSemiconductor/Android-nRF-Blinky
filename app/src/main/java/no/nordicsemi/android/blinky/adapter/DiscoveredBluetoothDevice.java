@@ -71,7 +71,7 @@ public class DiscoveredBluetoothDevice implements Parcelable {
 
 	/**
 	 * This method returns true if the RSSI range has changed. The RSSI range depends on drawable
-	 * levels from {@link no.nordicsemi.android.blinky.R.drawable#ic_rssi_bar}.
+	 * levels from {@link no.nordicsemi.android.blinky.R.drawable#ic_signal_bar}.
 	 *
 	 * @return True, if the RSSI range has changed.
 	 */
@@ -83,7 +83,9 @@ public class DiscoveredBluetoothDevice implements Parcelable {
 								1 :
 								rssi <= 45 ?
 										2 :
-										3;
+										rssi <= 65 ?
+												3 :
+												4;
 		final int oldLevel =
 				previousRssi <= 10 ?
 						0 :
@@ -91,7 +93,9 @@ public class DiscoveredBluetoothDevice implements Parcelable {
 								1 :
 								previousRssi <= 45 ?
 										2 :
-										3;
+										previousRssi <= 65 ?
+												3 :
+												4;
 		return newLevel != oldLevel;
 	}
 
