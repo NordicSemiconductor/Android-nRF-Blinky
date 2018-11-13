@@ -90,8 +90,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		mScannerViewModel.getDevices().clear();
-		mScannerViewModel.getScannerState().clearRecords();
+		clear();
 	}
 
 	@Override
@@ -179,6 +178,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 				mNoBluetoothView.setVisibility(View.VISIBLE);
 				mScanningView.setVisibility(View.INVISIBLE);
 				mEmptyView.setVisibility(View.GONE);
+				clear();
 			}
 		} else {
 			mNoLocationPermissionView.setVisibility(View.VISIBLE);
@@ -197,5 +197,13 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 	 */
 	private void stopScan() {
 		mScannerViewModel.stopScan();
+	}
+
+	/**
+	 * Clears the list of devices, which will notify the observer.
+	 */
+	private void clear() {
+		mScannerViewModel.getDevices().clear();
+		mScannerViewModel.getScannerState().clearRecords();
 	}
 }
