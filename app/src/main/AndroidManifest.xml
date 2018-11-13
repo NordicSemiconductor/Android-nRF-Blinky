@@ -44,6 +44,7 @@
 		tools:ignore="GoogleAppIndexingWarning">
 		<activity
 			android:name=".SplashScreenActivity"
+			android:theme="@style/AppTheme.SplashScreen"
 			android:launchMode="singleTop">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>

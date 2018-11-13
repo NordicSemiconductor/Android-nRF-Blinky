@@ -36,11 +36,15 @@
 	<style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
 		<item name="android:windowBackground">@color/background</item>
 		<item name="colorPrimary">@color/colorPrimary</item>
-		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+		<item name="colorPrimaryDark">@color/colorPrimary</item>
 		<item name="colorAccent">@color/colorAccent</item>
 	</style>
 
 	<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
 	<style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+	<style name="AppTheme.SplashScreen">
+		<item name="colorPrimaryDark">@android:color/transparent</item>
+	</style>
 </resources>
