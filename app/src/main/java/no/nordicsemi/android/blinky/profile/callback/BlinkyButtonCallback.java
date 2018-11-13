@@ -24,6 +24,8 @@ package no.nordicsemi.android.blinky.profile.callback;
 
 import android.bluetooth.BluetoothDevice;
 
+import androidx.annotation.NonNull;
+
 public interface BlinkyButtonCallback {
 
     /**
@@ -32,5 +34,5 @@ public interface BlinkyButtonCallback {
      * @param device the target device.
      * @param pressed true if the button was pressed, false if released.
      */
-    void onButtonStateChanged(final BluetoothDevice device, final boolean pressed);
+    void onButtonStateChanged(@NonNull final BluetoothDevice device, final boolean pressed);
 }

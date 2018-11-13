@@ -58,7 +58,8 @@ public class BlinkyActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Configure the view model
-		final BlinkyViewModel viewModel = ViewModelProviders.of(this).get(BlinkyViewModel.class);
+		final BlinkyViewModel viewModel =
+				ViewModelProviders.of(this).get(BlinkyViewModel.class);
 		viewModel.connect(device);
 
 		// Set up views
@@ -90,6 +91,7 @@ public class BlinkyActivity extends AppCompatActivity {
 			ledState.setText(isOn ? R.string.turn_on : R.string.turn_off);
 			led.setChecked(isOn);
 		});
-		viewModel.getButtonState().observe(this, pressed -> buttonState.setText(pressed ? R.string.button_pressed : R.string.button_released));
+		viewModel.getButtonState().observe(this,
+				pressed -> buttonState.setText(pressed ? R.string.button_pressed : R.string.button_released));
 	}
 }

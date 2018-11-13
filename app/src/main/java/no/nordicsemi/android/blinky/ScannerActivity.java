@@ -80,8 +80,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 		// Configure the recycler view
 		final RecyclerView recyclerView = findViewById(R.id.recycler_view_ble_devices);
 		recyclerView.setLayoutManager(new LinearLayoutManager(this));
-		final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
-		recyclerView.addItemDecoration(dividerItemDecoration);
+		recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 		((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 		final DevicesAdapter adapter = new DevicesAdapter(this, mScannerViewModel.getDevices());
 		adapter.setOnItemClickListener(this);
@@ -102,14 +101,16 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 	}
 
 	@Override
-	public void onItemClick(final DiscoveredBluetoothDevice device) {
+	public void onItemClick(@NonNull final DiscoveredBluetoothDevice device) {
 		final Intent controlBlinkIntent = new Intent(this, BlinkyActivity.class);
 		controlBlinkIntent.putExtra(BlinkyActivity.EXTRA_DEVICE, device);
 		startActivity(controlBlinkIntent);
 	}
 
 	@Override
-	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+	public void onRequestPermissionsResult(final int requestCode,
+										   @NonNull final String[] permissions,
+										   @NonNull final int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		switch (requestCode) {
 			case REQUEST_ACCESS_COARSE_LOCATION:
@@ -133,7 +134,10 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 	@OnClick(R.id.action_grant_location_permission)
 	public void onGrantLocationPermissionClicked() {
 		Utils.markLocationPermissionRequested(this);
-		ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_ACCESS_COARSE_LOCATION);
+		ActivityCompat.requestPermissions(
+				this,
+				new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
+				REQUEST_ACCESS_COARSE_LOCATION);
 	}
 
 	@OnClick(R.id.action_permission_settings)
@@ -147,7 +151,8 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 	 * Start scanning for Bluetooth devices or displays a message based on the scanner state.
 	 */
 	private void startScan(final ScannerStateLiveData state) {
-		// First, check the Location permission. This is required on Marshmallow onwards in order to scan for Bluetooth LE devices.
+		// First, check the Location permission. This is required on Marshmallow onwards in order
+		// to scan for Bluetooth LE devices.
 		if (Utils.isLocationPermissionsGranted(this)) {
 			mNoLocationPermissionView.setVisibility(View.GONE);
 

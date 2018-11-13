@@ -34,7 +34,8 @@ public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
 	private boolean mBluetoothEnabled;
 	private boolean mLocationEnabled;
 
-	/* package */ ScannerStateLiveData(final boolean bluetoothEnabled, final boolean locationEnabled) {
+	/* package */ ScannerStateLiveData(final boolean bluetoothEnabled,
+									   final boolean locationEnabled) {
 		mScanningStarted = false;
 		mBluetoothEnabled = bluetoothEnabled;
 		mLocationEnabled = locationEnabled;

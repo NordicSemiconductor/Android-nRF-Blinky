@@ -23,7 +23,6 @@
 package no.nordicsemi.android.blinky.viewmodels;
 
 import android.app.Application;
-import androidx.lifecycle.AndroidViewModel;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,6 +32,7 @@ import android.location.LocationManager;
 
 import java.util.List;
 
+import androidx.lifecycle.AndroidViewModel;
 import no.nordicsemi.android.blinky.utils.Utils;
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
@@ -40,9 +40,13 @@ import no.nordicsemi.android.support.v18.scanner.ScanResult;
 import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
 public class ScannerViewModel extends AndroidViewModel {
-	/** MutableLiveData containing the list of devices. */
+	/**
+	 * MutableLiveData containing the list of devices.
+	 */
 	private final DevicesLiveData mDevicesLiveData;
-	/** MutableLiveData containing the scanner state. */
+	/**
+	 * MutableLiveData containing the scanner state.
+	 */
 	private final ScannerStateLiveData mScannerStateLiveData;
 
 	public DevicesLiveData getDevices() {
@@ -157,7 +161,7 @@ public class ScannerViewModel extends AndroidViewModel {
 	}
 
 	/**
-	 * Broadcast receiver to monitor the changes in the location provider
+	 * Broadcast receiver to monitor the changes in the location provider.
 	 */
 	private final BroadcastReceiver mLocationProviderChangedReceiver = new BroadcastReceiver() {
 		@Override
@@ -168,7 +172,7 @@ public class ScannerViewModel extends AndroidViewModel {
 	};
 
 	/**
-	 * Broadcast receiver to monitor the changes in the bluetooth adapter
+	 * Broadcast receiver to monitor the changes in the bluetooth adapter.
 	 */
 	private final BroadcastReceiver mBluetoothStateBroadcastReceiver = new BroadcastReceiver() {
 		@Override

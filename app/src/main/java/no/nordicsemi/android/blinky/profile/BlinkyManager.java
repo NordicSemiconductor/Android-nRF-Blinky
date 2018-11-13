@@ -27,6 +27,8 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -52,7 +54,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	private BluetoothGattCharacteristic mButtonCharacteristic, mLedCharacteristic;
 	private LogSession mLogSession;
 
-	public BlinkyManager(final Context context) {
+	public BlinkyManager(@NonNull final Context context) {
 		super(context);
 	}
 
@@ -87,14 +89,16 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	 */
 	private	final BlinkyButtonDataCallback mButtonCallback = new BlinkyButtonDataCallback() {
 		@Override
-		public void onButtonStateChanged(final BluetoothDevice device, final boolean pressed) {
+		public void onButtonStateChanged(@NonNull final BluetoothDevice device,
+										 final boolean pressed) {
 			log(LogContract.Log.Level.APPLICATION, "Button " + (pressed ? "pressed" : "released"));
 			mCallbacks.onButtonStateChanged(device, pressed);
 		}
 
 		@Override
-		public void onInvalidDataReceived(@NonNull final BluetoothDevice device, @NonNull final Data data) {
-			log(LogContract.Log.Level.WARNING, "Invalid data received: " + data);
+		public void onInvalidDataReceived(@NonNull final BluetoothDevice device,
+										  @NonNull final Data data) {
+			log(Log.WARN, "Invalid data received: " + data);
 		}
 	};
 
@@ -111,15 +115,17 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	 */
 	private final BlinkyLedDataCallback mLedCallback = new BlinkyLedDataCallback() {
 		@Override
-		public void onLedStateChanged(final BluetoothDevice device, final boolean on) {
+		public void onLedStateChanged(@NonNull final BluetoothDevice device,
+									  final boolean on) {
 			log(LogContract.Log.Level.APPLICATION, "LED " + (on ? "ON" : "OFF"));
 			mCallbacks.onLedStateChanged(device, on);
 		}
 
 		@Override
-		public void onInvalidDataReceived(@NonNull final BluetoothDevice device, @NonNull final Data data) {
+		public void onInvalidDataReceived(@NonNull final BluetoothDevice device,
+										  @NonNull final Data data) {
 			// Data can only invalid if we read them. We assume the app always sends correct data.
-			log(LogContract.Log.Level.WARNING, "Invalid data received: " + data);
+			log(Log.WARN, "Invalid data received: " + data);
 		}
 	};
 
@@ -169,7 +175,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 		if (mLedCharacteristic == null)
 			return;
 
-		log(LogContract.Log.Level.VERBOSE, "Turning LED " + (on ? "ON" : "OFF") + "...");
+		log(Log.VERBOSE, "Turning LED " + (on ? "ON" : "OFF") + "...");
 		writeCharacteristic(mLedCharacteristic, on ? BlinkyLED.turnOn() : BlinkyLED.turnOff())
 				.with(mLedCallback).enqueue();
 	}

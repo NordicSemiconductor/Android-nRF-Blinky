@@ -54,7 +54,8 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	// Flag that holds the on off state of the LED. On is true, Off is False
 	private final MutableLiveData<Boolean> mLEDState = new MutableLiveData<>();
 
-	// Flag that holds the pressed released state of the button on the devkit. Pressed is true, Released is False
+	// Flag that holds the pressed released state of the button on the devkit.
+	// Pressed is true, Released is false
 	private final MutableLiveData<Boolean> mButtonState = new MutableLiveData<>();
 
 	public LiveData<Void> isDeviceReady() {
@@ -93,7 +94,8 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	 * Connect to peripheral.
 	 */
 	public void connect(final DiscoveredBluetoothDevice device) {
-		final LogSession logSession = Logger.newSession(getApplication(), null, device.getAddress(), device.getName());
+		final LogSession logSession
+				= Logger.newSession(getApplication(), null, device.getAddress(), device.getName());
 		mBlinkyManager.setLogger(logSession);
 		mBlinkyManager.connect(device.getDevice())
 				.retry(3, 100)
@@ -122,12 +124,12 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	}
 
 	@Override
-	public void onButtonStateChanged(final BluetoothDevice device, final boolean pressed) {
+	public void onButtonStateChanged(@NonNull final BluetoothDevice device, final boolean pressed) {
 		mButtonState.postValue(pressed);
 	}
 
 	@Override
-	public void onLedStateChanged(final BluetoothDevice device, final boolean on) {
+	public void onLedStateChanged(@NonNull final BluetoothDevice device, final boolean on) {
 		mLEDState.postValue(on);
 	}
 
@@ -158,7 +160,8 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	}
 
 	@Override
-	public void onServicesDiscovered(@NonNull final BluetoothDevice device, final boolean optionalServicesFound) {
+	public void onServicesDiscovered(@NonNull final BluetoothDevice device,
+									 final boolean optionalServicesFound) {
 		mConnectionState.postValue(getApplication().getString(R.string.state_initializing));
 	}
 
@@ -185,7 +188,8 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	}
 
 	@Override
-	public void onError(@NonNull final BluetoothDevice device, @NonNull final String message, final int errorCode) {
+	public void onError(@NonNull final BluetoothDevice device,
+						@NonNull final String message, final int errorCode) {
 		// TODO implement
 	}
 
