@@ -36,7 +36,7 @@ public class SplashScreenActivity extends Activity {
 		setContentView(R.layout.activity_splash_screen);
 
 		new Handler().postDelayed(() -> {
-			final Intent intent = new Intent(SplashScreenActivity.this, ScannerActivity.class);
+			final Intent intent = new Intent(this, ScannerActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			startActivity(intent);
 			finish();

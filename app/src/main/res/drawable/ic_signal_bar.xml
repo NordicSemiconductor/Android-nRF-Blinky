@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2018, Nordic Semiconductor
   ~ All rights reserved.
@@ -21,41 +20,20 @@
   ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<resources>
-	<!-- Base theme colors -->
-	<color name="colorPrimary">@color/nordicBlue</color>
-	<color name="colorPrimaryDark">@color/nordicBlueDark</color>
-	<color name="colorAccent">@color/nordicLake</color>
-	<color name="colorBackground">@color/lightGray</color>
-	<color name="colorSignalStrength">@color/nordicDarkGray</color>
-	<color name="colorDeviceIcon">@color/nordicBlue</color>
-
-	<!--
-		Nordic logo on splash screen.
-		When using light/dark top background, consider changing status bar to light/dark
-		in styles-v23.
-	-->
-	<color name="colorNordicLogo">@color/nordicBlue</color>
-	<color name="colorNordicLogoText">@color/black</color>
-	<color name="colorNordicLogoBottom">@color/white</color>
-	<color name="colorNordicLogoTop">@color/nordicLightGray</color>
-
-	<!-- Nordic colors -->
-	<color name="nordicBlue">#FF00A9CE</color>
-	<color name="nordicBlueDark">#FF0090B0</color>
-	<color name="nordicSky">#FF6AD1E3</color>
-	<color name="nordicBlueslate">#FF0033A0</color>
-	<color name="nordicLake">#FF0077C8</color>
-	<color name="nordicLightGray">#FFD9E1E2</color>
-	<color name="nordicMediumGray">#FF768692</color>
-	<color name="nordicDarkGray">#FF333F48</color>
-	<color name="nordicGrass">#FFD0DF00</color>
-	<color name="nordicSun">#FFFFCD00</color>
-	<color name="nordicRed">#FFEE2F4E</color>
-	<color name="nordicFall">#FFF58220</color>
-
-	<!-- Common -->
-	<color name="white">#FFFFFFFF</color>
-	<color name="black">#FF000000</color>
-	<color name="lightGray">#FFF5F5F5</color>
-</resources>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:drawable="@drawable/ic_signal_0_bar"
+		android:maxLevel="10"/>
+	<item
+		android:drawable="@drawable/ic_signal_1_bar"
+		android:maxLevel="28"/>
+	<item
+		android:drawable="@drawable/ic_signal_2_bar"
+		android:maxLevel="45"/>
+	<item
+		android:drawable="@drawable/ic_signal_3_bar"
+		android:maxLevel="65"/>
+	<item
+		android:drawable="@drawable/ic_signal_4_bar"
+		android:maxLevel="100"/>
+</level-list>

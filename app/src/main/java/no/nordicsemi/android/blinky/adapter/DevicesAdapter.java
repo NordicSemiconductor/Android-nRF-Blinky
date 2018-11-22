@@ -23,9 +23,9 @@
 package no.nordicsemi.android.blinky.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +49,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 
 	@FunctionalInterface
 	public interface OnItemClickListener {
-		void onItemClick(final DiscoveredBluetoothDevice device);
+		void onItemClick(@NonNull final DiscoveredBluetoothDevice device);
 	}
 
 	public void setOnItemClickListener(final OnItemClickListener listener) {
@@ -57,7 +57,8 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	public DevicesAdapter(final ScannerActivity activity, final DevicesLiveData devicesLiveData) {
+	public DevicesAdapter(@NonNull final ScannerActivity activity,
+						  @NonNull final DevicesLiveData devicesLiveData) {
 		mContext = activity;
 		setHasStableIds(true);
 		devicesLiveData.observe(activity, devices -> {
@@ -71,7 +72,8 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 	@NonNull
 	@Override
 	public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
-		final View layoutView = LayoutInflater.from(mContext).inflate(R.layout.device_item, parent, false);
+		final View layoutView = LayoutInflater.from(mContext)
+				.inflate(R.layout.device_item, parent, false);
 		return new ViewHolder(layoutView);
 	}
 
@@ -108,7 +110,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 		@BindView(R.id.device_name) TextView deviceName;
 		@BindView(R.id.rssi) ImageView rssi;
 
-		private ViewHolder(final View view) {
+		private ViewHolder(@NonNull final View view) {
 			super(view);
 			ButterKnife.bind(this, view);
 

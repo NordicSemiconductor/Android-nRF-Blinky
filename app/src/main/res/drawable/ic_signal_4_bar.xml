@@ -20,17 +20,13 @@
   ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<level-list xmlns:android="http://schemas.android.com/apk/res/android">
-	<item
-		android:drawable="@drawable/ic_rssi_0_bar"
-		android:maxLevel="10"/>
-	<item
-		android:drawable="@drawable/ic_rssi_1_bar"
-		android:maxLevel="28"/>
-	<item
-		android:drawable="@drawable/ic_rssi_2_bars"
-		android:maxLevel="45"/>
-	<item
-		android:drawable="@drawable/ic_rssi_3_bars"
-		android:maxLevel="100"/>
-</level-list>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+	android:width="24dp"
+	android:height="24dp"
+	android:tint="@color/colorSignalStrength"
+	android:viewportHeight="24.0"
+	android:viewportWidth="24.0">
+	<path
+		android:fillColor="#FF000000"
+		android:pathData="M12.01,21.49L23.64,7c-0.45,-0.34 -4.93,-4 -11.64,-4C5.28,3 0.81,6.66 0.36,7l11.63,14.49 0.01,0.01 0.01,-0.01z"/>
+</vector>

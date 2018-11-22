@@ -21,39 +21,25 @@
   ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<android.support.constraint.ConstraintLayout
-	android:id="@+id/relativeLayout"
+<!--
+	This has to be a CoordinatorLayout, or any other layout that dispatches insets
+	to its children, as the image is to be drawn behind status bar as well.
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="@color/background"
-	android:paddingLeft="48dp"
-	android:paddingRight="48dp"
+	android:fitsSystemWindows="true"
 	tools:context=".SplashScreenActivity"
 	tools:ignore="ContentDescription">
 
-	<android.support.v7.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
-		android:scaleType="centerInside"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintRight_toRightOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintVertical_bias="0.3"
+	<androidx.appcompat.widget.AppCompatImageView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:fitsSystemWindows="true"
+		android:scaleType="centerCrop"
+		android:background="@color/colorNordicLogoTop"
 		app:srcCompat="@drawable/nordic_logo"/>
-
-	<ImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center"
-		android:layout_marginBottom="8dp"
-		android:scaleType="center"
-		android:src="@drawable/background_title"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintLeft_toLeftOf="parent"
-		app:layout_constraintRight_toRightOf="parent"/>
-</android.support.constraint.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

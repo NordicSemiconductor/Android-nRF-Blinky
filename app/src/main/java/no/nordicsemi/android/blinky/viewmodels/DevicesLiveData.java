@@ -22,7 +22,7 @@
 
 package no.nordicsemi.android.blinky.viewmodels;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 import android.os.ParcelUuid;
 
 import java.util.ArrayList;

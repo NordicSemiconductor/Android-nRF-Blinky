@@ -22,7 +22,7 @@
 
 package no.nordicsemi.android.blinky.viewmodels;
 
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 
 /**
  * This class keeps the current state of the scanner.
@@ -34,7 +34,8 @@ public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
 	private boolean mBluetoothEnabled;
 	private boolean mLocationEnabled;
 
-	/* package */ ScannerStateLiveData(final boolean bluetoothEnabled, final boolean locationEnabled) {
+	/* package */ ScannerStateLiveData(final boolean bluetoothEnabled,
+									   final boolean locationEnabled) {
 		mScanningStarted = false;
 		mBluetoothEnabled = bluetoothEnabled;
 		mLocationEnabled = locationEnabled;
@@ -79,7 +80,7 @@ public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
 	/**
 	 * Returns whether scanning is in progress.
 	 */
-	public boolean isScanning() {
+	boolean isScanning() {
 		return mScanningStarted;
 	}
 

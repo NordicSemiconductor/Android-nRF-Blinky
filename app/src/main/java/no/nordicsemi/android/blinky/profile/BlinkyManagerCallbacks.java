@@ -28,5 +28,5 @@ import no.nordicsemi.android.blinky.profile.callback.BlinkyLedCallback;
 
 public interface BlinkyManagerCallbacks extends BleManagerCallbacks,
 		BlinkyButtonCallback, BlinkyLedCallback {
-
+	// No more methods
 }

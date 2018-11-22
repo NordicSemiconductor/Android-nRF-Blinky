@@ -22,18 +22,22 @@
 
 package no.nordicsemi.android.blinky;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
 
@@ -41,10 +45,16 @@ import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
 public class BlinkyActivity extends AppCompatActivity {
 	public static final String EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE";
 
+	private BlinkyViewModel mViewModel;
+
+	@BindView(R.id.led_switch) Switch mLed;
+	@BindView(R.id.button_state) TextView mButtonState;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_blinky);
+		ButterKnife.bind(this);
 
 		final Intent intent = getIntent();
 		final DiscoveredBluetoothDevice device = intent.getParcelableExtra(EXTRA_DEVICE);
@@ -58,38 +68,54 @@ public class BlinkyActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Configure the view model
-		final BlinkyViewModel viewModel = ViewModelProviders.of(this).get(BlinkyViewModel.class);
-		viewModel.connect(device);
+		mViewModel = ViewModelProviders.of(this).get(BlinkyViewModel.class);
+		mViewModel.connect(device);
 
 		// Set up views
 		final TextView ledState = findViewById(R.id.led_state);
-		final Switch led = findViewById(R.id.led_switch);
-		final TextView buttonState = findViewById(R.id.button_state);
 		final LinearLayout progressContainer = findViewById(R.id.progress_container);
 		final TextView connectionState = findViewById(R.id.connection_state);
 		final View content = findViewById(R.id.device_container);
+		final View notSupported = findViewById(R.id.not_supported);
 
-		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.toggleLED(isChecked));
-		viewModel.isDeviceReady().observe(this, deviceReady -> {
+		mLed.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.toggleLED(isChecked));
+		mViewModel.isDeviceReady().observe(this, deviceReady -> {
 			progressContainer.setVisibility(View.GONE);
 			content.setVisibility(View.VISIBLE);
 		});
-		viewModel.getConnectionState().observe(this, connectionState::setText);
-		viewModel.isConnected().observe(this, connected -> {
-			if (!connected) {
-				Toast.makeText(this, R.string.state_disconnected, Toast.LENGTH_SHORT).show();
-				finish();
+		mViewModel.getConnectionState().observe(this, text -> {
+			if (text != null) {
+				progressContainer.setVisibility(View.VISIBLE);
+				notSupported.setVisibility(View.GONE);
+				connectionState.setText(text);
 			}
 		});
-		viewModel.isSupported().observe(this, supported -> {
+		mViewModel.isConnected().observe(this, this::onConnectionStateChanged);
+		mViewModel.isSupported().observe(this, supported -> {
 			if (!supported) {
-				Toast.makeText(this, R.string.state_not_supported, Toast.LENGTH_SHORT).show();
+				progressContainer.setVisibility(View.GONE);
+				notSupported.setVisibility(View.VISIBLE);
 			}
 		});
-		viewModel.getLEDState().observe(this, isOn -> {
+		mViewModel.getLEDState().observe(this, isOn -> {
 			ledState.setText(isOn ? R.string.turn_on : R.string.turn_off);
-			led.setChecked(isOn);
+			mLed.setChecked(isOn);
 		});
-		viewModel.getButtonState().observe(this, pressed -> buttonState.setText(pressed ? R.string.button_pressed : R.string.button_released));
+		mViewModel.getButtonState().observe(this,
+				pressed -> mButtonState.setText(pressed ?
+						R.string.button_pressed : R.string.button_released));
+	}
+
+	@OnClick(R.id.action_clear_cache)
+	public void onTryAgainClicked() {
+		mViewModel.reconnect();
+	}
+
+	private void onConnectionStateChanged(final boolean connected) {
+		mLed.setEnabled(connected);
+		if (!connected) {
+			mLed.setChecked(false);
+			mButtonState.setText(R.string.button_unknown);
+		}
 	}
 }

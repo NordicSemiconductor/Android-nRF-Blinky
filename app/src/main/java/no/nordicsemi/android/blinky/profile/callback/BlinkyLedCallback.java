@@ -24,6 +24,8 @@ package no.nordicsemi.android.blinky.profile.callback;
 
 import android.bluetooth.BluetoothDevice;
 
+import androidx.annotation.NonNull;
+
 public interface BlinkyLedCallback {
 
     /**
@@ -32,5 +34,5 @@ public interface BlinkyLedCallback {
      * @param device the target device.
      * @param on true when LED was enabled, false when disabled.
      */
-    void onLedStateChanged(final BluetoothDevice device, final boolean on);
+    void onLedStateChanged(@NonNull final BluetoothDevice device, final boolean on);
 }

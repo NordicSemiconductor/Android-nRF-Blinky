@@ -29,42 +29,35 @@
 	tools:context=".BlinkyActivity"
 	tools:ignore="ContentDescription">
 
-	<android.support.design.widget.AppBarLayout
+	<com.google.android.material.appbar.AppBarLayout
 		android:id="@+id/appbar_layout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:theme="@style/AppTheme.AppBarOverlay">
 
-		<android.support.v7.widget.Toolbar
+		<androidx.appcompat.widget.Toolbar
 			android:id="@+id/toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="?attr/actionBarSize"
 			android:background="?attr/colorPrimary"
 			app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-	</android.support.design.widget.AppBarLayout>
-
-	<ImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_centerHorizontal="true"
-		android:layout_marginBottom="8dp"
-		android:src="@drawable/background_title"/>
+	</com.google.android.material.appbar.AppBarLayout>
 
 	<ScrollView
 		android:id="@+id/device_container"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_below="@+id/appbar_layout"
-		android:visibility="gone">
+		android:visibility="gone"
+		tools:visibility="visible">
 
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 
-			<android.support.v7.widget.CardView
+			<androidx.cardview.widget.CardView
 				android:id="@+id/led_card"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -72,12 +65,12 @@
 				android:background="@android:color/white"
 				app:cardElevation="1dp">
 
-				<android.support.constraint.ConstraintLayout
+				<androidx.constraintlayout.widget.ConstraintLayout
 					android:id="@+id/led_container"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent">
 
-					<android.support.v7.widget.Toolbar
+					<androidx.appcompat.widget.Toolbar
 						android:id="@+id/led_tool_bar"
 						android:layout_width="0dp"
 						android:layout_height="?actionBarSize"
@@ -115,10 +108,10 @@
 						app:layout_constraintEnd_toEndOf="parent"
 						app:layout_constraintTop_toBottomOf="@+id/led_summary"/>
 
-				</android.support.constraint.ConstraintLayout>
-			</android.support.v7.widget.CardView>
+				</androidx.constraintlayout.widget.ConstraintLayout>
+			</androidx.cardview.widget.CardView>
 
-			<android.support.v7.widget.CardView
+			<androidx.cardview.widget.CardView
 				android:id="@+id/button_card"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -127,12 +120,12 @@
 				android:background="@android:color/white"
 				app:cardElevation="1dp">
 
-				<android.support.constraint.ConstraintLayout
+				<androidx.constraintlayout.widget.ConstraintLayout
 					android:id="@+id/button_container"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent">
 
-					<android.support.v7.widget.Toolbar
+					<androidx.appcompat.widget.Toolbar
 						android:id="@+id/button_tool_bar"
 						android:layout_width="0dp"
 						android:layout_height="?actionBarSize"
@@ -171,8 +164,8 @@
 						android:textStyle="bold"
 						app:layout_constraintRight_toRightOf="parent"
 						app:layout_constraintTop_toBottomOf="@+id/button_summary"/>
-				</android.support.constraint.ConstraintLayout>
-			</android.support.v7.widget.CardView>
+				</androidx.constraintlayout.widget.ConstraintLayout>
+			</androidx.cardview.widget.CardView>
 		</LinearLayout>
 	</ScrollView>
 
@@ -183,6 +176,8 @@
 		android:layout_centerInParent="true"
 		android:gravity="center_horizontal"
 		android:orientation="vertical"
+		android:visibility="gone"
+		tools:visibility="visible"
 		android:padding="@dimen/activity_horizontal_margin">
 
 		<TextView
@@ -200,4 +195,13 @@
 			android:layout_height="wrap_content"
 			android:indeterminate="true"/>
 	</LinearLayout>
+
+	<include
+		android:id="@+id/not_supported"
+		layout="@layout/info_not_supported"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:visibility="gone"
+		tools:visibility="visible"/>
 </RelativeLayout>
