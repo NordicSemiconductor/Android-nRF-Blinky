@@ -38,6 +38,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.appcompat.widget.Toolbar;
+
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -97,6 +100,29 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 	protected void onStop() {
 		super.onStop();
 		stopScan();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(R.menu.filter, menu);
+		menu.findItem(R.id.filter_uuid).setChecked(mScannerViewModel.isUuidFilterEnabled());
+		menu.findItem(R.id.filter_nearby).setChecked(mScannerViewModel.isNearbyFilterEnabled());
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.filter_uuid:
+				item.setChecked(!item.isChecked());
+				mScannerViewModel.filterByUuid(item.isChecked());
+				return true;
+			case R.id.filter_nearby:
+				item.setChecked(!item.isChecked());
+				mScannerViewModel.filterByDistance(item.isChecked());
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

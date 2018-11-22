@@ -35,8 +35,13 @@
 
 	<style name="AppTheme.Base" parent="Theme.MaterialComponents.Light.NoActionBar">
 		<item name="android:windowBackground">@color/colorBackground</item>
+		<!-- Toolbar -->
 		<item name="colorPrimary">@color/colorPrimary</item>
+		<!-- Status bar -->
 		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+		<!-- Checked checkboxes -->
+		<item name="colorSecondary">@color/colorAccent</item>
+		<!-- Progress bar, Switch -->
 		<item name="colorAccent">@color/colorAccent</item>
 	</style>
 

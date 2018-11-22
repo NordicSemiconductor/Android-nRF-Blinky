@@ -28,7 +28,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.location.LocationManager;
+import android.preference.PreferenceManager;
 
 import java.util.List;
 
@@ -40,6 +42,9 @@ import no.nordicsemi.android.support.v18.scanner.ScanResult;
 import no.nordicsemi.android.support.v18.scanner.ScanSettings;
 
 public class ScannerViewModel extends AndroidViewModel {
+	private static final String PREFS_FILTER_UUID_REQUIRED = "filter_uuid";
+	private static final String PREFS_FILTER_NEARBY_ONLY = "filter_nearby";
+
 	/**
 	 * MutableLiveData containing the list of devices.
 	 */
@@ -48,6 +53,8 @@ public class ScannerViewModel extends AndroidViewModel {
 	 * MutableLiveData containing the scanner state.
 	 */
 	private final ScannerStateLiveData mScannerStateLiveData;
+
+	private final SharedPreferences mPreferences;
 
 	public DevicesLiveData getDevices() {
 		return mDevicesLiveData;
@@ -59,10 +66,14 @@ public class ScannerViewModel extends AndroidViewModel {
 
 	public ScannerViewModel(final Application application) {
 		super(application);
+		mPreferences = PreferenceManager.getDefaultSharedPreferences(application);
+
+		final boolean filterUuidRequired = isUuidFilterEnabled();
+		final boolean filerNearbyOnly = isNearbyFilterEnabled();
 
 		mScannerStateLiveData = new ScannerStateLiveData(Utils.isBleEnabled(),
 				Utils.isLocationEnabled(application));
-		mDevicesLiveData = new DevicesLiveData(true, false);
+		mDevicesLiveData = new DevicesLiveData(filterUuidRequired, filerNearbyOnly);
 		registerBroadcastReceivers(application);
 	}
 
@@ -76,8 +87,52 @@ public class ScannerViewModel extends AndroidViewModel {
 		}
 	}
 
+	public boolean isUuidFilterEnabled() {
+		return mPreferences.getBoolean(PREFS_FILTER_UUID_REQUIRED, true);
+	}
+
+	public boolean isNearbyFilterEnabled() {
+		return mPreferences.getBoolean(PREFS_FILTER_NEARBY_ONLY, false);
+	}
+
+	/**
+	 * Forces the observers to be notified. This method is used to refresh the screen after the
+	 * location permission has been granted. In result, the observer in
+	 * {@link no.nordicsemi.android.blinky.ScannerActivity} will try to start scanning.
+	 */
 	public void refresh() {
 		mScannerStateLiveData.refresh();
+	}
+
+	/**
+	 * Updates the device filter. Devices that once passed the filter will still be shown
+	 * even if they move away from the phone, or change the advertising packet. This is to
+	 * avoid removing devices from the list.
+	 *
+	 * @param uuidRequired if true, the list will display only devices with Led-Button Service UUID
+	 *                     in the advertising packet.
+	 */
+	public void filterByUuid(final boolean uuidRequired) {
+		mPreferences.edit().putBoolean(PREFS_FILTER_UUID_REQUIRED, uuidRequired).apply();
+		if (mDevicesLiveData.filterByUuid(uuidRequired))
+			mScannerStateLiveData.recordFound();
+		else
+			mScannerStateLiveData.clearRecords();
+	}
+
+	/**
+	 * Updates the device filter. Devices that once passed the filter will still be shown
+	 * even if they move away from the phone, or change the advertising packet. This is to
+	 * avoid removing devices from the list.
+	 *
+	 * @param nearbyOnly if true, the list will show only devices with high RSSI.
+	 */
+	public void filterByDistance(final boolean nearbyOnly) {
+		mPreferences.edit().putBoolean(PREFS_FILTER_NEARBY_ONLY, nearbyOnly).apply();
+		if (mDevicesLiveData.filterByDistance(nearbyOnly))
+			mScannerStateLiveData.recordFound();
+		else
+			mScannerStateLiveData.clearRecords();
 	}
 
 	/**

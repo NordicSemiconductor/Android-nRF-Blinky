@@ -26,6 +26,10 @@
 
 	<string name="title">@string/app_name</string>
 
+	<string name="menu_filter">Filter</string>
+	<string name="menu_filter_uuid">Only devices advertising LBS UUID</string>
+	<string name="menu_filter_nearby">Only nearby devices</string>
+
 	<string name="unknown_device">Unknown Device</string>
 	<string name="turn_on">On</string>
 	<string name="turn_off">Off</string>
