@@ -44,14 +44,6 @@
 
 	</com.google.android.material.appbar.AppBarLayout>
 
-	<ImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_centerHorizontal="true"
-		android:layout_marginBottom="8dp"
-		android:src="@drawable/background_title"/>
-
 	<ScrollView
 		android:id="@+id/device_container"
 		android:layout_width="match_parent"

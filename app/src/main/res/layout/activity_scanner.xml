@@ -60,15 +60,6 @@
 
 	</com.google.android.material.appbar.AppBarLayout>
 
-	<ImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginBottom="8dp"
-		android:src="@drawable/background_title"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"/>
-
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/recycler_view_ble_devices"
 		android:layout_width="0dp"

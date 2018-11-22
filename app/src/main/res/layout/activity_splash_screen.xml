@@ -21,6 +21,10 @@
   ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
+<!--
+	This has to be a CoordinatorLayout, or any other layout that dispatches insets
+	to its children, as the image is to be drawn behind status bar as well.
+-->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -38,11 +42,4 @@
 		android:scaleType="centerCrop"
 		android:background="@color/colorNordicLogoTop"
 		app:srcCompat="@drawable/nordic_logo"/>
-
-	<ImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="bottom|center_horizontal"
-		android:layout_marginBottom="8dp"
-		android:src="@drawable/background_title"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
