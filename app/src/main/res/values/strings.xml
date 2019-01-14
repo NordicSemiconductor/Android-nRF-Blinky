@@ -1,55 +1,73 @@
 <!--
-  ~ Copyright (c) 2015, Nordic Semiconductor
+  ~ Copyright (c) 2018, Nordic Semiconductor
   ~ All rights reserved.
   ~
-  ~ Redistribution and use in source and binary forms, with or without
-  ~ modification, are permitted provided that the following conditions are met:
+  ~ Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
   ~
-  ~ * Redistributions of source code must retain the above copyright notice, this
-  ~   list of conditions and the following disclaimer.
+  ~ 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
   ~
-  ~ * Redistributions in binary form must reproduce the above copyright notice,
-  ~   this list of conditions and the following disclaimer in the documentation
-  ~   and/or other materials provided with the distribution.
+  ~ 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the
+  ~ documentation and/or other materials provided with the distribution.
   ~
-  ~ * Neither the name of copyright holder nor the names of its
-  ~   contributors may be used to endorse or promote products derived from
-  ~   this software without specific prior written permission.
+  ~ 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this
+  ~ software without specific prior written permission.
   ~
-  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  ~ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  ~ HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  ~ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+  ~ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+  ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
 <resources>
-    <string name="app_name">nRF Blinky</string>
-    <string name="feature_name">BLINKY</string>
-    <string name="unknown_device">Unknown Device</string>
+	<string name="app_name">nRF Blinky</string>
+	<string name="feature_name">BLINKY</string>
 
-    <string name="rationale_title">Permission required</string>
-    <string name="rationale_location_permission_denied">Starting scanning failed. Access denied.</string>
-    <string name="rationale_location_message">From Android 6.0 Marshmallow onwards the system requires access to device\'s location in order to scan for Bluetooth Smart devices.
-      \n\nBluetooth beacons, like iBeacons or Eddystone beacons, may be used to determine the phone\'s and user\'s location, However <b>nRF Blinky</b> will not be using device location information for any purpose.</string>
-    <string name="rationale_location_cancel_message">Please turn on location services from the locations settings manually.</string>
+	<string name="title">@string/app_name</string>
 
-    <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
+	<string name="menu_filter">Filter</string>
+	<string name="menu_filter_uuid">Only devices advertising LBS UUID</string>
+	<string name="menu_filter_nearby">Only nearby devices</string>
 
-	<string name="action_settings">Settings</string>
-    <string name="action_start_scan">Start Scan</string>
-    <string name="action_stop_scan">Stop Scan</string>
-    <string name="action_connect">CONNECT</string>
-    <string name="action_disconnect">DISCONNECT</string>
-    <string name="turn_on">ON</string>
-    <string name="turn_off">OFF</string>
-    <string name="ble_not_supported">This device does not support Bluetooth Smart!</string>
-    <string name="please_connect">Please connect to device first!</string>
-    <string name="error_msg" formatted="false">%s (error %d)</string>
+	<string name="unknown_device">Unknown Device</string>
+	<string name="turn_on">On</string>
+	<string name="turn_off">Off</string>
+	<string name="title_led_state">LED</string>
+	<string name="title_button_state">Button</string>
+	<string name="state">State</string>
+	<string name="button_pressed">PRESSED</string>
+	<string name="button_released">RELEASED</string>
+	<string name="button_unknown">UNKNOWN</string>
+	<string name="led_summary">Toggle the switch to turn the LED 3 on or off.</string>
+	<string name="button_summary">Press Button 1 on the dev kit.</string>
+
+	<string name="location_permission_title">LOCATION PERMISSION REQUIRED</string>
+	<string name="location_permission_info">From Android 6.0 Marshmallow onwards the application requires Location permission in order to scan for Bluetooth Low Energy devices.
+      \n\nThis is because Bluetooth LE beacons, for example iBeacons or Eddystone, may be used to determine the phone\'s and user\'s location. <b>nRF Blinky</b> will not use this information in any way.</string>
+	<string name="location_permission_action">Grant permission</string>
+	<string name="location_permission_settings">Settings</string>
+
+	<string name="bluetooth_disabled_title">BLUETOOTH DISABLED</string>
+	<string name="bluetooth_disabled_info">The Bluetooth adapter is turned off. Click the button below to enable it.</string>
+	<string name="bluetooth_disabled_action">Enable</string>
+
+	<string name="blinky_guide_title">CAN\'T SEE YOUR BLINKY?</string>
+	<string name="blinky_guide_info">1. Make sure the DK is <b>turned on</b> and is connected to a power source using a micro USB cable or a coin cell is plugged in.
+        \n\n2. Make sure the <b>ble_app_blinky</b> firmware and SoftDevice are flashed.</string>
+	<string name="blinky_guide_location_info">3. Location is turned off. Some Android phones require it enabled in order to scan for Bluetooth LE devices.
+		If you are sure your Blinky is advertising and it doesn\'t show up here, click the button below to enable Location.</string>
+	<string name="blinky_guide_location_action">Enable</string>
+
+	<string name="not_supported_title">DEVICE NOT SUPPORTED</string>
+	<string name="not_supported_info">1. The Blinky service hasn\'t been found on the device\'s attribute table.
+		\n\n2. Make sure the DK is flashed with the correct firmware.
+		\n\n3. If you used the DK with another firmware before, the old services might have been cached by the system.</string>
+	<string name="not_supported_action">Fix and try again</string>
+
+	<string name="state_scanning">Scanning…</string>
+	<string name="state_connecting">Connecting…</string>
+	<string name="state_discovering_services">Discovering services…</string>
+	<string name="state_initializing">Initializing…</string>
+	<string name="state_disconnected">Device disconnected.</string>
 </resources>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018, Nordic Semiconductor
+  ~ All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+  ~
+  ~ 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+  ~
+  ~ 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the
+  ~ documentation and/or other materials provided with the distribution.
+  ~
+  ~ 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this
+  ~ software without specific prior written permission.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  ~ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  ~ HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  ~ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+  ~ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+  ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".BlinkyActivity"
+	tools:ignore="ContentDescription">
+
+	<com.google.android.material.appbar.AppBarLayout
+		android:id="@+id/appbar_layout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:theme="@style/AppTheme.AppBarOverlay">
+
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/toolbar"
+			android:layout_width="match_parent"
+			android:layout_height="?attr/actionBarSize"
+			android:background="?attr/colorPrimary"
+			app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+	</com.google.android.material.appbar.AppBarLayout>
+
+	<ScrollView
+		android:id="@+id/device_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_below="@+id/appbar_layout"
+		android:visibility="gone"
+		tools:visibility="visible">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+			<androidx.cardview.widget.CardView
+				android:id="@+id/led_card"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/activity_horizontal_margin"
+				android:background="@android:color/white"
+				app:cardElevation="1dp">
+
+				<androidx.constraintlayout.widget.ConstraintLayout
+					android:id="@+id/led_container"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent">
+
+					<androidx.appcompat.widget.Toolbar
+						android:id="@+id/led_tool_bar"
+						android:layout_width="0dp"
+						android:layout_height="?actionBarSize"
+						app:layout_constraintLeft_toLeftOf="parent"
+						app:layout_constraintRight_toRightOf="parent"
+						app:layout_constraintTop_toTopOf="parent"
+						app:logo="@drawable/ic_lightbulb_outline"
+						app:title="@string/title_led_state"
+						app:titleMarginStart="@dimen/toolbar_title_margin"/>
+
+					<TextView
+						android:id="@+id/led_summary"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:paddingEnd="@dimen/activity_horizontal_margin"
+						android:paddingStart="@dimen/activity_horizontal_margin"
+						android:text="@string/led_summary"
+						app:layout_constraintLeft_toLeftOf="parent"
+						app:layout_constraintTop_toBottomOf="@+id/led_tool_bar"/>
+
+					<TextView
+						android:id="@+id/led_state"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:padding="@dimen/activity_horizontal_margin"
+						android:text="@string/turn_off"
+						app:layout_constraintLeft_toLeftOf="parent"
+						app:layout_constraintTop_toBottomOf="@+id/led_summary"/>
+
+					<Switch
+						android:id="@+id/led_switch"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:padding="@dimen/activity_horizontal_margin"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintTop_toBottomOf="@+id/led_summary"/>
+
+				</androidx.constraintlayout.widget.ConstraintLayout>
+			</androidx.cardview.widget.CardView>
+
+			<androidx.cardview.widget.CardView
+				android:id="@+id/button_card"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/activity_horizontal_margin"
+				android:layout_marginTop="@dimen/activity_horizontal_margin"
+				android:background="@android:color/white"
+				app:cardElevation="1dp">
+
+				<androidx.constraintlayout.widget.ConstraintLayout
+					android:id="@+id/button_container"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent">
+
+					<androidx.appcompat.widget.Toolbar
+						android:id="@+id/button_tool_bar"
+						android:layout_width="0dp"
+						android:layout_height="?actionBarSize"
+						app:layout_constraintLeft_toLeftOf="parent"
+						app:layout_constraintRight_toRightOf="parent"
+						app:layout_constraintTop_toTopOf="parent"
+						app:logo="@drawable/ic_radio_button_checked"
+						app:title="@string/title_button_state"
+						app:titleMarginStart="@dimen/toolbar_title_margin"
+						app:titleTextColor="@android:color/black"/>
+
+					<TextView
+						android:id="@+id/button_summary"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:paddingEnd="@dimen/activity_horizontal_margin"
+						android:paddingStart="@dimen/activity_horizontal_margin"
+						android:text="@string/button_summary"
+						app:layout_constraintLeft_toLeftOf="parent"
+						app:layout_constraintTop_toBottomOf="@+id/button_tool_bar"/>
+
+					<TextView
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:padding="@dimen/activity_horizontal_margin"
+						android:text="@string/state"
+						app:layout_constraintLeft_toLeftOf="parent"
+						app:layout_constraintTop_toBottomOf="@+id/button_summary"/>
+
+					<TextView
+						android:id="@+id/button_state"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:padding="@dimen/activity_horizontal_margin"
+						android:text="@string/button_unknown"
+						android:textStyle="bold"
+						app:layout_constraintRight_toRightOf="parent"
+						app:layout_constraintTop_toBottomOf="@+id/button_summary"/>
+				</androidx.constraintlayout.widget.ConstraintLayout>
+			</androidx.cardview.widget.CardView>
+		</LinearLayout>
+	</ScrollView>
+
+	<LinearLayout
+		android:id="@+id/progress_container"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:gravity="center_horizontal"
+		android:orientation="vertical"
+		android:visibility="gone"
+		tools:visibility="visible"
+		android:padding="@dimen/activity_horizontal_margin">
+
+		<TextView
+			android:id="@+id/connection_state"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal"
+			android:textSize="16sp"
+			tools:text="@string/state_connecting"/>
+
+		<ProgressBar
+			android:id="@+id/progress_bar"
+			style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:indeterminate="true"/>
+	</LinearLayout>
+
+	<include
+		android:id="@+id/not_supported"
+		layout="@layout/info_not_supported"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:visibility="gone"
+		tools:visibility="visible"/>
+</RelativeLayout>
