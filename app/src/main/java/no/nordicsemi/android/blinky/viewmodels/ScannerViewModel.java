@@ -34,6 +34,7 @@ import android.preference.PreferenceManager;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import no.nordicsemi.android.blinky.utils.Utils;
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
@@ -148,8 +149,6 @@ public class ScannerViewModel extends AndroidViewModel {
 				.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
 				.setReportDelay(500)
 				.setUseHardwareBatchingIfSupported(false)
-				// Hardware filtering has some issues on selected devices
-				.setUseHardwareFilteringIfSupported(false)
 				.build();
 
 		final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
@@ -168,7 +167,7 @@ public class ScannerViewModel extends AndroidViewModel {
 
 	private final ScanCallback scanCallback = new ScanCallback() {
 		@Override
-		public void onScanResult(final int callbackType, final ScanResult result) {
+		public void onScanResult(final int callbackType, @NonNull final ScanResult result) {
 			// This callback will be called only if the scan report delay is not set or is set to 0.
 
 			// If the packet has been obtained while Location was disabled, mark Location as not required
@@ -182,7 +181,7 @@ public class ScannerViewModel extends AndroidViewModel {
 		}
 
 		@Override
-		public void onBatchScanResults(final List<ScanResult> results) {
+		public void onBatchScanResults(@NonNull final List<ScanResult> results) {
 			// This callback will be called only if the report delay set above is greater then 0.
 
 			// If the packet has been obtained while Location was disabled, mark Location as not required
