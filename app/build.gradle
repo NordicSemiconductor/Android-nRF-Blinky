@@ -8,8 +8,8 @@ android {
         applicationId "no.nordicsemi.android.nrfblinky"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 9
-        versionName "2.4.0"
+        versionCode 10
+        versionName "2.4.1"
         resConfigs "en"
 
         vectorDrawables.useSupportLibrary = true
@@ -37,21 +37,21 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.google.android.material:material:1.1.0-alpha01'
+    implementation 'com.google.android.material:material:1.1.0-alpha03'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     // Lifecycle extensions
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     // Butter Knife
-    implementation 'com.jakewharton:butterknife:9.0.0-rc1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
+    implementation 'com.jakewharton:butterknife:10.0.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
     // Brings the new BluetoothLeScanner API to older platforms
-    implementation 'no.nordicsemi.android.support.v18:scanner:1.1.0'
+    implementation 'no.nordicsemi.android.support.v18:scanner:1.4.0'
     // Log Bluetooth LE events in nRF Logger
     implementation 'no.nordicsemi.android:log:2.2.0'
     // BLE library
-    implementation 'no.nordicsemi.android:ble:2.0.0'
+    implementation 'no.nordicsemi.android:ble:2.1.0'
     // To add BLE Library as a module, replace the above dependency with the following
     // and uncomment 2 lines in settings.gradle file.
     // implementation project(":ble")

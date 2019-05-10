@@ -1,7 +1,7 @@
 # nRF BLINKY
 
 nRF Blinky is an application developed targeting an audience of developers who are new to 
-Bluetooth low energy. This is a very simple application with two basic features to turn on LED 3 
+Bluetooth Low Energy. This is a very simple application with two basic features to turn on LED 3 
 on the nRF DK and to receive the Button 1 press event from a nRF DK on the nRF Blinky Application.
 It demonstrates how to the **BleManager** class from 
 [Android nRF Blinky](https://github.com/NordicSemiconductor/Android-BLE-Library/) 
@@ -25,8 +25,8 @@ control LED 3 and Button 1:
   - Value: **`1`** => Button Pressed
   - Value: **`0`** => Button Released
   
-For full specification, check out: 
-[infocenter](http://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.2.0/ble_sdk_app_blinky.html?cp=4_0_0_4_1_2_3).
+For full specification, check out 
+[documentation](https://www.nordicsemi.com/DocLib/Content/SDK_Doc/nRF5_SDK/v15-2-0/ble_sdk_app_blinky).
 
 ## Requirements
 
@@ -42,7 +42,7 @@ Prepare your Development kit.
   - The Development Kit will now appear as a Mass storage device.
   - Drag (or copy/paste) the appropriate HEX file onto that new device.
   - The Development Kit LEDs will flash and it will disconnect and reconnect.
-  - The Development Kit is now ready and flashed with the nRFBlinky example firmware.
+  - The Development Kit is now ready and flashed with the nRF Blinky example firmware.
 
 For your convenience, we have bundled two firmwares in this project under the 
 [Firmwares](https://github.com/NordicSemiconductor/Android-nRF-Blinky/tree/master/Firmwares) 
@@ -54,7 +54,7 @@ and download the SDK version you need. Then, find the source code and hex files 
 directory `/examples/ble_peripheral/ble_app_blinky/`.
 
 More information about the nRF Blinky example firmware can be found in the 
-[infocenter](http://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.2.0/ble_sdk_app_blinky.html?cp=4_0_0_4_1_2_3).
+[documentation](https://www.nordicsemi.com/DocLib/Content/SDK_Doc/nRF5_SDK/v15-2-0/ble_sdk_app_blinky).
 
 ## Note
 
