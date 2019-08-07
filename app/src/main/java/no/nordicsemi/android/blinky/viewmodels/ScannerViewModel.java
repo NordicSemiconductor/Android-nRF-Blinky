@@ -32,10 +32,11 @@ import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+
+import java.util.List;
+
 import no.nordicsemi.android.blinky.utils.Utils;
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
@@ -160,9 +161,11 @@ public class ScannerViewModel extends AndroidViewModel {
 	 * Stop scanning for bluetooth devices.
 	 */
 	public void stopScan() {
-		final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
-		scanner.stopScan(scanCallback);
-		mScannerStateLiveData.scanningStopped();
+		if (mScannerStateLiveData.isScanning() && mScannerStateLiveData.isBluetoothEnabled()) {
+			final BluetoothLeScannerCompat scanner = BluetoothLeScannerCompat.getScanner();
+			scanner.stopScan(scanCallback);
+			mScannerStateLiveData.scanningStopped();
+		}
 	}
 
 	private final ScanCallback scanCallback = new ScanCallback() {
