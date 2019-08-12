@@ -34,7 +34,10 @@
 		android:id="@+id/appbar_layout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:theme="@style/AppTheme.AppBarOverlay">
+		android:theme="@style/AppTheme.AppBarOverlay"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toEndOf="parent">
 
 		<androidx.appcompat.widget.Toolbar
 			android:id="@+id/toolbar"
