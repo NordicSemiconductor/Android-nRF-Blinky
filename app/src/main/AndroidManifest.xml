@@ -35,6 +35,7 @@
 		android:required="true"/>
 
 	<application
+		android:name=".BlinkyApplication"
 		android:allowBackup="true"
 		android:fullBackupContent="true"
 		android:icon="@mipmap/ic_launcher"
