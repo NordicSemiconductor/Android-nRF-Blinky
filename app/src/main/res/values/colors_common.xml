@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2018, Nordic Semiconductor
   ~ All rights reserved.
@@ -20,12 +21,11 @@
   ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-	android:shape="oval">
+<resources>
 
-	<solid android:color="@color/colorPrimary"/>
+    <!-- Common -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="lightGray">#FFF5F5F5</color>
 
-	<size
-		android:width="@dimen/device_icon_size"
-		android:height="@dimen/device_icon_size"/>
-</shape>
+</resources>

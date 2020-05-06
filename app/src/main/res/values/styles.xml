@@ -23,26 +23,20 @@
 <resources>
 	<style name="Widget" />
 
-	<style name="Widget.ScannerSubtitle">
-		<item name="android:textColor">?android:textColorSecondary</item>
-		<item name="android:textStyle">bold</item>
-	</style>
-
 	<!-- Base application theme. -->
 	<style name="AppTheme" parent="AppTheme.Base">
 		<!-- Customize your theme here. -->
 	</style>
 
-	<style name="AppTheme.Base" parent="Theme.MaterialComponents.Light.NoActionBar">
+	<style name="AppTheme.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 		<item name="android:windowBackground">@color/colorBackground</item>
-		<!-- Toolbar -->
+		<!-- Primary color of the app. -->
 		<item name="colorPrimary">@color/colorPrimary</item>
-		<!-- Status bar -->
-		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-		<!-- Checked checkboxes -->
-		<item name="colorSecondary">@color/colorAccent</item>
-		<!-- Progress bar, Switch -->
-		<item name="colorAccent">@color/colorAccent</item>
+		<item name="colorOnPrimary">@color/colorOnPrimary</item>
+		<!-- Status bar. -->
+		<item name="colorPrimaryDark">@color/colorStatusBar</item>
+		<!-- Secondary color of the app. -->
+		<item name="colorSecondary">@color/colorSecondary</item>
 	</style>
 
 	<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>

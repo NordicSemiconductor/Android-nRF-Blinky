@@ -35,11 +35,10 @@
 		android:layout_height="wrap_content"
 		android:theme="@style/AppTheme.AppBarOverlay">
 
-		<androidx.appcompat.widget.Toolbar
+		<com.google.android.material.appbar.MaterialToolbar
 			android:id="@+id/toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="?attr/actionBarSize"
-			android:background="?attr/colorPrimary"
 			app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
 	</com.google.android.material.appbar.AppBarLayout>
@@ -57,16 +56,12 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
 
-			<androidx.cardview.widget.CardView
-				android:id="@+id/led_card"
+			<com.google.android.material.card.MaterialCardView
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="@dimen/activity_horizontal_margin"
-				android:background="@android:color/white"
-				app:cardElevation="1dp">
+				android:layout_marginTop="@dimen/activity_horizontal_margin">
 
 				<androidx.constraintlayout.widget.ConstraintLayout
-					android:id="@+id/led_container"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent">
 
@@ -77,51 +72,50 @@
 						app:layout_constraintLeft_toLeftOf="parent"
 						app:layout_constraintRight_toRightOf="parent"
 						app:layout_constraintTop_toTopOf="parent"
-						app:logo="@drawable/ic_lightbulb_outline"
+						app:logo="@drawable/ic_toolbar_lightbulb"
 						app:title="@string/title_led_state"
-						app:titleMarginStart="@dimen/toolbar_title_margin"/>
+						app:titleMarginStart="@dimen/toolbar_title_margin" />
 
 					<TextView
 						android:id="@+id/led_summary"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
-						android:paddingEnd="@dimen/activity_horizontal_margin"
 						android:paddingStart="@dimen/activity_horizontal_margin"
+						android:paddingEnd="@dimen/activity_horizontal_margin"
+						android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
 						android:text="@string/led_summary"
 						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/led_tool_bar"/>
+						app:layout_constraintTop_toBottomOf="@+id/led_tool_bar" />
 
 					<TextView
 						android:id="@+id/led_state"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
+						android:textAllCaps="true"
 						android:padding="@dimen/activity_horizontal_margin"
 						android:text="@string/turn_off"
+						android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
 						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/led_summary"/>
+						app:layout_constraintTop_toBottomOf="@+id/led_summary" />
 
 					<Switch
 						android:id="@+id/led_switch"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
 						android:padding="@dimen/activity_horizontal_margin"
-						app:layout_constraintEnd_toEndOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/led_summary"/>
+						app:layout_constraintBaseline_toBaselineOf="@+id/led_state"
+						app:layout_constraintEnd_toEndOf="parent" />
 
 				</androidx.constraintlayout.widget.ConstraintLayout>
-			</androidx.cardview.widget.CardView>
+			</com.google.android.material.card.MaterialCardView>
 
-			<androidx.cardview.widget.CardView
-				android:id="@+id/button_card"
+			<com.google.android.material.card.MaterialCardView
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginBottom="@dimen/activity_horizontal_margin"
 				android:layout_marginTop="@dimen/activity_horizontal_margin"
-				android:background="@android:color/white"
-				app:cardElevation="1dp">
+				android:layout_marginBottom="@dimen/activity_horizontal_margin">
 
 				<androidx.constraintlayout.widget.ConstraintLayout
-					android:id="@+id/button_container"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent">
 
@@ -132,28 +126,30 @@
 						app:layout_constraintLeft_toLeftOf="parent"
 						app:layout_constraintRight_toRightOf="parent"
 						app:layout_constraintTop_toTopOf="parent"
-						app:logo="@drawable/ic_radio_button_checked"
+						app:logo="@drawable/ic_toolbar_button"
 						app:title="@string/title_button_state"
-						app:titleMarginStart="@dimen/toolbar_title_margin"
-						app:titleTextColor="@android:color/black"/>
+						app:titleMarginStart="@dimen/toolbar_title_margin" />
 
 					<TextView
 						android:id="@+id/button_summary"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
-						android:paddingEnd="@dimen/activity_horizontal_margin"
 						android:paddingStart="@dimen/activity_horizontal_margin"
+						android:paddingEnd="@dimen/activity_horizontal_margin"
 						android:text="@string/button_summary"
+						android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
 						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/button_tool_bar"/>
+						app:layout_constraintTop_toBottomOf="@+id/button_tool_bar" />
 
 					<TextView
+						android:id="@+id/textView"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
 						android:padding="@dimen/activity_horizontal_margin"
 						android:text="@string/state"
+						android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
 						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/button_summary"/>
+						app:layout_constraintTop_toBottomOf="@+id/button_summary" />
 
 					<TextView
 						android:id="@+id/button_state"
@@ -161,11 +157,12 @@
 						android:layout_height="wrap_content"
 						android:padding="@dimen/activity_horizontal_margin"
 						android:text="@string/button_unknown"
-						android:textStyle="bold"
-						app:layout_constraintRight_toRightOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/button_summary"/>
+						android:textAllCaps="true"
+						android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+						app:layout_constraintBaseline_toBaselineOf="@+id/textView"
+						app:layout_constraintRight_toRightOf="parent" />
 				</androidx.constraintlayout.widget.ConstraintLayout>
-			</androidx.cardview.widget.CardView>
+			</com.google.android.material.card.MaterialCardView>
 		</LinearLayout>
 	</ScrollView>
 
@@ -177,7 +174,7 @@
 		android:gravity="center_horizontal"
 		android:orientation="vertical"
 		android:visibility="gone"
-		tools:visibility="visible"
+		tools:visibility="gone"
 		android:padding="@dimen/activity_horizontal_margin">
 
 		<TextView
@@ -189,7 +186,6 @@
 			tools:text="@string/state_connecting"/>
 
 		<ProgressBar
-			android:id="@+id/progress_bar"
 			style="@style/Widget.AppCompat.ProgressBar.Horizontal"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
@@ -203,5 +199,5 @@
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
 		android:visibility="gone"
-		tools:visibility="visible"/>
+		tools:visibility="gone"/>
 </RelativeLayout>
