@@ -53,7 +53,7 @@ import no.nordicsemi.android.blinky.viewmodels.ScannerStateLiveData;
 import no.nordicsemi.android.blinky.viewmodels.ScannerViewModel;
 
 public class ScannerActivity extends AppCompatActivity implements DevicesAdapter.OnItemClickListener {
-    private static final int REQUEST_ACCESS_COARSE_LOCATION = 1022; // random number
+    private static final int REQUEST_ACCESS_FINE_LOCATION = 1022; // random number
 
     private ScannerViewModel mScannerViewModel;
 
@@ -143,7 +143,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
                                            @NonNull final String[] permissions,
                                            @NonNull final int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_ACCESS_COARSE_LOCATION) {
+        if (requestCode == REQUEST_ACCESS_FINE_LOCATION) {
             mScannerViewModel.refresh();
         }
     }
@@ -165,8 +165,8 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
         Utils.markLocationPermissionRequested(this);
         ActivityCompat.requestPermissions(
                 this,
-                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                REQUEST_ACCESS_COARSE_LOCATION);
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_ACCESS_FINE_LOCATION);
     }
 
     @OnClick(R.id.action_permission_settings)
