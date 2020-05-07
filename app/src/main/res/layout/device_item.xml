@@ -35,16 +35,16 @@
     android:paddingBottom="@dimen/item_padding_bottom"
     tools:ignore="ContentDescription">
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:background="@drawable/ic_device_bg"
         android:scaleType="center"
-        android:src="@drawable/ic_device_blinky"/>
+        app:srcCompat="@drawable/ic_device_blinky"/>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/device_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
         android:textSize="18sp"
         tools:text="Nordic_Blinky"/>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textColor="?android:attr/textColorSecondary"
         android:id="@+id/device_address"

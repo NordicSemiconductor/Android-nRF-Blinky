@@ -52,7 +52,7 @@
 			android:layout_marginTop="-8dp"
 			android:layout_marginBottom="-7dp"
 			android:indeterminate="true"
-			android:indeterminateTint="@android:color/white"
+			android:indeterminateTint="@color/colorAccentOnPrimary"
 			android:visibility="invisible"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"

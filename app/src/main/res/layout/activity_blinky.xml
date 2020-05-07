@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018, Nordic Semiconductor
   ~ All rights reserved.
   ~
@@ -20,8 +19,7 @@
   ~ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
   ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
@@ -39,7 +37,7 @@
 			android:id="@+id/toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="?attr/actionBarSize"
-			app:popupTheme="@style/AppTheme.PopupOverlay"/>
+			app:popupTheme="@style/AppTheme.PopupOverlay" />
 
 	</com.google.android.material.appbar.AppBarLayout>
 
@@ -65,7 +63,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="match_parent">
 
-					<androidx.appcompat.widget.Toolbar
+					<com.google.android.material.appbar.MaterialToolbar
 						android:id="@+id/led_tool_bar"
 						android:layout_width="0dp"
 						android:layout_height="?actionBarSize"
@@ -76,29 +74,29 @@
 						app:title="@string/title_led_state"
 						app:titleMarginStart="@dimen/toolbar_title_margin" />
 
-					<TextView
+					<com.google.android.material.textview.MaterialTextView
 						android:id="@+id/led_summary"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
 						android:paddingStart="@dimen/activity_horizontal_margin"
 						android:paddingEnd="@dimen/activity_horizontal_margin"
-						android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
 						android:text="@string/led_summary"
+						android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
 						app:layout_constraintLeft_toLeftOf="parent"
 						app:layout_constraintTop_toBottomOf="@+id/led_tool_bar" />
 
-					<TextView
+					<com.google.android.material.textview.MaterialTextView
 						android:id="@+id/led_state"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
-						android:textAllCaps="true"
 						android:padding="@dimen/activity_horizontal_margin"
 						android:text="@string/turn_off"
+						android:textAllCaps="true"
 						android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
 						app:layout_constraintLeft_toLeftOf="parent"
 						app:layout_constraintTop_toBottomOf="@+id/led_summary" />
 
-					<Switch
+					<androidx.appcompat.widget.SwitchCompat
 						android:id="@+id/led_switch"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
@@ -119,7 +117,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="match_parent">
 
-					<androidx.appcompat.widget.Toolbar
+					<com.google.android.material.appbar.MaterialToolbar
 						android:id="@+id/button_tool_bar"
 						android:layout_width="0dp"
 						android:layout_height="?actionBarSize"
@@ -130,7 +128,7 @@
 						app:title="@string/title_button_state"
 						app:titleMarginStart="@dimen/toolbar_title_margin" />
 
-					<TextView
+					<com.google.android.material.textview.MaterialTextView
 						android:id="@+id/button_summary"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
@@ -141,7 +139,7 @@
 						app:layout_constraintLeft_toLeftOf="parent"
 						app:layout_constraintTop_toBottomOf="@+id/button_tool_bar" />
 
-					<TextView
+					<com.google.android.material.textview.MaterialTextView
 						android:id="@+id/textView"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
@@ -151,7 +149,7 @@
 						app:layout_constraintLeft_toLeftOf="parent"
 						app:layout_constraintTop_toBottomOf="@+id/button_summary" />
 
-					<TextView
+					<com.google.android.material.textview.MaterialTextView
 						android:id="@+id/button_state"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
@@ -173,23 +171,23 @@
 		android:layout_centerInParent="true"
 		android:gravity="center_horizontal"
 		android:orientation="vertical"
+		android:padding="@dimen/activity_horizontal_margin"
 		android:visibility="gone"
-		tools:visibility="gone"
-		android:padding="@dimen/activity_horizontal_margin">
+		tools:visibility="gone">
 
-		<TextView
+		<com.google.android.material.textview.MaterialTextView
 			android:id="@+id/connection_state"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center_horizontal"
 			android:textSize="16sp"
-			tools:text="@string/state_connecting"/>
+			tools:text="@string/state_connecting" />
 
 		<ProgressBar
-			style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+			style="?android:attr/progressBarStyleHorizontal"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:indeterminate="true"/>
+			android:indeterminate="true" />
 	</LinearLayout>
 
 	<include
@@ -199,5 +197,5 @@
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
 		android:visibility="gone"
-		tools:visibility="gone"/>
+		tools:visibility="gone" />
 </RelativeLayout>
