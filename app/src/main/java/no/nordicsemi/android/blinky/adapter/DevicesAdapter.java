@@ -56,13 +56,12 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 		mOnItemClickListener = listener;
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	public DevicesAdapter(@NonNull final ScannerActivity activity,
 						  @NonNull final DevicesLiveData devicesLiveData) {
 		mContext = activity;
 		setHasStableIds(true);
 		devicesLiveData.observe(activity, devices -> {
-			DiffUtil.DiffResult result = DiffUtil.calculateDiff(
+			final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
 					new DeviceDiffCallback(mDevices, devices), false);
 			mDevices = devices;
 			result.dispatchUpdatesTo(this);

@@ -36,13 +36,15 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+
+import com.google.android.material.appbar.MaterialToolbar;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -78,19 +80,22 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
         setContentView(R.layout.activity_scanner);
         ButterKnife.bind(this);
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
+        final MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.app_name);
 
         // Create view model containing utility methods for scanning
-        mScannerViewModel = ViewModelProviders.of(this).get(ScannerViewModel.class);
+        mScannerViewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
         mScannerViewModel.getScannerState().observe(this, this::startScan);
 
         // Configure the recycler view
         final RecyclerView recyclerView = findViewById(R.id.recycler_view_ble_devices);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+        final RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
         final DevicesAdapter adapter = new DevicesAdapter(this, mScannerViewModel.getDevices());
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
@@ -185,11 +190,11 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
         if (Utils.isLocationPermissionsGranted(this)) {
             mNoLocationPermissionView.setVisibility(View.GONE);
 
-            // Bluetooth must be enabled
+            // Bluetooth must be enabled.
             if (state.isBluetoothEnabled()) {
                 mNoBluetoothView.setVisibility(View.GONE);
 
-                // We are now OK to start scanning
+                // We are now OK to start scanning.
                 mScannerViewModel.startScan();
                 mScanningView.setVisibility(View.VISIBLE);
 

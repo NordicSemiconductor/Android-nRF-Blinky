@@ -96,7 +96,7 @@
 						app:layout_constraintLeft_toLeftOf="parent"
 						app:layout_constraintTop_toBottomOf="@+id/led_summary" />
 
-					<androidx.appcompat.widget.SwitchCompat
+					<com.google.android.material.switchmaterial.SwitchMaterial
 						android:id="@+id/led_switch"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"

@@ -22,18 +22,19 @@
 
 package no.nordicsemi.android.blinky;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,7 +48,7 @@ public class BlinkyActivity extends AppCompatActivity {
 
 	private BlinkyViewModel mViewModel;
 
-	@BindView(R.id.led_switch) Switch mLed;
+	@BindView(R.id.led_switch)  SwitchMaterial mLed;
 	@BindView(R.id.button_state) TextView mButtonState;
 
 	@Override
@@ -61,17 +62,17 @@ public class BlinkyActivity extends AppCompatActivity {
 		final String deviceName = device.getName();
 		final String deviceAddress = device.getAddress();
 
-		final Toolbar toolbar = findViewById(R.id.toolbar);
+		final MaterialToolbar toolbar = findViewById(R.id.toolbar);
+		toolbar.setTitle(deviceName != null ? deviceName : getString(R.string.unknown_device));
+		toolbar.setSubtitle(deviceAddress);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setTitle(deviceName);
-		getSupportActionBar().setSubtitle(deviceAddress);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		// Configure the view model
-		mViewModel = ViewModelProviders.of(this).get(BlinkyViewModel.class);
+		// Configure the view model.
+		mViewModel = new ViewModelProvider(this).get(BlinkyViewModel.class);
 		mViewModel.connect(device);
 
-		// Set up views
+		// Set up views.
 		final TextView ledState = findViewById(R.id.led_state);
 		final LinearLayout progressContainer = findViewById(R.id.progress_container);
 		final TextView connectionState = findViewById(R.id.connection_state);

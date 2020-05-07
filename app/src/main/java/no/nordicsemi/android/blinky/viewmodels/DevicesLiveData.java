@@ -22,6 +22,8 @@
 
 package no.nordicsemi.android.blinky.viewmodels;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import android.os.ParcelUuid;
 
@@ -43,7 +45,9 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 	private static final ParcelUuid FILTER_UUID = new ParcelUuid(BlinkyManager.LBS_UUID_SERVICE);
 	private static final int FILTER_RSSI = -50; // [dBm]
 
+	@NonNull
 	private final List<DiscoveredBluetoothDevice> mDevices = new ArrayList<>();
+	@Nullable
 	private List<DiscoveredBluetoothDevice> mFilteredDevices = null;
 	private boolean mFilterUuidRequired;
 	private boolean mFilterNearbyOnly;
@@ -69,7 +73,7 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 		return applyFilter();
 	}
 
-	/* package */ synchronized boolean deviceDiscovered(final ScanResult result) {
+	/* package */ synchronized boolean deviceDiscovered(@NonNull final ScanResult result) {
 		DiscoveredBluetoothDevice device;
 
 		// Check if it's a new device.
@@ -120,7 +124,7 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 	 * @param result scan result.
 	 * @return Index of -1 if not found.
 	 */
-	private int indexOf(final ScanResult result) {
+	private int indexOf(@NonNull final ScanResult result) {
 		int i = 0;
 		for (final DiscoveredBluetoothDevice device : mDevices) {
 			if (device.matches(result))
@@ -131,7 +135,7 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 	}
 
 	@SuppressWarnings("SimplifiableIfStatement")
-	private boolean matchesUuidFilter(final ScanResult result) {
+	private boolean matchesUuidFilter(@NonNull final ScanResult result) {
 		if (!mFilterUuidRequired)
 			return true;
 

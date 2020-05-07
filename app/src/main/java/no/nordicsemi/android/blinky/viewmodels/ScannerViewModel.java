@@ -210,7 +210,7 @@ public class ScannerViewModel extends AndroidViewModel {
 	/**
 	 * Register for required broadcast receivers.
 	 */
-	private void registerBroadcastReceivers(final Application application) {
+	private void registerBroadcastReceivers(@NonNull final Application application) {
 		application.registerReceiver(mBluetoothStateBroadcastReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
 		if (Utils.isMarshmallowOrAbove()) {
 			application.registerReceiver(mLocationProviderChangedReceiver, new IntentFilter(LocationManager.MODE_CHANGED_ACTION));
