@@ -34,7 +34,7 @@ import androidx.annotation.Nullable;
 
 import java.util.UUID;
 
-import no.nordicsemi.android.ble.BleManager;
+import no.nordicsemi.android.ble.LegacyBleManager;
 import no.nordicsemi.android.ble.data.Data;
 import no.nordicsemi.android.blinky.profile.callback.BlinkyButtonDataCallback;
 import no.nordicsemi.android.blinky.profile.callback.BlinkyLedDataCallback;
@@ -43,7 +43,8 @@ import no.nordicsemi.android.log.LogContract;
 import no.nordicsemi.android.log.LogSession;
 import no.nordicsemi.android.log.Logger;
 
-public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
+@SuppressWarnings("deprecation")
+public class BlinkyManager extends LegacyBleManager<BlinkyManagerCallbacks> {
 	/** Nordic Blinky Service UUID. */
 	public final static UUID LBS_UUID_SERVICE = UUID.fromString("00001523-1212-efde-1523-785feabcd123");
 	/** BUTTON characteristic UUID. */
@@ -63,7 +64,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	@NonNull
 	@Override
 	protected BleManagerGattCallback getGattCallback() {
-		return mGattCallback;
+		return new BlinkyBleManagerGattCallback();
 	}
 
 	/**
@@ -140,7 +141,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	/**
 	 * BluetoothGatt callbacks object.
 	 */
-	private final BleManagerGattCallback mGattCallback = new BleManagerGattCallback() {
+	private class BlinkyBleManagerGattCallback extends BleManagerGattCallback {
 		@Override
 		protected void initialize() {
 			setNotificationCallback(mButtonCharacteristic).with(mButtonCallback);
@@ -172,7 +173,7 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 			mButtonCharacteristic = null;
 			mLedCharacteristic = null;
 		}
-	};
+	}
 
 	/**
 	 * Sends a request to the device to turn the LED on or off.
