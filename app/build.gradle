@@ -8,8 +8,8 @@ android {
         applicationId "no.nordicsemi.android.nrfblinky"
         minSdkVersion 18
         targetSdkVersion 29
-        versionCode 12
-        versionName "2.4.3"
+        versionCode 13
+        versionName "2.5.0"
         resConfigs "en"
 
         vectorDrawables.useSupportLibrary = true
