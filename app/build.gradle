@@ -50,8 +50,8 @@ dependencies {
     // Log Bluetooth LE events in nRF Logger
     implementation 'no.nordicsemi.android:log:2.2.0'
     // BLE library
-    implementation 'no.nordicsemi.android:ble:2.2.0-beta02'
+    implementation 'no.nordicsemi.android:ble-livedata:2.2.0-beta03'
     // To add BLE Library as a module, replace the above dependency with the following
     // and uncomment 2 lines in settings.gradle file.
-    // implementation project(":ble")
+    // implementation project(":ble-livedata")
 }
