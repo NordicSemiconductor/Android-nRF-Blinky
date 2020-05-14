@@ -26,6 +26,9 @@ import android.bluetooth.BluetoothDevice;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import no.nordicsemi.android.support.v18.scanner.ScanResult;
 
 public class DiscoveredBluetoothDevice implements Parcelable {
@@ -36,27 +39,32 @@ public class DiscoveredBluetoothDevice implements Parcelable {
 	private int previousRssi;
 	private int highestRssi = -128;
 
-	public DiscoveredBluetoothDevice(final ScanResult scanResult) {
+	public DiscoveredBluetoothDevice(@NonNull final ScanResult scanResult) {
 		device = scanResult.getDevice();
 		update(scanResult);
 	}
 
+	@NonNull
 	public BluetoothDevice getDevice() {
 		return device;
 	}
 
+	@NonNull
 	public String getAddress() {
 		return device.getAddress();
 	}
 
+	@Nullable
 	public String getName() {
 		return name;
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public int getRssi() {
 		return rssi;
 	}
 
+	@NonNull
 	public ScanResult getScanResult() {
 		return lastScanResult;
 	}
@@ -104,7 +112,7 @@ public class DiscoveredBluetoothDevice implements Parcelable {
 	 *
 	 * @param scanResult the new received scan result.
 	 */
-	public void update(final ScanResult scanResult) {
+	public void update(@NonNull final ScanResult scanResult) {
 		lastScanResult = scanResult;
 		name = scanResult.getScanRecord() != null ?
 				scanResult.getScanRecord().getDeviceName() : null;
@@ -114,7 +122,7 @@ public class DiscoveredBluetoothDevice implements Parcelable {
 			highestRssi = rssi;
 	}
 
-	public boolean matches(final ScanResult scanResult) {
+	public boolean matches(@NonNull final ScanResult scanResult) {
 		return device.getAddress().equals(scanResult.getDevice().getAddress());
 	}
 

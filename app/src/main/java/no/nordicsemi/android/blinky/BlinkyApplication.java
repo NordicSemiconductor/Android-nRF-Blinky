@@ -10,7 +10,7 @@ public class BlinkyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //Added to support vector drawables for devices below android 21
+        // Added to support vector drawables for devices below Android 21.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         }

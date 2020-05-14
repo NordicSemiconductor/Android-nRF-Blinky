@@ -23,14 +23,10 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
 	android:width="24dp"
 	android:height="24dp"
-	android:tint="@color/colorOnBackground"
+	android:tint="@color/colorSecondary"
 	android:viewportHeight="24.0"
 	android:viewportWidth="24.0">
 	<path
-		android:fillAlpha=".3"
 		android:fillColor="#FF000000"
-		android:pathData="M12.01,21.49L23.64,7c-0.45,-0.34 -4.93,-4 -11.64,-4C5.28,3 0.81,6.66 0.36,7l11.63,14.49 0.01,0.01 0.01,-0.01z"/>
-	<path
-		android:fillColor="#FF000000"
-		android:pathData="M4.79,12.52l7.2,8.98H12l0.01,-0.01 7.2,-8.98C18.85,12.24 16.1,10 12,10s-6.85,2.24 -7.21,2.52z"/>
+		android:pathData="M9,21c0,0.55 0.45,1 1,1h4c0.55,0 1,-0.45 1,-1v-1L9,20v1zM12,2C8.14,2 5,5.14 5,9c0,2.38 1.19,4.47 3,5.74L8,17c0,0.55 0.45,1 1,1h6c0.55,0 1,-0.45 1,-1v-2.26c1.81,-1.27 3,-3.36 3,-5.74 0,-3.86 -3.14,-7 -7,-7zM14.85,13.1l-0.85,0.6L14,16h-4v-2.3l-0.85,-0.6C7.8,12.16 7,10.63 7,9c0,-2.76 2.24,-5 5,-5s5,2.24 5,5c0,1.63 -0.8,3.16 -2.15,4.1z"/>
 </vector>

@@ -24,8 +24,6 @@
 	<string name="app_name">nRF Blinky</string>
 	<string name="feature_name">BLINKY</string>
 
-	<string name="title">@string/app_name</string>
-
 	<string name="menu_filter">Filter</string>
 	<string name="menu_filter_uuid">Only devices advertising LBS UUID</string>
 	<string name="menu_filter_nearby">Only nearby devices</string>
@@ -36,9 +34,9 @@
 	<string name="title_led_state">LED</string>
 	<string name="title_button_state">Button</string>
 	<string name="state">State</string>
-	<string name="button_pressed">PRESSED</string>
-	<string name="button_released">RELEASED</string>
-	<string name="button_unknown">UNKNOWN</string>
+	<string name="button_pressed">Pressed</string>
+	<string name="button_released">Released</string>
+	<string name="button_unknown">Unknown</string>
 	<string name="led_summary">Toggle the switch to turn the LED 3 on or off.</string>
 	<string name="button_summary">Press Button 1 on the dev kit.</string>
 
@@ -65,9 +63,6 @@
 		\n\n3. If you used the DK with another firmware before, the old services might have been cached by the system.</string>
 	<string name="not_supported_action">Fix and try again</string>
 
-	<string name="state_scanning">Scanning…</string>
 	<string name="state_connecting">Connecting…</string>
-	<string name="state_discovering_services">Discovering services…</string>
 	<string name="state_initializing">Initializing…</string>
-	<string name="state_disconnected">Device disconnected.</string>
 </resources>

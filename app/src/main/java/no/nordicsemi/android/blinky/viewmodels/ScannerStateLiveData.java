@@ -29,16 +29,16 @@ import androidx.lifecycle.LiveData;
  */
 @SuppressWarnings("unused")
 public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
-	private boolean mScanningStarted;
-	private boolean mHasRecords;
-	private boolean mBluetoothEnabled;
-	private boolean mLocationEnabled;
+	private boolean scanningStarted;
+	private boolean hasRecords;
+	private boolean bluetoothEnabled;
+	private boolean locationEnabled;
 
 	/* package */ ScannerStateLiveData(final boolean bluetoothEnabled,
 									   final boolean locationEnabled) {
-		mScanningStarted = false;
-		mBluetoothEnabled = bluetoothEnabled;
-		mLocationEnabled = locationEnabled;
+		this.scanningStarted = false;
+		this.bluetoothEnabled = bluetoothEnabled;
+		this.locationEnabled = locationEnabled;
 		postValue(this);
 	}
 
@@ -47,33 +47,33 @@ public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
 	}
 
 	/* package */ void scanningStarted() {
-		mScanningStarted = true;
+		scanningStarted = true;
 		postValue(this);
 	}
 
 	/* package */ void scanningStopped() {
-		mScanningStarted = false;
+		scanningStarted = false;
 		postValue(this);
 	}
 
 	/* package */ void bluetoothEnabled() {
-		mBluetoothEnabled = true;
+		bluetoothEnabled = true;
 		postValue(this);
 	}
 
 	/* package */ synchronized void bluetoothDisabled() {
-		mBluetoothEnabled = false;
-		mHasRecords = false;
+		bluetoothEnabled = false;
+		hasRecords = false;
 		postValue(this);
 	}
 
 	/* package */ void setLocationEnabled(final boolean enabled) {
-		mLocationEnabled = enabled;
+		locationEnabled = enabled;
 		postValue(this);
 	}
 
 	/* package */ void recordFound() {
-		mHasRecords = true;
+		hasRecords = true;
 		postValue(this);
 	}
 
@@ -81,35 +81,35 @@ public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
 	 * Returns whether scanning is in progress.
 	 */
 	boolean isScanning() {
-		return mScanningStarted;
+		return scanningStarted;
 	}
 
 	/**
 	 * Returns whether any records matching filter criteria has been found.
 	 */
 	public boolean hasRecords() {
-		return mHasRecords;
+		return hasRecords;
 	}
 
 	/**
 	 * Returns whether Bluetooth adapter is enabled.
 	 */
 	public boolean isBluetoothEnabled() {
-		return mBluetoothEnabled;
+		return bluetoothEnabled;
 	}
 
 	/**
 	 * Returns whether Location is enabled.
 	 */
 	public boolean isLocationEnabled() {
-		return mLocationEnabled;
+		return locationEnabled;
 	}
 
 	/**
 	 * Notifies the observer that scanner has no records to show.
 	 */
 	public void clearRecords() {
-		mHasRecords = false;
+		hasRecords = false;
 		postValue(this);
 	}
 }

@@ -42,4 +42,5 @@
 		android:scaleType="centerCrop"
 		android:background="@color/colorNordicLogoTop"
 		app:srcCompat="@drawable/nordic_logo"/>
+	
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

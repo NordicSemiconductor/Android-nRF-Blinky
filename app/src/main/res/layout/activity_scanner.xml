@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018, Nordic Semiconductor
   ~ All rights reserved.
   ~
@@ -35,31 +34,30 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:theme="@style/AppTheme.AppBarOverlay"
-		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toEndOf="parent">
+		app:layout_constraintTop_toTopOf="parent">
 
-		<androidx.appcompat.widget.Toolbar
+		<com.google.android.material.appbar.MaterialToolbar
 			android:id="@+id/toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="?actionBarSize"
-			android:background="?attr/colorPrimary"
-			app:popupTheme="@style/AppTheme.PopupOverlay"/>
+			app:popupTheme="@style/AppTheme.PopupOverlay" />
 
 		<ProgressBar
 			android:id="@+id/state_scanning"
 			style="?android:attr/progressBarStyleHorizontal"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginBottom="-7dp"
 			android:layout_marginTop="-8dp"
+			android:layout_marginBottom="-7dp"
 			android:indeterminate="true"
-			android:indeterminateTint="@android:color/white"
+			android:indeterminateTint="@color/colorAccentOnPrimary"
 			android:visibility="invisible"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="@+id/recycler_view_ble_devices"
-			tools:ignore="UnusedAttribute"/>
+			tools:ignore="UnusedAttribute" />
 
 	</com.google.android.material.appbar.AppBarLayout>
 
@@ -68,13 +66,14 @@
 		android:layout_width="0dp"
 		android:layout_height="0dp"
 		android:clipToPadding="false"
-		android:paddingBottom="@dimen/activity_vertical_margin_bottom"
 		android:paddingTop="@dimen/activity_vertical_margin_top"
+		android:paddingBottom="@dimen/activity_vertical_margin_bottom"
 		android:scrollbars="none"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/appbar_layout"/>
+		app:layout_constraintTop_toBottomOf="@id/appbar_layout"
+		tools:listitem="@layout/device_item" />
 
 	<include
 		android:id="@+id/no_devices"
@@ -85,7 +84,7 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/appbar_layout"/>
+		app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
 	<include
 		android:id="@+id/bluetooth_off"
@@ -96,7 +95,7 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/appbar_layout"/>
+		app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
 	<include
 		android:id="@+id/no_location_permission"
@@ -107,6 +106,6 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/appbar_layout"/>
+		app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

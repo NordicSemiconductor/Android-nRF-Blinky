@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.0'
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
         applicationId "no.nordicsemi.android.nrfblinky"
         minSdkVersion 18
         targetSdkVersion 29
-        versionCode 12
-        versionName "2.4.3"
+        versionCode 13
+        versionName "2.5.0"
         resConfigs "en"
 
         vectorDrawables.useSupportLibrary = true
@@ -18,12 +18,10 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
             minifyEnabled true
-            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -36,24 +34,24 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.google.android.material:material:1.1.0-alpha09'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha06'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta5'
     // Lifecycle extensions
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     // Butter Knife
-    implementation 'com.jakewharton:butterknife:10.1.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
     // Brings the new BluetoothLeScanner API to older platforms
-     implementation 'no.nordicsemi.android.support.v18:scanner:1.4.2'
+     implementation 'no.nordicsemi.android.support.v18:scanner:1.4.3'
     //implementation project(":scanner")
     // Log Bluetooth LE events in nRF Logger
     implementation 'no.nordicsemi.android:log:2.2.0'
     // BLE library
-    implementation 'no.nordicsemi.android:ble:2.1.1'
+    implementation 'no.nordicsemi.android:ble-livedata:2.2.0'
     // To add BLE Library as a module, replace the above dependency with the following
     // and uncomment 2 lines in settings.gradle file.
-    // implementation project(":ble")
+    // implementation project(":ble-livedata")
 }

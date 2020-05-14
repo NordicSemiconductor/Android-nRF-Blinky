@@ -31,11 +31,13 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.UUID;
 
-import no.nordicsemi.android.ble.BleManager;
 import no.nordicsemi.android.ble.data.Data;
+import no.nordicsemi.android.ble.livedata.ObservableBleManager;
 import no.nordicsemi.android.blinky.profile.callback.BlinkyButtonDataCallback;
 import no.nordicsemi.android.blinky.profile.callback.BlinkyLedDataCallback;
 import no.nordicsemi.android.blinky.profile.data.BlinkyLED;
@@ -43,7 +45,7 @@ import no.nordicsemi.android.log.LogContract;
 import no.nordicsemi.android.log.LogSession;
 import no.nordicsemi.android.log.Logger;
 
-public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
+public class BlinkyManager extends ObservableBleManager {
 	/** Nordic Blinky Service UUID. */
 	public final static UUID LBS_UUID_SERVICE = UUID.fromString("00001523-1212-efde-1523-785feabcd123");
 	/** BUTTON characteristic UUID. */
@@ -51,19 +53,30 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	/** LED characteristic UUID. */
 	private final static UUID LBS_UUID_LED_CHAR = UUID.fromString("00001525-1212-efde-1523-785feabcd123");
 
-	private BluetoothGattCharacteristic mButtonCharacteristic, mLedCharacteristic;
-	private LogSession mLogSession;
-	private boolean mSupported;
-	private boolean mLedOn;
+	private final MutableLiveData<Boolean> ledState = new MutableLiveData<>();
+	private final MutableLiveData<Boolean> buttonState = new MutableLiveData<>();
+
+	private BluetoothGattCharacteristic buttonCharacteristic, ledCharacteristic;
+	private LogSession logSession;
+	private boolean supported;
+	private boolean ledOn;
 
 	public BlinkyManager(@NonNull final Context context) {
 		super(context);
 	}
 
+	public final LiveData<Boolean> getLedState() {
+		return ledState;
+	}
+
+	public final LiveData<Boolean> getButtonState() {
+		return buttonState;
+	}
+
 	@NonNull
 	@Override
 	protected BleManagerGattCallback getGattCallback() {
-		return mGattCallback;
+		return new BlinkyBleManagerGattCallback();
 	}
 
 	/**
@@ -71,18 +84,18 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	 * @param session the session, or null, if nRF Logger is not installed.
 	 */
 	public void setLogger(@Nullable final LogSession session) {
-		this.mLogSession = session;
+		logSession = session;
 	}
 
 	@Override
 	public void log(final int priority, @NonNull final String message) {
 		// The priority is a Log.X constant, while the Logger accepts it's log levels.
-		Logger.log(mLogSession, LogContract.Log.Level.fromPriority(priority), message);
+		Logger.log(logSession, LogContract.Log.Level.fromPriority(priority), message);
 	}
 
 	@Override
 	protected boolean shouldClearCacheWhenDisconnected() {
-		return !mSupported;
+		return !supported;
 	}
 
 	/**
@@ -94,12 +107,12 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	 * Otherwise, the {@link BlinkyButtonDataCallback#onInvalidDataReceived(BluetoothDevice, Data)}
 	 * will be called with the data received.
 	 */
-	private	final BlinkyButtonDataCallback mButtonCallback = new BlinkyButtonDataCallback() {
+	private	final BlinkyButtonDataCallback buttonCallback = new BlinkyButtonDataCallback() {
 		@Override
 		public void onButtonStateChanged(@NonNull final BluetoothDevice device,
 										 final boolean pressed) {
 			log(LogContract.Log.Level.APPLICATION, "Button " + (pressed ? "pressed" : "released"));
-			mCallbacks.onButtonStateChanged(device, pressed);
+			buttonState.setValue(pressed);
 		}
 
 		@Override
@@ -120,13 +133,13 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	 * {@link BlinkyLedDataCallback#onInvalidDataReceived(BluetoothDevice, Data)} will be
 	 * called.
 	 */
-	private final BlinkyLedDataCallback mLedCallback = new BlinkyLedDataCallback() {
+	private final BlinkyLedDataCallback ledCallback = new BlinkyLedDataCallback() {
 		@Override
 		public void onLedStateChanged(@NonNull final BluetoothDevice device,
 									  final boolean on) {
-			mLedOn = on;
+			ledOn = on;
 			log(LogContract.Log.Level.APPLICATION, "LED " + (on ? "ON" : "OFF"));
-			mCallbacks.onLedStateChanged(device, on);
+			ledState.setValue(on);
 		}
 
 		@Override
@@ -140,56 +153,57 @@ public class BlinkyManager extends BleManager<BlinkyManagerCallbacks> {
 	/**
 	 * BluetoothGatt callbacks object.
 	 */
-	private final BleManagerGattCallback mGattCallback = new BleManagerGattCallback() {
+	private class BlinkyBleManagerGattCallback extends BleManagerGattCallback {
 		@Override
 		protected void initialize() {
-			setNotificationCallback(mButtonCharacteristic).with(mButtonCallback);
-			readCharacteristic(mLedCharacteristic).with(mLedCallback).enqueue();
-			readCharacteristic(mButtonCharacteristic).with(mButtonCallback).enqueue();
-			enableNotifications(mButtonCharacteristic).enqueue();
+			setNotificationCallback(buttonCharacteristic).with(buttonCallback);
+			readCharacteristic(ledCharacteristic).with(ledCallback).enqueue();
+			readCharacteristic(buttonCharacteristic).with(buttonCallback).enqueue();
+			enableNotifications(buttonCharacteristic).enqueue();
 		}
 
 		@Override
 		public boolean isRequiredServiceSupported(@NonNull final BluetoothGatt gatt) {
 			final BluetoothGattService service = gatt.getService(LBS_UUID_SERVICE);
 			if (service != null) {
-				mButtonCharacteristic = service.getCharacteristic(LBS_UUID_BUTTON_CHAR);
-				mLedCharacteristic = service.getCharacteristic(LBS_UUID_LED_CHAR);
+				buttonCharacteristic = service.getCharacteristic(LBS_UUID_BUTTON_CHAR);
+				ledCharacteristic = service.getCharacteristic(LBS_UUID_LED_CHAR);
 			}
 
 			boolean writeRequest = false;
-			if (mLedCharacteristic != null) {
-				final int rxProperties = mLedCharacteristic.getProperties();
+			if (ledCharacteristic != null) {
+				final int rxProperties = ledCharacteristic.getProperties();
 				writeRequest = (rxProperties & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0;
 			}
 
-			mSupported = mButtonCharacteristic != null && mLedCharacteristic != null && writeRequest;
-			return mSupported;
+			supported = buttonCharacteristic != null && ledCharacteristic != null && writeRequest;
+			return supported;
 		}
 
 		@Override
 		protected void onDeviceDisconnected() {
-			mButtonCharacteristic = null;
-			mLedCharacteristic = null;
+			buttonCharacteristic = null;
+			ledCharacteristic = null;
 		}
-	};
+	}
 
 	/**
 	 * Sends a request to the device to turn the LED on or off.
 	 *
 	 * @param on true to turn the LED on, false to turn it off.
 	 */
-	public void send(final boolean on) {
+	public void turnLed(final boolean on) {
 		// Are we connected?
-		if (mLedCharacteristic == null)
+		if (ledCharacteristic == null)
 			return;
 
 		// No need to change?
-		if (mLedOn == on)
+		if (ledOn == on)
 			return;
 
 		log(Log.VERBOSE, "Turning LED " + (on ? "ON" : "OFF") + "...");
-		writeCharacteristic(mLedCharacteristic, on ? BlinkyLED.turnOn() : BlinkyLED.turnOff())
-				.with(mLedCallback).enqueue();
+		writeCharacteristic(ledCharacteristic,
+				on ? BlinkyLED.turnOn() : BlinkyLED.turnOff())
+				.with(ledCallback).enqueue();
 	}
 }

@@ -23,84 +23,53 @@
 package no.nordicsemi.android.blinky.viewmodels;
 
 import android.app.Application;
+import android.bluetooth.BluetoothDevice;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import android.bluetooth.BluetoothDevice;
-import androidx.annotation.NonNull;
 
-import no.nordicsemi.android.blinky.R;
+import no.nordicsemi.android.ble.livedata.state.ConnectionState;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.profile.BlinkyManager;
-import no.nordicsemi.android.blinky.profile.BlinkyManagerCallbacks;
 import no.nordicsemi.android.log.LogSession;
 import no.nordicsemi.android.log.Logger;
 
-public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCallbacks {
-	private final BlinkyManager mBlinkyManager;
-	private BluetoothDevice mDevice;
-
-	// Connection states Connecting, Connected, Disconnecting, Disconnected etc.
-	private final MutableLiveData<String> mConnectionState = new MutableLiveData<>();
-
-	// Flag to determine if the device is connected
-	private final MutableLiveData<Boolean> mIsConnected = new MutableLiveData<>();
-
-	// Flag to determine if the device has required services
-	private final MutableLiveData<Boolean> mIsSupported = new MutableLiveData<>();
-
-	// Flag to determine if the device is ready
-	private final MutableLiveData<Void> mOnDeviceReady = new MutableLiveData<>();
-
-	// Flag that holds the on off state of the LED. On is true, Off is False
-	private final MutableLiveData<Boolean> mLEDState = new MutableLiveData<>();
-
-	// Flag that holds the pressed released state of the button on the devkit.
-	// Pressed is true, Released is false
-	private final MutableLiveData<Boolean> mButtonState = new MutableLiveData<>();
-
-	public LiveData<Void> isDeviceReady() {
-		return mOnDeviceReady;
-	}
-
-	public LiveData<String> getConnectionState() {
-		return mConnectionState;
-	}
-
-	public LiveData<Boolean> isConnected() {
-		return mIsConnected;
-	}
-
-	public LiveData<Boolean> getButtonState() {
-		return mButtonState;
-	}
-
-	public LiveData<Boolean> getLEDState() {
-		return mLEDState;
-	}
-
-	public LiveData<Boolean> isSupported() {
-		return mIsSupported;
-	}
+public class BlinkyViewModel extends AndroidViewModel {
+	private final BlinkyManager blinkyManager;
+	private BluetoothDevice device;
 
 	public BlinkyViewModel(@NonNull final Application application) {
 		super(application);
 
-		// Initialize the manager
-		mBlinkyManager = new BlinkyManager(getApplication());
-		mBlinkyManager.setGattCallbacks(this);
+		// Initialize the manager.
+		blinkyManager = new BlinkyManager(getApplication());
+	}
+
+	public LiveData<ConnectionState> getConnectionState() {
+		return blinkyManager.getState();
+	}
+
+	public LiveData<Boolean> getButtonState() {
+		return blinkyManager.getButtonState();
+	}
+
+	public LiveData<Boolean> getLedState() {
+		return blinkyManager.getLedState();
 	}
 
 	/**
-	 * Connect to peripheral.
+	 * Connect to the given peripheral.
+	 *
+	 * @param target the target device.
 	 */
-	public void connect(@NonNull final DiscoveredBluetoothDevice device) {
-		// Prevent from calling again when called again (screen orientation changed)
-		if (mDevice == null) {
-			mDevice = device.getDevice();
-			final LogSession logSession
-					= Logger.newSession(getApplication(), null, device.getAddress(), device.getName());
-			mBlinkyManager.setLogger(logSession);
+	public void connect(@NonNull final DiscoveredBluetoothDevice target) {
+		// Prevent from calling again when called again (screen orientation changed).
+		if (device == null) {
+			device = target.getDevice();
+			final LogSession logSession = Logger
+					.newSession(getApplication(), null, target.getAddress(), target.getName());
+			blinkyManager.setLogger(logSession);
 			reconnect();
 		}
 	}
@@ -111,8 +80,8 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	 * reconnection may help.
 	 */
 	public void reconnect() {
-		if (mDevice != null) {
-			mBlinkyManager.connect(mDevice)
+		if (device != null) {
+			blinkyManager.connect(device)
 					.retry(3, 100)
 					.useAutoConnect(false)
 					.enqueue();
@@ -123,96 +92,24 @@ public class BlinkyViewModel extends AndroidViewModel implements BlinkyManagerCa
 	 * Disconnect from peripheral.
 	 */
 	private void disconnect() {
-		mDevice = null;
-		mBlinkyManager.disconnect().enqueue();
+		device = null;
+		blinkyManager.disconnect().enqueue();
 	}
 
-	public void toggleLED(final boolean isOn) {
-		mBlinkyManager.send(isOn);
-		mLEDState.setValue(isOn);
+	/**
+	 * Sends a command to turn ON or OFF the LED on the nRF5 DK.
+	 *
+	 * @param on true to turn the LED on, false to turn it OFF.
+	 */
+	public void setLedState(final boolean on) {
+		blinkyManager.turnLed(on);
 	}
 
 	@Override
 	protected void onCleared() {
 		super.onCleared();
-		if (mBlinkyManager.isConnected()) {
+		if (blinkyManager.isConnected()) {
 			disconnect();
 		}
-	}
-
-	@Override
-	public void onButtonStateChanged(@NonNull final BluetoothDevice device, final boolean pressed) {
-		mButtonState.postValue(pressed);
-	}
-
-	@Override
-	public void onLedStateChanged(@NonNull final BluetoothDevice device, final boolean on) {
-		mLEDState.postValue(on);
-	}
-
-	@Override
-	public void onDeviceConnecting(@NonNull final BluetoothDevice device) {
-		mConnectionState.postValue(getApplication().getString(R.string.state_connecting));
-	}
-
-	@Override
-	public void onDeviceConnected(@NonNull final BluetoothDevice device) {
-		mIsConnected.postValue(true);
-		mConnectionState.postValue(getApplication().getString(R.string.state_discovering_services));
-	}
-
-	@Override
-	public void onDeviceDisconnecting(@NonNull final BluetoothDevice device) {
-		mIsConnected.postValue(false);
-	}
-
-	@Override
-	public void onDeviceDisconnected(@NonNull final BluetoothDevice device) {
-		mIsConnected.postValue(false);
-	}
-
-	@Override
-	public void onLinkLossOccurred(@NonNull final BluetoothDevice device) {
-		mIsConnected.postValue(false);
-	}
-
-	@Override
-	public void onServicesDiscovered(@NonNull final BluetoothDevice device,
-									 final boolean optionalServicesFound) {
-		mConnectionState.postValue(getApplication().getString(R.string.state_initializing));
-	}
-
-	@Override
-	public void onDeviceReady(@NonNull final BluetoothDevice device) {
-		mIsSupported.postValue(true);
-		mConnectionState.postValue(null);
-		mOnDeviceReady.postValue(null);
-	}
-
-	@Override
-	public void onBondingRequired(@NonNull final BluetoothDevice device) {
-		// Blinky does not require bonding
-	}
-
-	@Override
-	public void onBonded(@NonNull final BluetoothDevice device) {
-		// Blinky does not require bonding
-	}
-
-	@Override
-	public void onBondingFailed(@NonNull final BluetoothDevice device) {
-		// Blinky does not require bonding
-	}
-
-	@Override
-	public void onError(@NonNull final BluetoothDevice device,
-						@NonNull final String message, final int errorCode) {
-		// TODO implement
-	}
-
-	@Override
-	public void onDeviceNotSupported(@NonNull final BluetoothDevice device) {
-		mConnectionState.postValue(null);
-		mIsSupported.postValue(false);
 	}
 }
