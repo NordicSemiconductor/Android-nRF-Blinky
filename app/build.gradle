@@ -38,7 +38,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0-alpha06'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta5'
     // Lifecycle extensions
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     // Butter Knife
@@ -50,8 +50,8 @@ dependencies {
     // Log Bluetooth LE events in nRF Logger
     implementation 'no.nordicsemi.android:log:2.2.0'
     // BLE library
-    implementation 'no.nordicsemi.android:ble:2.2.0-beta02'
+    implementation 'no.nordicsemi.android:ble-livedata:2.2.0-beta03'
     // To add BLE Library as a module, replace the above dependency with the following
     // and uncomment 2 lines in settings.gradle file.
-    // implementation project(":ble")
+    // implementation project(":ble-livedata")
 }

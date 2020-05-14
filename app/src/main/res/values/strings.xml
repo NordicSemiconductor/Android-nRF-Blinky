@@ -64,6 +64,5 @@
 	<string name="not_supported_action">Fix and try again</string>
 
 	<string name="state_connecting">Connecting…</string>
-	<string name="state_discovering_services">Discovering services…</string>
 	<string name="state_initializing">Initializing…</string>
 </resources>

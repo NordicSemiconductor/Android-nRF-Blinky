@@ -26,11 +26,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.appbar.MaterialToolbar;
@@ -39,6 +37,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import no.nordicsemi.android.ble.livedata.state.ConnectionState;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
 
@@ -48,7 +47,7 @@ public class BlinkyActivity extends AppCompatActivity {
 
 	private BlinkyViewModel mViewModel;
 
-	@BindView(R.id.led_switch)  SwitchMaterial mLed;
+	@BindView(R.id.led_switch) SwitchMaterial mLed;
 	@BindView(R.id.button_state) TextView mButtonState;
 
 	@Override
@@ -79,26 +78,37 @@ public class BlinkyActivity extends AppCompatActivity {
 		final View content = findViewById(R.id.device_container);
 		final View notSupported = findViewById(R.id.not_supported);
 
-		mLed.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.toggleLED(isChecked));
-		mViewModel.isDeviceReady().observe(this, deviceReady -> {
-			progressContainer.setVisibility(View.GONE);
-			content.setVisibility(View.VISIBLE);
-		});
-		mViewModel.getConnectionState().observe(this, text -> {
-			if (text != null) {
-				progressContainer.setVisibility(View.VISIBLE);
-				notSupported.setVisibility(View.GONE);
-				connectionState.setText(text);
+		mLed.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.setLedState(isChecked));
+		mViewModel.getConnectionState().observe(this, state -> {
+			switch (state.getState()) {
+				case CONNECTING:
+					progressContainer.setVisibility(View.VISIBLE);
+					notSupported.setVisibility(View.GONE);
+					connectionState.setText(R.string.state_connecting);
+					break;
+				case INITIALIZING:
+					connectionState.setText(R.string.state_initializing);
+					break;
+				case READY:
+					progressContainer.setVisibility(View.GONE);
+					content.setVisibility(View.VISIBLE);
+					onConnectionStateChanged(true);
+					break;
+				case DISCONNECTED:
+					if (state instanceof ConnectionState.Disconnected) {
+						final ConnectionState.Disconnected stateWithReason = (ConnectionState.Disconnected) state;
+						if (stateWithReason.isNotSupported()) {
+							progressContainer.setVisibility(View.GONE);
+							notSupported.setVisibility(View.VISIBLE);
+						}
+					}
+					// fallthrough
+				case DISCONNECTING:
+					onConnectionStateChanged(false);
+					break;
 			}
 		});
-		mViewModel.isConnected().observe(this, this::onConnectionStateChanged);
-		mViewModel.isSupported().observe(this, supported -> {
-			if (!supported) {
-				progressContainer.setVisibility(View.GONE);
-				notSupported.setVisibility(View.VISIBLE);
-			}
-		});
-		mViewModel.getLEDState().observe(this, isOn -> {
+		mViewModel.getLedState().observe(this, isOn -> {
 			ledState.setText(isOn ? R.string.turn_on : R.string.turn_off);
 			mLed.setChecked(isOn);
 		});
