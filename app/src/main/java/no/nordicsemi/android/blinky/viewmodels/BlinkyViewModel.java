@@ -36,40 +36,40 @@ import no.nordicsemi.android.log.LogSession;
 import no.nordicsemi.android.log.Logger;
 
 public class BlinkyViewModel extends AndroidViewModel {
-	private final BlinkyManager mBlinkyManager;
-	private BluetoothDevice mDevice;
+	private final BlinkyManager blinkyManager;
+	private BluetoothDevice device;
 
 	public BlinkyViewModel(@NonNull final Application application) {
 		super(application);
 
 		// Initialize the manager.
-		mBlinkyManager = new BlinkyManager(getApplication());
+		blinkyManager = new BlinkyManager(getApplication());
 	}
 
 	public LiveData<ConnectionState> getConnectionState() {
-		return mBlinkyManager.getState();
+		return blinkyManager.getState();
 	}
 
 	public LiveData<Boolean> getButtonState() {
-		return mBlinkyManager.getButtonState();
+		return blinkyManager.getButtonState();
 	}
 
 	public LiveData<Boolean> getLedState() {
-		return mBlinkyManager.getLedState();
+		return blinkyManager.getLedState();
 	}
 
 	/**
 	 * Connect to the given peripheral.
 	 *
-	 * @param device the target device.
+	 * @param target the target device.
 	 */
-	public void connect(@NonNull final DiscoveredBluetoothDevice device) {
+	public void connect(@NonNull final DiscoveredBluetoothDevice target) {
 		// Prevent from calling again when called again (screen orientation changed).
-		if (mDevice == null) {
-			mDevice = device.getDevice();
+		if (device == null) {
+			device = target.getDevice();
 			final LogSession logSession = Logger
-					.newSession(getApplication(), null, device.getAddress(), device.getName());
-			mBlinkyManager.setLogger(logSession);
+					.newSession(getApplication(), null, target.getAddress(), target.getName());
+			blinkyManager.setLogger(logSession);
 			reconnect();
 		}
 	}
@@ -80,8 +80,8 @@ public class BlinkyViewModel extends AndroidViewModel {
 	 * reconnection may help.
 	 */
 	public void reconnect() {
-		if (mDevice != null) {
-			mBlinkyManager.connect(mDevice)
+		if (device != null) {
+			blinkyManager.connect(device)
 					.retry(3, 100)
 					.useAutoConnect(false)
 					.enqueue();
@@ -92,8 +92,8 @@ public class BlinkyViewModel extends AndroidViewModel {
 	 * Disconnect from peripheral.
 	 */
 	private void disconnect() {
-		mDevice = null;
-		mBlinkyManager.disconnect().enqueue();
+		device = null;
+		blinkyManager.disconnect().enqueue();
 	}
 
 	/**
@@ -102,13 +102,13 @@ public class BlinkyViewModel extends AndroidViewModel {
 	 * @param on true to turn the LED on, false to turn it OFF.
 	 */
 	public void setLedState(final boolean on) {
-		mBlinkyManager.turnLed(on);
+		blinkyManager.turnLed(on);
 	}
 
 	@Override
 	protected void onCleared() {
 		super.onCleared();
-		if (mBlinkyManager.isConnected()) {
+		if (blinkyManager.isConnected()) {
 			disconnect();
 		}
 	}

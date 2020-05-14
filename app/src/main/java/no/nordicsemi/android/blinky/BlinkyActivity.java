@@ -45,10 +45,10 @@ import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
 public class BlinkyActivity extends AppCompatActivity {
 	public static final String EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE";
 
-	private BlinkyViewModel mViewModel;
+	private BlinkyViewModel viewModel;
 
-	@BindView(R.id.led_switch) SwitchMaterial mLed;
-	@BindView(R.id.button_state) TextView mButtonState;
+	@BindView(R.id.led_switch) SwitchMaterial led;
+	@BindView(R.id.button_state) TextView buttonState;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -68,8 +68,8 @@ public class BlinkyActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Configure the view model.
-		mViewModel = new ViewModelProvider(this).get(BlinkyViewModel.class);
-		mViewModel.connect(device);
+		viewModel = new ViewModelProvider(this).get(BlinkyViewModel.class);
+		viewModel.connect(device);
 
 		// Set up views.
 		final TextView ledState = findViewById(R.id.led_state);
@@ -78,8 +78,8 @@ public class BlinkyActivity extends AppCompatActivity {
 		final View content = findViewById(R.id.device_container);
 		final View notSupported = findViewById(R.id.not_supported);
 
-		mLed.setOnCheckedChangeListener((buttonView, isChecked) -> mViewModel.setLedState(isChecked));
-		mViewModel.getConnectionState().observe(this, state -> {
+		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
+		viewModel.getConnectionState().observe(this, state -> {
 			switch (state.getState()) {
 				case CONNECTING:
 					progressContainer.setVisibility(View.VISIBLE);
@@ -108,25 +108,25 @@ public class BlinkyActivity extends AppCompatActivity {
 					break;
 			}
 		});
-		mViewModel.getLedState().observe(this, isOn -> {
+		viewModel.getLedState().observe(this, isOn -> {
 			ledState.setText(isOn ? R.string.turn_on : R.string.turn_off);
-			mLed.setChecked(isOn);
+			led.setChecked(isOn);
 		});
-		mViewModel.getButtonState().observe(this,
-				pressed -> mButtonState.setText(pressed ?
+		viewModel.getButtonState().observe(this,
+				pressed -> buttonState.setText(pressed ?
 						R.string.button_pressed : R.string.button_released));
 	}
 
 	@OnClick(R.id.action_clear_cache)
 	public void onTryAgainClicked() {
-		mViewModel.reconnect();
+		viewModel.reconnect();
 	}
 
 	private void onConnectionStateChanged(final boolean connected) {
-		mLed.setEnabled(connected);
+		led.setEnabled(connected);
 		if (!connected) {
-			mLed.setChecked(false);
-			mButtonState.setText(R.string.button_unknown);
+			led.setChecked(false);
+			buttonState.setText(R.string.button_unknown);
 		}
 	}
 }

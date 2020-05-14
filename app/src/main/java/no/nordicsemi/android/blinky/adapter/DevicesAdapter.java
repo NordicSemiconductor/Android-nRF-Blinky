@@ -22,16 +22,16 @@
 
 package no.nordicsemi.android.blinky.adapter;
 
-import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
@@ -43,9 +43,8 @@ import no.nordicsemi.android.blinky.viewmodels.DevicesLiveData;
 
 @SuppressWarnings("unused")
 public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHolder> {
-	private final Context mContext;
-	private List<DiscoveredBluetoothDevice> mDevices;
-	private OnItemClickListener mOnItemClickListener;
+	private List<DiscoveredBluetoothDevice> devices;
+	private OnItemClickListener onItemClickListener;
 
 	@FunctionalInterface
 	public interface OnItemClickListener {
@@ -53,17 +52,16 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 	}
 
 	public void setOnItemClickListener(final OnItemClickListener listener) {
-		mOnItemClickListener = listener;
+		onItemClickListener = listener;
 	}
 
 	public DevicesAdapter(@NonNull final ScannerActivity activity,
 						  @NonNull final DevicesLiveData devicesLiveData) {
-		mContext = activity;
 		setHasStableIds(true);
-		devicesLiveData.observe(activity, devices -> {
+		devicesLiveData.observe(activity, newDevices -> {
 			final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
-					new DeviceDiffCallback(mDevices, devices), false);
-			mDevices = devices;
+					new DeviceDiffCallback(devices, newDevices), false);
+			devices = newDevices;
 			result.dispatchUpdatesTo(this);
 		});
 	}
@@ -71,14 +69,14 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 	@NonNull
 	@Override
 	public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
-		final View layoutView = LayoutInflater.from(mContext)
+		final View layoutView = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.device_item, parent, false);
 		return new ViewHolder(layoutView);
 	}
 
 	@Override
 	public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-		final DiscoveredBluetoothDevice device = mDevices.get(position);
+		final DiscoveredBluetoothDevice device = devices.get(position);
 		final String deviceName = device.getName();
 
 		if (!TextUtils.isEmpty(deviceName))
@@ -92,12 +90,12 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 
 	@Override
 	public long getItemId(final int position) {
-		return mDevices.get(position).hashCode();
+		return devices.get(position).hashCode();
 	}
 
 	@Override
 	public int getItemCount() {
-		return mDevices != null ? mDevices.size() : 0;
+		return devices != null ? devices.size() : 0;
 	}
 
 	public boolean isEmpty() {
@@ -114,8 +112,8 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 			ButterKnife.bind(this, view);
 
 			view.findViewById(R.id.device_container).setOnClickListener(v -> {
-				if (mOnItemClickListener != null) {
-					mOnItemClickListener.onItemClick(mDevices.get(getAdapterPosition()));
+				if (onItemClickListener != null) {
+					onItemClickListener.onItemClick(devices.get(getAdapterPosition()));
 				}
 			});
 		}

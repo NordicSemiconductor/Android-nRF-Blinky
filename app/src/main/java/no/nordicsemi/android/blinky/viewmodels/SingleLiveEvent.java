@@ -42,7 +42,7 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
 
 	private static final String TAG = "SingleLiveEvent";
 
-	private final AtomicBoolean mPending = new AtomicBoolean(false);
+	private final AtomicBoolean pending = new AtomicBoolean(false);
 
 	@MainThread
 	@Override
@@ -53,7 +53,7 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
 
 		// Observe the internal MutableLiveData
 		super.observe(owner, t -> {
-			if (mPending.compareAndSet(true, false)) {
+			if (pending.compareAndSet(true, false)) {
 				observer.onChanged(t);
 			}
 		});
@@ -62,7 +62,7 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
 	@MainThread
 	@Override
 	public void setValue(@Nullable final T t) {
-		mPending.set(true);
+		pending.set(true);
 		super.setValue(t);
 	}
 

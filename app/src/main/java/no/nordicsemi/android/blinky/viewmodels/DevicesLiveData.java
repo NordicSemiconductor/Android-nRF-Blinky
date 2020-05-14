@@ -46,30 +46,30 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 	private static final int FILTER_RSSI = -50; // [dBm]
 
 	@NonNull
-	private final List<DiscoveredBluetoothDevice> mDevices = new ArrayList<>();
+	private final List<DiscoveredBluetoothDevice> devices = new ArrayList<>();
 	@Nullable
-	private List<DiscoveredBluetoothDevice> mFilteredDevices = null;
-	private boolean mFilterUuidRequired;
-	private boolean mFilterNearbyOnly;
+	private List<DiscoveredBluetoothDevice> filteredDevices = null;
+	private boolean filterUuidRequired;
+	private boolean filterNearbyOnly;
 
 	/* package */ DevicesLiveData(final boolean filterUuidRequired, final boolean filterNearbyOnly) {
-		mFilterUuidRequired = filterUuidRequired;
-		mFilterNearbyOnly = filterNearbyOnly;
+		this.filterUuidRequired = filterUuidRequired;
+		this.filterNearbyOnly = filterNearbyOnly;
 	}
 
 	/* package */ synchronized void bluetoothDisabled() {
-		mDevices.clear();
-		mFilteredDevices = null;
+		devices.clear();
+		filteredDevices = null;
 		postValue(null);
 	}
 
 	/* package */  boolean filterByUuid(final boolean uuidRequired) {
-		mFilterUuidRequired = uuidRequired;
+		filterUuidRequired = uuidRequired;
 		return applyFilter();
 	}
 
 	/* package */  boolean filterByDistance(final boolean nearbyOnly) {
-		mFilterNearbyOnly = nearbyOnly;
+		filterNearbyOnly = nearbyOnly;
 		return applyFilter();
 	}
 
@@ -80,16 +80,16 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 		final int index = indexOf(result);
 		if (index == -1) {
 			device = new DiscoveredBluetoothDevice(result);
-			mDevices.add(device);
+			devices.add(device);
 		} else {
-			device = mDevices.get(index);
+			device = devices.get(index);
 		}
 
 		// Update RSSI and name.
 		device.update(result);
 
 		// Return true if the device was on the filtered list or is to be added.
-		return (mFilteredDevices != null && mFilteredDevices.contains(device))
+		return (filteredDevices != null && filteredDevices.contains(device))
 				|| (matchesUuidFilter(result) && matchesNearbyFilter(device.getHighestRssi()));
     }
 
@@ -97,8 +97,8 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 	 * Clears the list of devices.
 	 */
 	public synchronized void clear() {
-		mDevices.clear();
-		mFilteredDevices = null;
+		devices.clear();
+		filteredDevices = null;
 		postValue(null);
 	}
 
@@ -106,16 +106,16 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 	 * Refreshes the filtered device list based on the filter flags.
 	 */
 	/* package */ synchronized boolean applyFilter() {
-		final List<DiscoveredBluetoothDevice> devices = new ArrayList<>();
-		for (final DiscoveredBluetoothDevice device : mDevices) {
+		final List<DiscoveredBluetoothDevice> tmp = new ArrayList<>();
+		for (final DiscoveredBluetoothDevice device : devices) {
 			final ScanResult result = device.getScanResult();
 			if (matchesUuidFilter(result) && matchesNearbyFilter(device.getHighestRssi())) {
-				devices.add(device);
+				tmp.add(device);
 			}
 		}
-		mFilteredDevices = devices;
-        postValue(mFilteredDevices);
-        return !mFilteredDevices.isEmpty();
+		filteredDevices = tmp;
+        postValue(filteredDevices);
+        return !filteredDevices.isEmpty();
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 	 */
 	private int indexOf(@NonNull final ScanResult result) {
 		int i = 0;
-		for (final DiscoveredBluetoothDevice device : mDevices) {
+		for (final DiscoveredBluetoothDevice device : devices) {
 			if (device.matches(result))
 				return i;
 			i++;
@@ -136,7 +136,7 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 
 	@SuppressWarnings("SimplifiableIfStatement")
 	private boolean matchesUuidFilter(@NonNull final ScanResult result) {
-		if (!mFilterUuidRequired)
+		if (!filterUuidRequired)
 			return true;
 
 		final ScanRecord record = result.getScanRecord();
@@ -152,7 +152,7 @@ public class DevicesLiveData extends LiveData<List<DiscoveredBluetoothDevice>> {
 
 	@SuppressWarnings("SimplifiableIfStatement")
 	private boolean matchesNearbyFilter(final int rssi) {
-		if (!mFilterNearbyOnly)
+		if (!filterNearbyOnly)
 			return true;
 
 		return rssi >= FILTER_RSSI;
