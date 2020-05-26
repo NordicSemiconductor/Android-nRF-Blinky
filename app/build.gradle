@@ -8,8 +8,8 @@ android {
         applicationId "no.nordicsemi.android.nrfblinky"
         minSdkVersion 18
         targetSdkVersion 29
-        versionCode 13
-        versionName "2.5.0"
+        versionCode 14
+        versionName "2.5.1"
         resConfigs "en"
 
         vectorDrawables.useSupportLibrary = true
@@ -38,7 +38,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0-alpha06'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta5'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
     // Lifecycle extensions
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     // Butter Knife
