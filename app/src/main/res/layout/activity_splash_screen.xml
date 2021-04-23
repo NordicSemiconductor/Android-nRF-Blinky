@@ -33,7 +33,8 @@
 	android:layout_height="match_parent"
 	android:fitsSystemWindows="true"
 	tools:context=".SplashScreenActivity"
-	tools:ignore="ContentDescription">
+	tools:ignore="ContentDescription"
+	tools:viewBindingIgnore="true">
 
 	<androidx.appcompat.widget.AppCompatImageView
 		android:layout_width="match_parent"
