@@ -28,13 +28,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.location.LocationManagerCompat;
 
 public class Utils {
 	private static final String PREFS_LOCATION_NOT_REQUIRED = "location_not_required";
@@ -86,14 +87,8 @@ public class Utils {
 	 */
 	public static boolean isLocationEnabled(@NonNull final Context context) {
 		if (isMarshmallowOrAbove()) {
-			int locationMode = Settings.Secure.LOCATION_MODE_OFF;
-			try {
-				locationMode = Settings.Secure.getInt(context.getContentResolver(),
-						Settings.Secure.LOCATION_MODE);
-			} catch (final Settings.SettingNotFoundException e) {
-				// do nothing
-			}
-			return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+			LocationManager lm = context.getSystemService(LocationManager.class);
+			return LocationManagerCompat.isLocationEnabled(lm);
 		}
 		return true;
 	}
