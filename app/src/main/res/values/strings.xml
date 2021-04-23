@@ -63,6 +63,10 @@
 		\n\n3. If you used the DK with another firmware before, the old services might have been cached by the system.</string>
 	<string name="not_supported_action">Fix and try again</string>
 
+	<string name="timeout_title">CONNECTION TIMED OUT</string>
+	<string name="timeout_info">Make sure your device is powered ON and in range.</string>
+	<string name="timeout_action">Retry</string>
+
 	<string name="state_connecting">Connecting…</string>
 	<string name="state_initializing">Initializing…</string>
 </resources>

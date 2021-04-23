@@ -41,7 +41,6 @@ import no.nordicsemi.android.ble.livedata.state.ConnectionState;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
 
-@SuppressWarnings("ConstantConditions")
 public class BlinkyActivity extends AppCompatActivity {
 	public static final String EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE";
 
@@ -76,14 +75,16 @@ public class BlinkyActivity extends AppCompatActivity {
 		final LinearLayout progressContainer = findViewById(R.id.progress_container);
 		final TextView connectionState = findViewById(R.id.connection_state);
 		final View content = findViewById(R.id.device_container);
-		final View notSupported = findViewById(R.id.not_supported);
+		final View infoNotSupported = findViewById(R.id.info_not_supported);
+		final View infoTimeout = findViewById(R.id.info_timeout);
 
 		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
 		viewModel.getConnectionState().observe(this, state -> {
 			switch (state.getState()) {
 				case CONNECTING:
 					progressContainer.setVisibility(View.VISIBLE);
-					notSupported.setVisibility(View.GONE);
+					infoNotSupported.setVisibility(View.GONE);
+					infoTimeout.setVisibility(View.GONE);
 					connectionState.setText(R.string.state_connecting);
 					break;
 				case INITIALIZING:
@@ -96,10 +97,13 @@ public class BlinkyActivity extends AppCompatActivity {
 					break;
 				case DISCONNECTED:
 					if (state instanceof ConnectionState.Disconnected) {
+						content.setVisibility(View.GONE);
+						progressContainer.setVisibility(View.GONE);
 						final ConnectionState.Disconnected stateWithReason = (ConnectionState.Disconnected) state;
 						if (stateWithReason.isNotSupported()) {
-							progressContainer.setVisibility(View.GONE);
-							notSupported.setVisibility(View.VISIBLE);
+							infoNotSupported.setVisibility(View.VISIBLE);
+						} else if (stateWithReason.isTimeout()) {
+							infoTimeout.setVisibility(View.VISIBLE);
 						}
 					}
 					// fallthrough
@@ -119,6 +123,11 @@ public class BlinkyActivity extends AppCompatActivity {
 
 	@OnClick(R.id.action_clear_cache)
 	public void onTryAgainClicked() {
+		viewModel.reconnect();
+	}
+
+	@OnClick(R.id.action_retry)
+	public void onRetryClicked() {
 		viewModel.reconnect();
 	}
 

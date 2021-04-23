@@ -191,8 +191,17 @@
 	</LinearLayout>
 
 	<include
-		android:id="@+id/not_supported"
+		android:id="@+id/info_not_supported"
 		layout="@layout/info_not_supported"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:visibility="gone"
+		tools:visibility="gone" />
+
+	<include
+		android:id="@+id/info_timeout"
+		layout="@layout/info_timeout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
