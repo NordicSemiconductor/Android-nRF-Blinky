@@ -38,6 +38,7 @@ import java.util.UUID;
 
 import no.nordicsemi.android.ble.data.Data;
 import no.nordicsemi.android.ble.livedata.ObservableBleManager;
+import no.nordicsemi.android.blinky.BuildConfig;
 import no.nordicsemi.android.blinky.profile.callback.BlinkyButtonDataCallback;
 import no.nordicsemi.android.blinky.profile.callback.BlinkyLedDataCallback;
 import no.nordicsemi.android.blinky.profile.data.BlinkyLED;
@@ -89,6 +90,9 @@ public class BlinkyManager extends ObservableBleManager {
 
 	@Override
 	public void log(final int priority, @NonNull final String message) {
+		if (BuildConfig.DEBUG) {
+			Log.println(priority, "BlinkyManager", message);
+		}
 		// The priority is a Log.X constant, while the Logger accepts it's log levels.
 		Logger.log(logSession, LogContract.Log.Level.fromPriority(priority), message);
 	}
