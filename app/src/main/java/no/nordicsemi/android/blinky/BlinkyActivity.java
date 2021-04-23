@@ -71,8 +71,8 @@ public class BlinkyActivity extends AppCompatActivity {
 			switch (state.getState()) {
 				case CONNECTING:
 					binding.progressContainer.setVisibility(View.VISIBLE);
-					binding.infoNotSupported.getRoot().setVisibility(View.GONE);
-					binding.infoTimeout.getRoot().setVisibility(View.GONE);
+					binding.infoNotSupported.container.setVisibility(View.GONE);
+					binding.infoTimeout.container.setVisibility(View.GONE);
 					binding.connectionState.setText(R.string.state_connecting);
 					break;
 				case INITIALIZING:
@@ -89,9 +89,9 @@ public class BlinkyActivity extends AppCompatActivity {
 						binding.progressContainer.setVisibility(View.GONE);
 						final ConnectionState.Disconnected stateWithReason = (ConnectionState.Disconnected) state;
 						if (stateWithReason.isNotSupported()) {
-							binding.infoNotSupported.getRoot().setVisibility(View.VISIBLE);
+							binding.infoNotSupported.container.setVisibility(View.VISIBLE);
 						} else if (stateWithReason.isTimeout()) {
-							binding.infoTimeout.getRoot().setVisibility(View.VISIBLE);
+							binding.infoTimeout.container.setVisibility(View.VISIBLE);
 						}
 					}
 					// fallthrough

@@ -164,18 +164,18 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
         // First, check the Location permission. This is required on Marshmallow onwards in order
         // to scan for Bluetooth LE devices.
         if (Utils.isLocationPermissionsGranted(this)) {
-            binding.noLocationPermission.getRoot().setVisibility(View.GONE);
+            binding.noLocationPermission.container.setVisibility(View.GONE);
 
             // Bluetooth must be enabled.
             if (state.isBluetoothEnabled()) {
-                binding.bluetoothOff.getRoot().setVisibility(View.GONE);
+                binding.bluetoothOff.container.setVisibility(View.GONE);
 
                 // We are now OK to start scanning.
                 scannerViewModel.startScan();
                 binding.stateScanning.setVisibility(View.VISIBLE);
 
                 if (!state.hasRecords()) {
-                    binding.noDevices.getRoot().setVisibility(View.VISIBLE);
+                    binding.noDevices.container.setVisibility(View.VISIBLE);
 
                     if (!Utils.isLocationRequired(this) || Utils.isLocationEnabled(this)) {
                         binding.noDevices.noLocation.setVisibility(View.INVISIBLE);
@@ -183,19 +183,19 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
                         binding.noDevices.noLocation.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    binding.noDevices.getRoot().setVisibility(View.GONE);
+                    binding.noDevices.container.setVisibility(View.GONE);
                 }
             } else {
-                binding.bluetoothOff.getRoot().setVisibility(View.VISIBLE);
+                binding.bluetoothOff.container.setVisibility(View.VISIBLE);
                 binding.stateScanning.setVisibility(View.INVISIBLE);
-                binding.noDevices.getRoot().setVisibility(View.GONE);
+                binding.noDevices.container.setVisibility(View.GONE);
                 clear();
             }
         } else {
-            binding.noLocationPermission.getRoot().setVisibility(View.VISIBLE);
-            binding.bluetoothOff.getRoot().setVisibility(View.GONE);
+            binding.noLocationPermission.container.setVisibility(View.VISIBLE);
+            binding.bluetoothOff.container.setVisibility(View.GONE);
             binding.stateScanning.setVisibility(View.INVISIBLE);
-            binding.noDevices.getRoot().setVisibility(View.GONE);
+            binding.noDevices.container.setVisibility(View.GONE);
 
             final boolean deniedForever = Utils.isLocationPermissionDeniedForever(this);
             binding.noLocationPermission.actionGrantLocationPermission.setVisibility(deniedForever ? View.GONE : View.VISIBLE);
