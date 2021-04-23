@@ -25,6 +25,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildFeatures {
+        viewBinding = true
+    }
 
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
@@ -41,9 +44,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0-beta01'
     // Lifecycle extensions
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    // Butter Knife
-    implementation 'com.jakewharton:butterknife:10.2.3'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
     // Brings the new BluetoothLeScanner API to older platforms
      implementation 'no.nordicsemi.android.support.v18:scanner:1.4.3'
     //implementation project(":scanner")

@@ -26,22 +26,17 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import no.nordicsemi.android.blinky.R;
 import no.nordicsemi.android.blinky.ScannerActivity;
+import no.nordicsemi.android.blinky.databinding.DeviceItemBinding;
 import no.nordicsemi.android.blinky.viewmodels.DevicesLiveData;
 
-@SuppressWarnings("unused")
 public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHolder> {
 	private List<DiscoveredBluetoothDevice> devices;
 	private OnItemClickListener onItemClickListener;
@@ -80,12 +75,12 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 		final String deviceName = device.getName();
 
 		if (!TextUtils.isEmpty(deviceName))
-			holder.deviceName.setText(deviceName);
+			holder.binding.deviceName.setText(deviceName);
 		else
-			holder.deviceName.setText(R.string.unknown_device);
-		holder.deviceAddress.setText(device.getAddress());
+			holder.binding.deviceName.setText(R.string.unknown_device);
+		holder.binding.deviceAddress.setText(device.getAddress());
 		final int rssiPercent = (int) (100.0f * (127.0f + device.getRssi()) / (127.0f + 20.0f));
-		holder.rssi.setImageLevel(rssiPercent);
+		holder.binding.rssi.setImageLevel(rssiPercent);
 	}
 
 	@Override
@@ -98,22 +93,16 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 		return devices != null ? devices.size() : 0;
 	}
 
-	public boolean isEmpty() {
-		return getItemCount() == 0;
-	}
-
 	final class ViewHolder extends RecyclerView.ViewHolder {
-		@BindView(R.id.device_address) TextView deviceAddress;
-		@BindView(R.id.device_name) TextView deviceName;
-		@BindView(R.id.rssi) ImageView rssi;
+		private final DeviceItemBinding binding;
 
 		private ViewHolder(@NonNull final View view) {
 			super(view);
-			ButterKnife.bind(this, view);
+			binding = DeviceItemBinding.bind(view);
 
 			view.findViewById(R.id.device_container).setOnClickListener(v -> {
 				if (onItemClickListener != null) {
-					onItemClickListener.onItemClick(devices.get(getAdapterPosition()));
+					onItemClickListener.onItemClick(devices.get(getBindingAdapterPosition()));
 				}
 			});
 		}
