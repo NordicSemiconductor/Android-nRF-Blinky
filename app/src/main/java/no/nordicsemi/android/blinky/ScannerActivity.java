@@ -34,10 +34,11 @@ import android.view.View;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -51,10 +52,13 @@ import no.nordicsemi.android.blinky.viewmodels.ScannerStateLiveData;
 import no.nordicsemi.android.blinky.viewmodels.ScannerViewModel;
 
 public class ScannerActivity extends AppCompatActivity implements DevicesAdapter.OnItemClickListener {
-    private static final int REQUEST_ACCESS_FINE_LOCATION = 1022; // random number
-
     private ScannerViewModel scannerViewModel;
     private ActivityScannerBinding binding;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> scannerViewModel.refresh()
+    );
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -93,10 +97,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
         });
         binding.noLocationPermission.actionGrantLocationPermission.setOnClickListener(v -> {
             Utils.markLocationPermissionRequested(this);
-            ActivityCompat.requestPermissions(
-                    this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_ACCESS_FINE_LOCATION);
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         });
         binding.noLocationPermission.actionPermissionSettings.setOnClickListener(v -> {
             final Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -145,16 +146,6 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
         final Intent controlBlinkIntent = new Intent(this, BlinkyActivity.class);
         controlBlinkIntent.putExtra(BlinkyActivity.EXTRA_DEVICE, device);
         startActivity(controlBlinkIntent);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(final int requestCode,
-                                           @NonNull final String[] permissions,
-                                           @NonNull final int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_ACCESS_FINE_LOCATION) {
-            scannerViewModel.refresh();
-        }
     }
 
     /**
