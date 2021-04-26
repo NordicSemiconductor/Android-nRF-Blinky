@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import no.nordicsemi.android.blinky.R;
@@ -46,7 +47,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 		void onItemClick(@NonNull final DiscoveredBluetoothDevice device);
 	}
 
-	public void setOnItemClickListener(final OnItemClickListener listener) {
+	public void setOnItemClickListener(@Nullable final OnItemClickListener listener) {
 		onItemClickListener = listener;
 	}
 
