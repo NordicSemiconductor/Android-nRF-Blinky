@@ -99,8 +99,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 		private ViewHolder(@NonNull final View view) {
 			super(view);
 			binding = DeviceItemBinding.bind(view);
-
-			view.findViewById(R.id.device_container).setOnClickListener(v -> {
+			binding.deviceContainer.setOnClickListener(v -> {
 				if (onItemClickListener != null) {
 					onItemClickListener.onItemClick(devices.get(getBindingAdapterPosition()));
 				}
