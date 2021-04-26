@@ -127,15 +127,15 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.filter_uuid:
-                item.setChecked(!item.isChecked());
-                scannerViewModel.filterByUuid(item.isChecked());
-                return true;
-            case R.id.filter_nearby:
-                item.setChecked(!item.isChecked());
-                scannerViewModel.filterByDistance(item.isChecked());
-                return true;
+        int itemId = item.getItemId();
+        if (itemId == R.id.filter_uuid) {
+            item.setChecked(!item.isChecked());
+            scannerViewModel.filterByUuid(item.isChecked());
+            return true;
+        } else if (itemId == R.id.filter_nearby) {
+            item.setChecked(!item.isChecked());
+            scannerViewModel.filterByDistance(item.isChecked());
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
