@@ -160,7 +160,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
     /**
      * Start scanning for Bluetooth devices or displays a message based on the scanner state.
      */
-    private void startScan(final ScannerStateLiveData state) {
+    private void startScan(@NonNull final ScannerStateLiveData state) {
         // First, check the Location permission. This is required on Marshmallow onwards in order
         // to scan for Bluetooth LE devices.
         if (Utils.isLocationPermissionsGranted(this)) {
