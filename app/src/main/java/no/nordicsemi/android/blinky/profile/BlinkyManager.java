@@ -29,11 +29,13 @@ import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.List;
 import java.util.UUID;
 
 import no.nordicsemi.android.ble.data.Data;
@@ -44,8 +46,11 @@ import no.nordicsemi.android.blinky.profile.data.BlinkyLED;
 import no.nordicsemi.android.log.LogContract;
 import no.nordicsemi.android.log.LogSession;
 import no.nordicsemi.android.log.Logger;
+import no.nordicsemi.android.ble.common.callback.hr.HeartRateMeasurementDataCallback;
+
 
 public class BlinkyManager extends ObservableBleManager {
+	//TODO remove these UUID
 	/** Nordic Blinky Service UUID. */
 	public final static UUID LBS_UUID_SERVICE = UUID.fromString("00001523-1212-efde-1523-785feabcd123");
 	/** BUTTON characteristic UUID. */
@@ -53,13 +58,29 @@ public class BlinkyManager extends ObservableBleManager {
 	/** LED characteristic UUID. */
 	private final static UUID LBS_UUID_LED_CHAR = UUID.fromString("00001525-1212-efde-1523-785feabcd123");
 
+
+
+	static final UUID HEART_RATE_UUID_SERVICE = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
+	private final static UUID BATTERY_SERVICE = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb"); // battery if time allows
+	private static final UUID HEART_RATE_MEASUREMENT_UUID_CHAR = UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb");
+	private final static UUID BATTERY_LEVEL_CHARACTERISTIC = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb"); // battery if time allows
+
+
+
 	private final MutableLiveData<Boolean> ledState = new MutableLiveData<>();
 	private final MutableLiveData<Boolean> buttonState = new MutableLiveData<>();
+	private final MutableLiveData<Integer> heartRateState = new MutableLiveData<>();
 
 	private BluetoothGattCharacteristic buttonCharacteristic, ledCharacteristic;
+
+
+	private BluetoothGattCharacteristic heartRateCharacteristic;
+
+
 	private LogSession logSession;
 	private boolean supported;
 	private boolean ledOn;
+	private int curHeartRate;
 
 	public BlinkyManager(@NonNull final Context context) {
 		super(context);
@@ -73,10 +94,22 @@ public class BlinkyManager extends ObservableBleManager {
 		return buttonState;
 	}
 
+	public final LiveData<Integer> getHeartRate() {
+		return heartRateState;
+	}
+
+	/*
 	@NonNull
 	@Override
 	protected BleManagerGattCallback getGattCallback() {
 		return new BlinkyBleManagerGattCallback();
+	}
+	*/
+
+	@NonNull
+	@Override
+	protected BleManagerGattCallback getGattCallback() {
+		return new HeartRateManagerGattCallback();
 	}
 
 	/**
@@ -150,9 +183,31 @@ public class BlinkyManager extends ObservableBleManager {
 		}
 	};
 
-	/**
+
+	// in no.nordicsemi.android.ble.common.callback.hr
+	private final HeartRateMeasurementDataCallback HeartRateCallback = new HeartRateMeasurementDataCallback() {
+		@Override
+		public void onDataReceived(@NonNull final BluetoothDevice device, @NonNull final Data data) {
+			super.onDataReceived(device, data);
+		}
+
+		@Override
+		public void onHeartRateMeasurementReceived(@NonNull final BluetoothDevice device,
+												   @IntRange(from = 0) final int heartRate,
+												   @Nullable final Boolean contactDetected,
+												   @Nullable @IntRange(from = 0) final Integer energyExpanded,
+												   @Nullable final List<Integer> rrIntervals) {
+			curHeartRate = heartRate;
+			heartRateState.setValue(heartRate);
+		// TODO will likely need to flush out here once phone comes and I fully understand
+		}
+	};
+
+
+		/**
 	 * BluetoothGatt callbacks object.
 	 */
+
 	private class BlinkyBleManagerGattCallback extends BleManagerGattCallback {
 		@Override
 		protected void initialize() {
@@ -184,6 +239,33 @@ public class BlinkyManager extends ObservableBleManager {
 		protected void onDeviceDisconnected() {
 			buttonCharacteristic = null;
 			ledCharacteristic = null;
+		}
+	}
+
+
+
+	/**
+	 * BluetoothGatt callbacks object.
+	 */
+	private class HeartRateManagerGattCallback extends BleManagerGattCallback {
+		@Override
+		protected void initialize() {
+			setNotificationCallback(heartRateCharacteristic).with(HeartRateCallback);
+			enableNotifications(heartRateCharacteristic).enqueue();
+		}
+
+		@Override
+		protected boolean isRequiredServiceSupported(@NonNull final BluetoothGatt gatt) {
+			final BluetoothGattService service = gatt.getService(HEART_RATE_UUID_SERVICE);
+			if (service != null) {
+				heartRateCharacteristic = service.getCharacteristic(HEART_RATE_MEASUREMENT_UUID_CHAR);
+			}
+			return heartRateCharacteristic != null;
+		}
+
+		@Override
+		protected void onDeviceDisconnected() {
+			heartRateCharacteristic = null;
 		}
 	}
 

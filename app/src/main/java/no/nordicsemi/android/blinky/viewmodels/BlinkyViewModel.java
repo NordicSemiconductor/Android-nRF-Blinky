@@ -58,6 +58,10 @@ public class BlinkyViewModel extends AndroidViewModel {
 		return blinkyManager.getLedState();
 	}
 
+	public LiveData<Integer> getHeartRate() {
+		return blinkyManager.getHeartRate();
+	}
+
 	/**
 	 * Connect to the given peripheral.
 	 *
