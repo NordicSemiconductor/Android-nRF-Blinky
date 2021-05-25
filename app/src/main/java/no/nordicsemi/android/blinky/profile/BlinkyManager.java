@@ -98,13 +98,6 @@ public class BlinkyManager extends ObservableBleManager {
 		return heartRateState;
 	}
 
-	/*
-	@NonNull
-	@Override
-	protected BleManagerGattCallback getGattCallback() {
-		return new BlinkyBleManagerGattCallback();
-	}
-	*/
 
 	@NonNull
 	@Override
@@ -202,46 +195,6 @@ public class BlinkyManager extends ObservableBleManager {
 		// TODO will likely need to flush out here once phone comes and I fully understand
 		}
 	};
-
-
-		/**
-	 * BluetoothGatt callbacks object.
-	 */
-
-	private class BlinkyBleManagerGattCallback extends BleManagerGattCallback {
-		@Override
-		protected void initialize() {
-			setNotificationCallback(buttonCharacteristic).with(buttonCallback);
-			readCharacteristic(ledCharacteristic).with(ledCallback).enqueue();
-			readCharacteristic(buttonCharacteristic).with(buttonCallback).enqueue();
-			enableNotifications(buttonCharacteristic).enqueue();
-		}
-
-		@Override
-		public boolean isRequiredServiceSupported(@NonNull final BluetoothGatt gatt) {
-			final BluetoothGattService service = gatt.getService(LBS_UUID_SERVICE);
-			if (service != null) {
-				buttonCharacteristic = service.getCharacteristic(LBS_UUID_BUTTON_CHAR);
-				ledCharacteristic = service.getCharacteristic(LBS_UUID_LED_CHAR);
-			}
-
-			boolean writeRequest = false;
-			if (ledCharacteristic != null) {
-				final int rxProperties = ledCharacteristic.getProperties();
-				writeRequest = (rxProperties & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0;
-			}
-
-			supported = buttonCharacteristic != null && ledCharacteristic != null && writeRequest;
-			return supported;
-		}
-
-		@Override
-		protected void onDeviceDisconnected() {
-			buttonCharacteristic = null;
-			ledCharacteristic = null;
-		}
-	}
-
 
 
 	/**

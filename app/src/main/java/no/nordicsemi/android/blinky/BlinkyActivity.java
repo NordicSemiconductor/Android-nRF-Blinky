@@ -23,14 +23,21 @@
 package no.nordicsemi.android.blinky;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -41,6 +48,9 @@ import no.nordicsemi.android.ble.livedata.state.ConnectionState;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("ConstantConditions")
 public class BlinkyActivity extends AppCompatActivity {
 	public static final String EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE";
@@ -49,6 +59,12 @@ public class BlinkyActivity extends AppCompatActivity {
 
 	@BindView(R.id.led_switch) SwitchMaterial led;
 	@BindView(R.id.button_state) TextView buttonState;
+	@BindView(R.id.heart_rate_tv) TextView heart_rate_tv;
+
+	LineChart chart = (LineChart) findViewById(R.id.heart_rate_chart);
+	private Handler handler = new Handler();
+	private ArrayList<int[]> hr_values_list = new ArrayList<int[]>();
+	private int data_cnt = 0;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -77,6 +93,10 @@ public class BlinkyActivity extends AppCompatActivity {
 		final TextView connectionState = findViewById(R.id.connection_state);
 		final View content = findViewById(R.id.device_container);
 		final View notSupported = findViewById(R.id.not_supported);
+
+		// Mock Data for heart rate chart
+		createChart();
+
 
 		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
 		viewModel.getConnectionState().observe(this, state -> {
@@ -115,7 +135,49 @@ public class BlinkyActivity extends AppCompatActivity {
 		viewModel.getButtonState().observe(this,
 				pressed -> buttonState.setText(pressed ?
 						R.string.button_pressed : R.string.button_released));
+
+		setHrTv();
 	}
+
+	private void createChart() {
+		//		int[][] hr_values_list = {{0,100},{1,99},{2,95},{3,122},{4,115},{5,101}};
+		hr_values_list.add(new int[]{data_cnt, viewModel.getHeartRate().getValue()});
+			data_cnt++;
+		List<Entry> entries = new ArrayList<Entry>();
+		for (int[] data : hr_values_list) {
+			// TODO dont magic number this, make a getX(), getY() func to return the relevant datum
+			entries.add(new Entry(data[0], data[1]));
+		}
+
+		LineDataSet dataSet = new LineDataSet(entries, "Label"); // add entries to dataset
+		dataSet.setColor(Color.parseColor("#0096FF"));
+
+		LineData lineData = new LineData(dataSet);
+		chart.setData(lineData);
+		chart.setAutoScaleMinMaxEnabled(true);
+		chart.invalidate(); // refresh
+		runUpdate.run();
+	}
+
+	private Runnable runUpdate = new Runnable() {
+		@Override
+		public void run() {
+			setHrTv();
+			updateGraph();
+			handler.postDelayed(runUpdate, 1000);
+		}
+	};
+
+	private void updateGraph() {
+		// need to set new data to line chart and refresh it
+		chart.notifyDataSetChanged();
+		chart.invalidate();
+	}
+
+	private void setHrTv() {
+		heart_rate_tv.setText(viewModel.getHeartRate().getValue().toString());
+	}
+
 
 	@OnClick(R.id.action_clear_cache)
 	public void onTryAgainClicked() {

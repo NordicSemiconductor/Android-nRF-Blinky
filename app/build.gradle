@@ -47,6 +47,8 @@ dependencies {
     // Brings the new BluetoothLeScanner API to older platforms
      implementation 'no.nordicsemi.android.support.v18:scanner:1.4.3'
     //implementation project(":scanner")
+    //MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0' // https://weeklycoding.com/mpandroidchart-documentation/
     // Log Bluetooth LE events in nRF Logger
     implementation 'no.nordicsemi.android:log:2.2.0'
     // BLE library
@@ -58,4 +60,8 @@ dependencies {
     // To add BLE Library as a module, replace the above dependency with the following
     // and uncomment 2 lines in settings.gradle file.
     // implementation project(":ble-livedata")
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
 }

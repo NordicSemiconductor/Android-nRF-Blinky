@@ -161,6 +161,18 @@
 						app:layout_constraintRight_toRightOf="parent" />
 				</androidx.constraintlayout.widget.ConstraintLayout>
 			</com.google.android.material.card.MaterialCardView>
+
+			<TextView
+				android:id="@+id/heart_rate_tv"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="TextView" />
+
+			<com.github.mikephil.charting.charts.LineChart
+				android:id="@+id/heart_rate_chart"
+				android:layout_width="match_parent"
+				android:layout_height="181dp" />
+
 		</LinearLayout>
 	</ScrollView>
 
