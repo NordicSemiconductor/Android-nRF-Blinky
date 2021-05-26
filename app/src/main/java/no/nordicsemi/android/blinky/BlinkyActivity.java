@@ -51,8 +51,6 @@ import butterknife.OnClick;
 import no.nordicsemi.android.ble.livedata.state.ConnectionState;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
-import no.nordicsemi.android.ble.common.callback.hr.HeartRateMeasurementDataCallback;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +64,6 @@ public class BlinkyActivity extends AppCompatActivity {
 	@BindView(R.id.button_state) TextView buttonState;
 	@BindView(R.id.heart_rate_tv) TextView heart_rate_tv;
 	@BindView(R.id.heart_rate_chart) LineChart chart;
-//	LineChart chart = (LineChart) findViewById(R.id.heart_rate_chart);
 
 //	private Handler handler = new Handler();
 	private ArrayList<int[]> hr_values_list = new ArrayList<int[]>();
@@ -101,7 +98,6 @@ public class BlinkyActivity extends AppCompatActivity {
 		final View content = findViewById(R.id.device_container);
 		final View notSupported = findViewById(R.id.not_supported);
 
-
 		//set up livedata observer
 		viewModel.getHeartRate().observe(this, new Observer<Integer>() {
 			@Override
@@ -113,7 +109,6 @@ public class BlinkyActivity extends AppCompatActivity {
 		});
 
 		createChart();
-//		runUpdate.run();
 
 
 		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
@@ -153,8 +148,6 @@ public class BlinkyActivity extends AppCompatActivity {
 		viewModel.getButtonState().observe(this,
 				pressed -> buttonState.setText(pressed ?
 						R.string.button_pressed : R.string.button_released));
-
-//		setHrTv();
 	}
 
 
@@ -162,23 +155,7 @@ public class BlinkyActivity extends AppCompatActivity {
 		resetGraphData();
 		chart.setAutoScaleMinMaxEnabled(true);
 		chart.invalidate(); // refresh
-//		runUpdate.run();
 	}
-
-
-
-//	private Runnable runUpdate = new Runnable() {
-//		@Override
-//		public void run() {
-////			setHrTv();
-//			updateGraph();
-//			//TODO - is this delay based approach sufficient?
-//			// do i need to be "listening" for new changes and
-//			// publishing those?
-//			// would I achieve the above by integrating the "LiveData" datatypes?
-//			handler.postDelayed(runUpdate, 1000);
-//		}
-//	};
 
 
 	private void updateGraph() {
@@ -187,13 +164,15 @@ public class BlinkyActivity extends AppCompatActivity {
 		chart.invalidate();
 	}
 
-	//TODO - remove entries with value of 0 and depricate counter
 	private void resetGraphData() {
+		//remove leading 0's
+		//TODO - more elegant solution?
 		if(!hr_values_list.isEmpty())
 			if(hr_values_list.get(0)[1] == 0) {
 				hr_values_list.remove(0);
 				data_cnt--;
 			}
+
 		hr_values_list.add(new int[]{data_cnt, hrValue});
 		data_cnt++;
 		List<Entry> entries = new ArrayList<Entry>();
@@ -206,17 +185,6 @@ public class BlinkyActivity extends AppCompatActivity {
 		LineData lineData = new LineData(dataSet);
 		chart.setData(lineData);
 	}
-
-
-
-	//TODO - this was causing crashes. not actually getting the value of the heart rate
-	// possible need for "LiveData" discussed in tdo in runnable method
-//	private void setHrTv() {
-////		heart_rate_tv.setText(viewModel.getHeartRate().getValue().toString());
-//		String hrvs = String.valueOf(viewModel.getHeartRateValue());
-//		heart_rate_tv.setText(hrvs);
-//	}
-
 
 	@OnClick(R.id.action_clear_cache)
 	public void onTryAgainClicked() {

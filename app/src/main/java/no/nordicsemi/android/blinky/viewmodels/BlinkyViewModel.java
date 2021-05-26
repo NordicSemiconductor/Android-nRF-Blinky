@@ -50,7 +50,6 @@ public class BlinkyViewModel extends AndroidViewModel {
 		return blinkyManager.getState();
 	}
 
-	// TODO blink functionality only
 	public LiveData<Boolean> getButtonState() {
 		return blinkyManager.getButtonState();
 	}
@@ -58,13 +57,11 @@ public class BlinkyViewModel extends AndroidViewModel {
 	public LiveData<Boolean> getLedState() {
 		return blinkyManager.getLedState();
 	}
-	// end
 
 	public LiveData<Integer> getHeartRate() {
 		return blinkyManager.getHeartRate();
 	}
 
-	public int getHeartRateValue() { return blinkyManager.getHeartRateInt(); }
 
 	/**
 	 * Connect to the given peripheral.
@@ -109,7 +106,6 @@ public class BlinkyViewModel extends AndroidViewModel {
 	 *
 	 * @param on true to turn the LED on, false to turn it OFF.
 	 */
-	// TODO don't need a heart rate equivilent since use case never dictates changing characteristic
 	public void setLedState(final boolean on) {
 		blinkyManager.turnLed(on);
 	}
