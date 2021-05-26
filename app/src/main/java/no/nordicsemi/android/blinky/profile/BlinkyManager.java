@@ -98,6 +98,9 @@ public class BlinkyManager extends ObservableBleManager {
 		return heartRateState;
 	}
 
+	public final int getHeartRateInt() {
+		return curHeartRate;
+	}
 
 	@NonNull
 	@Override

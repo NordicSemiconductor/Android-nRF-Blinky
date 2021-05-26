@@ -61,7 +61,7 @@ public class BlinkyActivity extends AppCompatActivity {
 	@BindView(R.id.button_state) TextView buttonState;
 	@BindView(R.id.heart_rate_tv) TextView heart_rate_tv;
 
-	LineChart chart = (LineChart) findViewById(R.id.heart_rate_chart);
+//	LineChart chart = (LineChart) findViewById(R.id.heart_rate_chart);
 	private Handler handler = new Handler();
 	private ArrayList<int[]> hr_values_list = new ArrayList<int[]>();
 	private int data_cnt = 0;
@@ -95,7 +95,8 @@ public class BlinkyActivity extends AppCompatActivity {
 		final View notSupported = findViewById(R.id.not_supported);
 
 		// Mock Data for heart rate chart
-		createChart();
+//		createChart();
+		runUpdate.run();
 
 
 		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
@@ -139,6 +140,7 @@ public class BlinkyActivity extends AppCompatActivity {
 		setHrTv();
 	}
 
+	/*
 	private void createChart() {
 		//		int[][] hr_values_list = {{0,100},{1,99},{2,95},{3,122},{4,115},{5,101}};
 		hr_values_list.add(new int[]{data_cnt, viewModel.getHeartRate().getValue()});
@@ -156,26 +158,35 @@ public class BlinkyActivity extends AppCompatActivity {
 		chart.setData(lineData);
 		chart.setAutoScaleMinMaxEnabled(true);
 		chart.invalidate(); // refresh
-		runUpdate.run();
+//		runUpdate.run();
 	}
+	 */
+
 
 	private Runnable runUpdate = new Runnable() {
 		@Override
 		public void run() {
 			setHrTv();
-			updateGraph();
+//			updateGraph();
 			handler.postDelayed(runUpdate, 1000);
 		}
 	};
 
+	/*
 	private void updateGraph() {
 		// need to set new data to line chart and refresh it
 		chart.notifyDataSetChanged();
 		chart.invalidate();
 	}
+	 */
 
+
+	// TODO this was causing crashes. not actually getting the value of the heart rate
 	private void setHrTv() {
-		heart_rate_tv.setText(viewModel.getHeartRate().getValue().toString());
+//		heart_rate_tv.setText(viewModel.getHeartRate().getValue().toString());
+		int hrv = viewModel.getHeartRateValue();
+		String hrvs = String.valueOf(hrv);
+		heart_rate_tv.setText(hrvs);
 	}
 
 

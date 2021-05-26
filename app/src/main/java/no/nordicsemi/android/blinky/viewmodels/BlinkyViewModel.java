@@ -64,6 +64,8 @@ public class BlinkyViewModel extends AndroidViewModel {
 		return blinkyManager.getHeartRate();
 	}
 
+	public int getHeartRateValue() { return blinkyManager.getHeartRateInt(); }
+
 	/**
 	 * Connect to the given peripheral.
 	 *
@@ -119,4 +121,5 @@ public class BlinkyViewModel extends AndroidViewModel {
 			disconnect();
 		}
 	}
+
 }
