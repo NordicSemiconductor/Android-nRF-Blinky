@@ -22,6 +22,7 @@
 
 package no.nordicsemi.android.blinky;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -30,6 +31,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -47,6 +50,7 @@ import butterknife.OnClick;
 import no.nordicsemi.android.ble.livedata.state.ConnectionState;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
+import no.nordicsemi.android.ble.common.callback.hr.HeartRateMeasurementDataCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +64,13 @@ public class BlinkyActivity extends AppCompatActivity {
 	@BindView(R.id.led_switch) SwitchMaterial led;
 	@BindView(R.id.button_state) TextView buttonState;
 	@BindView(R.id.heart_rate_tv) TextView heart_rate_tv;
-
+	@BindView(R.id.heart_rate_chart) LineChart chart;
 //	LineChart chart = (LineChart) findViewById(R.id.heart_rate_chart);
+
 	private Handler handler = new Handler();
 	private ArrayList<int[]> hr_values_list = new ArrayList<int[]>();
 	private int data_cnt = 0;
+	private int hrValue;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -95,7 +101,7 @@ public class BlinkyActivity extends AppCompatActivity {
 		final View notSupported = findViewById(R.id.not_supported);
 
 		// Mock Data for heart rate chart
-//		createChart();
+		createChart();
 		runUpdate.run();
 
 
@@ -140,52 +146,63 @@ public class BlinkyActivity extends AppCompatActivity {
 		setHrTv();
 	}
 
-	/*
+
 	private void createChart() {
-		//		int[][] hr_values_list = {{0,100},{1,99},{2,95},{3,122},{4,115},{5,101}};
-		hr_values_list.add(new int[]{data_cnt, viewModel.getHeartRate().getValue()});
-			data_cnt++;
-		List<Entry> entries = new ArrayList<Entry>();
-		for (int[] data : hr_values_list) {
-			// TODO dont magic number this, make a getX(), getY() func to return the relevant datum
-			entries.add(new Entry(data[0], data[1]));
-		}
-
-		LineDataSet dataSet = new LineDataSet(entries, "Label"); // add entries to dataset
-		dataSet.setColor(Color.parseColor("#0096FF"));
-
-		LineData lineData = new LineData(dataSet);
-		chart.setData(lineData);
+		resetGraphData();
 		chart.setAutoScaleMinMaxEnabled(true);
 		chart.invalidate(); // refresh
 //		runUpdate.run();
 	}
-	 */
+
 
 
 	private Runnable runUpdate = new Runnable() {
 		@Override
 		public void run() {
 			setHrTv();
-//			updateGraph();
+			updateGraph();
+			//TODO - is this delay based approach sufficient?
+			// do i need to be "listening" for new changes and
+			// publishing those?
+			// would I achieve the above by integrating the "LiveData" datatypes?
 			handler.postDelayed(runUpdate, 1000);
 		}
 	};
 
-	/*
+
 	private void updateGraph() {
-		// need to set new data to line chart and refresh it
+		resetGraphData();
 		chart.notifyDataSetChanged();
 		chart.invalidate();
 	}
-	 */
+
+	//TODO - remove entries with value of 0 and depricate counter
+	private void resetGraphData() {
+		if(!hr_values_list.isEmpty())
+			if(hr_values_list.get(0)[1] == 0) {
+				hr_values_list.remove(0);
+				data_cnt--;
+			}
+		hr_values_list.add(new int[]{data_cnt, viewModel.getHeartRateValue()});
+		data_cnt++;
+		List<Entry> entries = new ArrayList<Entry>();
+		for (int[] data : hr_values_list) {
+			// TODO dont magic number this, make a getX(), getY() func to return the relevant datum
+			entries.add(new Entry(data[0], data[1]));
+		}
+		LineDataSet dataSet = new LineDataSet(entries, "Heart Rate"); // add entries to dataset
+		dataSet.setColor(Color.parseColor("#0096FF"));
+		LineData lineData = new LineData(dataSet);
+		chart.setData(lineData);
+	}
 
 
-	// TODO this was causing crashes. not actually getting the value of the heart rate
+
+	//TODO - this was causing crashes. not actually getting the value of the heart rate
+	// possible need for "LiveData" discussed in tdo in runnable method
 	private void setHrTv() {
 //		heart_rate_tv.setText(viewModel.getHeartRate().getValue().toString());
-		int hrv = viewModel.getHeartRateValue();
-		String hrvs = String.valueOf(hrv);
+		String hrvs = String.valueOf(viewModel.getHeartRateValue());
 		heart_rate_tv.setText(hrvs);
 	}
 
