@@ -35,6 +35,7 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -67,7 +68,7 @@ public class BlinkyActivity extends AppCompatActivity {
 	@BindView(R.id.heart_rate_chart) LineChart chart;
 //	LineChart chart = (LineChart) findViewById(R.id.heart_rate_chart);
 
-	private Handler handler = new Handler();
+//	private Handler handler = new Handler();
 	private ArrayList<int[]> hr_values_list = new ArrayList<int[]>();
 	private int data_cnt = 0;
 	private int hrValue;
@@ -100,9 +101,19 @@ public class BlinkyActivity extends AppCompatActivity {
 		final View content = findViewById(R.id.device_container);
 		final View notSupported = findViewById(R.id.not_supported);
 
-		// Mock Data for heart rate chart
+
+		//set up livedata observer
+		viewModel.getHeartRate().observe(this, new Observer<Integer>() {
+			@Override
+			public void onChanged(Integer integer) {
+				hrValue = viewModel.getHeartRate().getValue();
+				heart_rate_tv.setText(String.valueOf(hrValue));
+				updateGraph();
+			}
+		});
+
 		createChart();
-		runUpdate.run();
+//		runUpdate.run();
 
 
 		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
@@ -143,7 +154,7 @@ public class BlinkyActivity extends AppCompatActivity {
 				pressed -> buttonState.setText(pressed ?
 						R.string.button_pressed : R.string.button_released));
 
-		setHrTv();
+//		setHrTv();
 	}
 
 
@@ -156,18 +167,18 @@ public class BlinkyActivity extends AppCompatActivity {
 
 
 
-	private Runnable runUpdate = new Runnable() {
-		@Override
-		public void run() {
-			setHrTv();
-			updateGraph();
-			//TODO - is this delay based approach sufficient?
-			// do i need to be "listening" for new changes and
-			// publishing those?
-			// would I achieve the above by integrating the "LiveData" datatypes?
-			handler.postDelayed(runUpdate, 1000);
-		}
-	};
+//	private Runnable runUpdate = new Runnable() {
+//		@Override
+//		public void run() {
+////			setHrTv();
+//			updateGraph();
+//			//TODO - is this delay based approach sufficient?
+//			// do i need to be "listening" for new changes and
+//			// publishing those?
+//			// would I achieve the above by integrating the "LiveData" datatypes?
+//			handler.postDelayed(runUpdate, 1000);
+//		}
+//	};
 
 
 	private void updateGraph() {
@@ -183,7 +194,7 @@ public class BlinkyActivity extends AppCompatActivity {
 				hr_values_list.remove(0);
 				data_cnt--;
 			}
-		hr_values_list.add(new int[]{data_cnt, viewModel.getHeartRateValue()});
+		hr_values_list.add(new int[]{data_cnt, hrValue});
 		data_cnt++;
 		List<Entry> entries = new ArrayList<Entry>();
 		for (int[] data : hr_values_list) {
@@ -200,11 +211,11 @@ public class BlinkyActivity extends AppCompatActivity {
 
 	//TODO - this was causing crashes. not actually getting the value of the heart rate
 	// possible need for "LiveData" discussed in tdo in runnable method
-	private void setHrTv() {
-//		heart_rate_tv.setText(viewModel.getHeartRate().getValue().toString());
-		String hrvs = String.valueOf(viewModel.getHeartRateValue());
-		heart_rate_tv.setText(hrvs);
-	}
+//	private void setHrTv() {
+////		heart_rate_tv.setText(viewModel.getHeartRate().getValue().toString());
+//		String hrvs = String.valueOf(viewModel.getHeartRateValue());
+//		heart_rate_tv.setText(hrvs);
+//	}
 
 
 	@OnClick(R.id.action_clear_cache)
