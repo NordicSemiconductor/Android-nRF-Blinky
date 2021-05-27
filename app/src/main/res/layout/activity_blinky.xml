@@ -22,8 +22,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
+	android:id="@+id/hr_txt_container"
+	android:layout_width="wrap_content"
 	android:layout_height="match_parent"
+	android:layout_alignWithParentIfMissing="true"
 	tools:context=".BlinkyActivity"
 	tools:ignore="ContentDescription">
 
@@ -57,42 +59,62 @@
 			<com.google.android.material.card.MaterialCardView
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="@dimen/activity_horizontal_margin"/>
+				android:layout_marginTop="@dimen/activity_horizontal_margin" />
 
-			<com.google.android.material.card.MaterialCardView
+			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="@dimen/activity_horizontal_margin"
-				android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
+				android:layout_margin="20dp"
+				android:background="@drawable/layout_bg"
+				android:orientation="horizontal"
+				android:padding="8dp">
 
-			<TextView
-				android:id="@+id/textView2"
-				android:layout_width="209dp"
-				android:layout_height="wrap_content"
-				android:text="Current Heart Rate" />
+				<TextView
+					android:id="@+id/textView2"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Heart Rate"
+					android:textSize="16sp" />
 
-			<TextView
-				android:id="@+id/heart_rate_tv"
-				android:layout_width="209dp"
-				android:layout_height="wrap_content"
-				android:text="TextView" />
+				<TextView
+					android:id="@+id/heart_rate_tv"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:gravity="right|center_vertical"
+					android:text="-"
+					android:textAlignment="gravity"
+					android:textSize="16sp" />
+			</LinearLayout>
 
 			<com.github.mikephil.charting.charts.LineChart
 				android:id="@+id/heart_rate_chart"
 				android:layout_width="match_parent"
 				android:layout_height="181dp" />
 
-			<TextView
-				android:id="@+id/textView"
-				android:layout_width="205dp"
-				android:layout_height="wrap_content"
-				android:text="Battery Level" />
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_margin="20dp"
+				android:background="@drawable/layout_bg"
+				android:orientation="horizontal"
+				android:padding="8dp">
 
-			<TextView
-				android:id="@+id/battery_level_tv"
-				android:layout_width="205dp"
-				android:layout_height="wrap_content"
-				android:text="-" />
+				<TextView
+					android:id="@+id/textView5"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Battery Level"
+					android:textSize="16sp" />
+
+				<TextView
+					android:id="@+id/battery_level_tv"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:gravity="right|center_vertical"
+					android:text="-"
+					android:textAlignment="gravity"
+					android:textSize="16sp" />
+			</LinearLayout>
 
 		</LinearLayout>
 	</ScrollView>

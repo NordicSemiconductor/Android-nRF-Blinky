@@ -22,11 +22,9 @@
 
 package no.nordicsemi.android.blinky;
 
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,7 +41,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
