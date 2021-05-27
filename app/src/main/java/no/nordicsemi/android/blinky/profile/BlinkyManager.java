@@ -38,6 +38,8 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.List;
 import java.util.UUID;
 
+import no.nordicsemi.android.ble.callback.DataReceivedCallback;
+import no.nordicsemi.android.ble.common.callback.battery.BatteryLevelDataCallback;
 import no.nordicsemi.android.ble.data.Data;
 import no.nordicsemi.android.ble.livedata.ObservableBleManager;
 import no.nordicsemi.android.log.LogContract;
@@ -50,11 +52,12 @@ public class BlinkyManager extends ObservableBleManager {
 
 	public static final UUID HEART_RATE_UUID_SERVICE = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
 	private static final UUID HEART_RATE_MEASUREMENT_UUID_CHAR = UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb");
-	private final static UUID BATTERY_SERVICE = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb"); // battery
-	private final static UUID BATTERY_LEVEL_CHARACTERISTIC = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb"); // battery
+	private final static UUID BATTERY_UUID_SERVICE = UUID.fromString("0000180F-0000-1000-8000-00805f9b34fb"); // battery
+	private final static UUID BATTERY_LEVEL_UUID_CHAR = UUID.fromString("00002A19-0000-1000-8000-00805f9b34fb"); // battery
 
 	private final MutableLiveData<Integer> heartRateState = new MutableLiveData<>();
-	private BluetoothGattCharacteristic heartRateCharacteristic;
+	private final MutableLiveData<Integer> batteryState = new MutableLiveData<>();
+	private BluetoothGattCharacteristic heartRateCharacteristic, batteryLevelCharacteristic;
 	private LogSession logSession;
 
 	public BlinkyManager(@NonNull final Context context) {
@@ -64,6 +67,8 @@ public class BlinkyManager extends ObservableBleManager {
 	public final LiveData<Integer> getHeartRate() {
 		return heartRateState;
 	}
+
+	public final LiveData<Integer> getBatteryLevel() { return batteryState; }
 
 	@NonNull
 	@Override
@@ -105,15 +110,38 @@ public class BlinkyManager extends ObservableBleManager {
 		}
 	};
 
+	// no.nordicsemi.android.ble.common.callback.battery
+	private final DataReceivedCallback batteryLevelCallback = new BatteryLevelDataCallback() {
+		@Override
+		public void onBatteryLevelChanged(@NonNull final BluetoothDevice device,
+										  @IntRange(from = 0, to = 100) final int batteryLevel) {
+			batteryState.setValue(batteryLevel);
+		}
+
+		@Override
+		public void onInvalidDataReceived(@NonNull final BluetoothDevice device, final @NonNull Data data) {
+			super.onInvalidDataReceived(device, data);
+		}
+	};
 
 	/**
 	 * BluetoothGatt callbacks object.
 	 */
+	//TODO - having battery and heart rate in this class does not seem like best practice.
+	// what is the correct implimentation? Not sure how to split in two classes in gattCallback()
+	// only called once and expects one obj returned
 	private class HeartRateManagerGattCallback extends BleManagerGattCallback {
 		@Override
 		protected void initialize() {
+			// Heart rate
 			setNotificationCallback(heartRateCharacteristic).with(HeartRateCallback);
 			enableNotifications(heartRateCharacteristic).enqueue();
+
+			// Battery
+			readCharacteristic(batteryLevelCharacteristic).with(batteryLevelCallback).enqueue();
+			setNotificationCallback(batteryLevelCharacteristic).with(batteryLevelCallback);
+			enableNotifications(batteryLevelCharacteristic).enqueue();
+
 		}
 
 		@Override
@@ -126,8 +154,18 @@ public class BlinkyManager extends ObservableBleManager {
 		}
 
 		@Override
+		protected boolean isOptionalServiceSupported(@NonNull final BluetoothGatt gatt) {
+			final BluetoothGattService service = gatt.getService(BATTERY_UUID_SERVICE);
+			if (service != null) {
+				batteryLevelCharacteristic = service.getCharacteristic(BATTERY_LEVEL_UUID_CHAR);
+			}
+			return batteryLevelCharacteristic != null;
+		}
+
+		@Override
 		protected void onDeviceDisconnected() {
 			heartRateCharacteristic = null;
+			batteryLevelCharacteristic = null;
 		}
 	}
 }
