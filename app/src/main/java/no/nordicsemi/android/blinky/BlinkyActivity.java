@@ -60,12 +60,11 @@ public class BlinkyActivity extends AppCompatActivity {
 
 	private BlinkyViewModel viewModel;
 
-	@BindView(R.id.led_switch) SwitchMaterial led;
-	@BindView(R.id.button_state) TextView buttonState;
+//	@BindView(R.id.led_switch) SwitchMaterial led;
+//	@BindView(R.id.button_state) TextView buttonState;
 	@BindView(R.id.heart_rate_tv) TextView heart_rate_tv;
 	@BindView(R.id.heart_rate_chart) LineChart chart;
 
-//	private Handler handler = new Handler();
 	private ArrayList<int[]> hr_values_list = new ArrayList<int[]>();
 	private int data_cnt = 0;
 	private int hrValue;
@@ -92,7 +91,7 @@ public class BlinkyActivity extends AppCompatActivity {
 		viewModel.connect(device);
 
 		// Set up views.
-		final TextView ledState = findViewById(R.id.led_state);
+//		final TextView ledState = findViewById(R.id.led_state);
 		final LinearLayout progressContainer = findViewById(R.id.progress_container);
 		final TextView connectionState = findViewById(R.id.connection_state);
 		final View content = findViewById(R.id.device_container);
@@ -111,7 +110,7 @@ public class BlinkyActivity extends AppCompatActivity {
 		createChart();
 
 
-		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
+//		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
 		viewModel.getConnectionState().observe(this, state -> {
 			switch (state.getState()) {
 				case CONNECTING:
@@ -125,7 +124,7 @@ public class BlinkyActivity extends AppCompatActivity {
 				case READY:
 					progressContainer.setVisibility(View.GONE);
 					content.setVisibility(View.VISIBLE);
-					onConnectionStateChanged(true);
+//					onConnectionStateChanged(true);
 					break;
 				case DISCONNECTED:
 					if (state instanceof ConnectionState.Disconnected) {
@@ -137,17 +136,17 @@ public class BlinkyActivity extends AppCompatActivity {
 					}
 					// fallthrough
 				case DISCONNECTING:
-					onConnectionStateChanged(false);
+//					onConnectionStateChanged(false);
 					break;
 			}
 		});
-		viewModel.getLedState().observe(this, isOn -> {
-			ledState.setText(isOn ? R.string.turn_on : R.string.turn_off);
-			led.setChecked(isOn);
-		});
-		viewModel.getButtonState().observe(this,
-				pressed -> buttonState.setText(pressed ?
-						R.string.button_pressed : R.string.button_released));
+//		viewModel.getLedState().observe(this, isOn -> {
+//			ledState.setText(isOn ? R.string.turn_on : R.string.turn_off);
+//			led.setChecked(isOn);
+//		});
+//		viewModel.getButtonState().observe(this,
+//				pressed -> buttonState.setText(pressed ?
+//						R.string.button_pressed : R.string.button_released));
 	}
 
 
@@ -164,6 +163,7 @@ public class BlinkyActivity extends AppCompatActivity {
 		chart.invalidate();
 	}
 
+	//TODO - options for graph view: live(1m), 10m(locked x axis), 1hr(locked x axis)
 	private void resetGraphData() {
 		//remove leading 0's
 		//TODO - more elegant solution?
@@ -191,11 +191,11 @@ public class BlinkyActivity extends AppCompatActivity {
 		viewModel.reconnect();
 	}
 
-	private void onConnectionStateChanged(final boolean connected) {
-		led.setEnabled(connected);
-		if (!connected) {
-			led.setChecked(false);
-			buttonState.setText(R.string.button_unknown);
-		}
-	}
+//	private void onConnectionStateChanged(final boolean connected) {
+//		led.setEnabled(connected);
+//		if (!connected) {
+//			led.setChecked(false);
+//			buttonState.setText(R.string.button_unknown);
+//		}
+//	}
 }

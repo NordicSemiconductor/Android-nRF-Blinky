@@ -57,110 +57,13 @@
 			<com.google.android.material.card.MaterialCardView
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="@dimen/activity_horizontal_margin">
-
-				<androidx.constraintlayout.widget.ConstraintLayout
-					android:layout_width="match_parent"
-					android:layout_height="match_parent">
-
-					<com.google.android.material.appbar.MaterialToolbar
-						android:id="@+id/led_tool_bar"
-						android:layout_width="0dp"
-						android:layout_height="?actionBarSize"
-						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintRight_toRightOf="parent"
-						app:layout_constraintTop_toTopOf="parent"
-						app:logo="@drawable/ic_toolbar_lightbulb"
-						app:title="@string/title_led_state"
-						app:titleMarginStart="@dimen/toolbar_title_margin" />
-
-					<com.google.android.material.textview.MaterialTextView
-						android:id="@+id/led_summary"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:paddingStart="@dimen/activity_horizontal_margin"
-						android:paddingEnd="@dimen/activity_horizontal_margin"
-						android:text="@string/led_summary"
-						android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/led_tool_bar" />
-
-					<com.google.android.material.textview.MaterialTextView
-						android:id="@+id/led_state"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:padding="@dimen/activity_horizontal_margin"
-						android:text="@string/turn_off"
-						android:textAllCaps="true"
-						android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/led_summary" />
-
-					<com.google.android.material.switchmaterial.SwitchMaterial
-						android:id="@+id/led_switch"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:padding="@dimen/activity_horizontal_margin"
-						app:layout_constraintBaseline_toBaselineOf="@+id/led_state"
-						app:layout_constraintEnd_toEndOf="parent" />
-
-				</androidx.constraintlayout.widget.ConstraintLayout>
-			</com.google.android.material.card.MaterialCardView>
+				android:layout_marginTop="@dimen/activity_horizontal_margin"/>
 
 			<com.google.android.material.card.MaterialCardView
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="@dimen/activity_horizontal_margin"
-				android:layout_marginBottom="@dimen/activity_horizontal_margin">
-
-				<androidx.constraintlayout.widget.ConstraintLayout
-					android:layout_width="match_parent"
-					android:layout_height="match_parent">
-
-					<com.google.android.material.appbar.MaterialToolbar
-						android:id="@+id/button_tool_bar"
-						android:layout_width="0dp"
-						android:layout_height="?actionBarSize"
-						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintRight_toRightOf="parent"
-						app:layout_constraintTop_toTopOf="parent"
-						app:logo="@drawable/ic_toolbar_button"
-						app:title="@string/title_button_state"
-						app:titleMarginStart="@dimen/toolbar_title_margin" />
-
-					<com.google.android.material.textview.MaterialTextView
-						android:id="@+id/button_summary"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:paddingStart="@dimen/activity_horizontal_margin"
-						android:paddingEnd="@dimen/activity_horizontal_margin"
-						android:text="@string/button_summary"
-						android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/button_tool_bar" />
-
-					<com.google.android.material.textview.MaterialTextView
-						android:id="@+id/textView"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:padding="@dimen/activity_horizontal_margin"
-						android:text="@string/state"
-						android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-						app:layout_constraintLeft_toLeftOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/button_summary" />
-
-					<com.google.android.material.textview.MaterialTextView
-						android:id="@+id/button_state"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:padding="@dimen/activity_horizontal_margin"
-						android:text="@string/button_unknown"
-						android:textAllCaps="true"
-						android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-						app:layout_constraintBaseline_toBaselineOf="@+id/textView"
-						app:layout_constraintRight_toRightOf="parent" />
-				</androidx.constraintlayout.widget.ConstraintLayout>
-			</com.google.android.material.card.MaterialCardView>
+				android:layout_marginBottom="@dimen/activity_horizontal_margin"/>
 
 			<TextView
 				android:id="@+id/textView2"

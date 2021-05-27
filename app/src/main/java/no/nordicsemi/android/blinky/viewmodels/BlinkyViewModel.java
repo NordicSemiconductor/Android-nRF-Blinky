@@ -50,14 +50,6 @@ public class BlinkyViewModel extends AndroidViewModel {
 		return blinkyManager.getState();
 	}
 
-	public LiveData<Boolean> getButtonState() {
-		return blinkyManager.getButtonState();
-	}
-
-	public LiveData<Boolean> getLedState() {
-		return blinkyManager.getLedState();
-	}
-
 	public LiveData<Integer> getHeartRate() {
 		return blinkyManager.getHeartRate();
 	}
@@ -99,15 +91,6 @@ public class BlinkyViewModel extends AndroidViewModel {
 	private void disconnect() {
 		device = null;
 		blinkyManager.disconnect().enqueue();
-	}
-
-	/**
-	 * Sends a command to turn ON or OFF the LED on the nRF5 DK.
-	 *
-	 * @param on true to turn the LED on, false to turn it OFF.
-	 */
-	public void setLedState(final boolean on) {
-		blinkyManager.turnLed(on);
 	}
 
 	@Override
