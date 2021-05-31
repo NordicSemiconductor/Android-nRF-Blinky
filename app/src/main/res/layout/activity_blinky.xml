@@ -86,10 +86,29 @@
 					android:textSize="16sp" />
 			</LinearLayout>
 
-			<com.github.mikephil.charting.charts.LineChart
-				android:id="@+id/heart_rate_chart"
+			<LinearLayout
 				android:layout_width="match_parent"
-				android:layout_height="181dp" />
+				android:layout_height="wrap_content"
+				android:layout_margin="10dp"
+				android:background="@drawable/layout_bg"
+				android:gravity="bottom|fill_vertical"
+				android:orientation="vertical"
+				android:paddingTop="8dp"
+				android:paddingBottom="8dp">
+
+				<TextView
+					android:id="@+id/x_axis_tv"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center"
+					android:text="BPM per Second"
+					android:textColor="@color/black" />
+
+				<com.github.mikephil.charting.charts.LineChart
+					android:id="@+id/heart_rate_chart"
+					android:layout_width="match_parent"
+					android:layout_height="350dp" />
+			</LinearLayout>
 
 			<LinearLayout
 				android:layout_width="match_parent"

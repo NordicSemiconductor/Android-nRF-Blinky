@@ -37,10 +37,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.appbar.MaterialToolbar;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,12 +53,18 @@ import butterknife.OnClick;
 import no.nordicsemi.android.ble.livedata.state.ConnectionState;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
+
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ConstantConditions")
 public class BlinkyActivity extends AppCompatActivity {
 	public static final String EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE";
+	private static final int xIndex = 0;
+	private static final int yIndex = 1;
+	private static final int headIndex = 0;
+	private static final int bpmValueIndex = 1;
 
 	private BlinkyViewModel viewModel;
 
@@ -61,7 +72,8 @@ public class BlinkyActivity extends AppCompatActivity {
 	@BindView(R.id.battery_level_tv) TextView batter_level_tv;
 	@BindView(R.id.heart_rate_chart) LineChart chart;
 
-	private ArrayList<int[]> hr_values_list = new ArrayList<int[]>();
+
+	private ArrayList<int[]> hr_values_list = new ArrayList<>();
 	private int data_cnt = 0;
 	private int hrValue;
 	private int batteryValue;
@@ -94,22 +106,16 @@ public class BlinkyActivity extends AppCompatActivity {
 		final View notSupported = findViewById(R.id.not_supported);
 
 		//heart rate livedata observer
-		viewModel.getHeartRate().observe(this, new Observer<Integer>() {
-			@Override
-			public void onChanged(Integer integer) {
-				hrValue = viewModel.getHeartRate().getValue();
-				heart_rate_tv.setText(String.valueOf(hrValue));
-				updateGraph();
-			}
+		viewModel.getHeartRate().observe(this, integer -> {
+			hrValue = viewModel.getHeartRate().getValue();
+			heart_rate_tv.setText(String.valueOf(hrValue));
+			updateGraph();
 		});
 
 		//battery livedata observer
-		viewModel.getBatteryLevel().observe(this, new Observer<Integer>() {
-			@Override
-			public void onChanged(Integer integer) {
-				batteryValue = viewModel.getBatteryLevel().getValue();
-				batter_level_tv.setText(batteryValue + "%");
-			}
+		viewModel.getBatteryLevel().observe(this, integer -> {
+			batteryValue = viewModel.getBatteryLevel().getValue();
+			batter_level_tv.setText(batteryValue + "%");
 		});
 
 		createChart();
@@ -143,11 +149,70 @@ public class BlinkyActivity extends AppCompatActivity {
 		});
 	}
 
-
 	private void createChart() {
 		resetGraphData();
+
+		LineData data = chart.getLineData();
+		data.setValueTextColor(Color.CYAN);
+		chart.setData(data);
+
+		Description desc = chart.getDescription();
+		desc.setText("");
 		chart.setAutoScaleMinMaxEnabled(true);
-		chart.invalidate(); // refresh
+		// touch screen functionality
+		chart.setTouchEnabled(true);
+		// move/zoom graph
+		chart.setDragEnabled(true);
+		chart.setScaleEnabled(true);
+		chart.setDrawGridBackground(false);
+		// pinch scale
+		chart.setPinchZoom(true);
+		// transparent background
+		chart.setBackgroundColor(Color.TRANSPARENT);
+		// padding
+		chart.setExtraOffsets(10f, 10f, 10f, 10f);
+		// add legend and edit, has to be done after setting data
+		Legend hrm_key = chart.getLegend();
+		hrm_key.setForm(Legend.LegendForm.LINE);
+		hrm_key.setTextColor(Color.BLACK);
+
+
+
+		// get x and y axis
+		XAxis xax = chart.getXAxis();
+		xax.setPosition(XAxis.XAxisPosition.BOTTOM);
+		xax.setTextColor(Color.BLACK);
+		xax.setDrawGridLines(false);
+		xax.setAvoidFirstLastClipping(true);
+		xax.setEnabled(true);
+
+		YAxis lyax = chart.getAxisLeft();
+		lyax.setTextColor(Color.BLACK);
+		lyax.setDrawGridLines(true);
+		lyax.setDrawTopYLabelEntry(true);
+		lyax.setGridColor(Color.BLACK);
+		lyax.setSpaceTop(0);
+		lyax.setSpaceBottom(0);
+
+		YAxis ryax = chart.getAxisRight();
+		ryax.setDrawAxisLine(true);
+		ryax.setDrawGridLines(false);
+		ryax.setDrawLabels(false);
+
+		chart.invalidate();
+	}
+
+
+	private LineDataSet formatSet(LineDataSet set) {
+		set.setAxisDependency(YAxis.AxisDependency.LEFT);
+		set.setColor(Color.CYAN);
+		set.setLineWidth(2f);
+		set.setFillAlpha(65);
+		set.setValueTextColor(Color.BLACK);
+		set.setValueTextSize(9f);
+		set.setDrawValues(false);
+		return set;
+
 	}
 
 
@@ -157,25 +222,23 @@ public class BlinkyActivity extends AppCompatActivity {
 		chart.invalidate();
 	}
 
-	//TODO - options for graph view: live(1m), 10m(locked x axis), 1hr(locked x axis)
+	//TODO - feature - options for graph view: live(1m), 10m(locked x axis), 1hr(locked x axis)
 	private void resetGraphData() {
 		//remove leading 0's
-		//TODO - more elegant solution?
 		if(!hr_values_list.isEmpty())
-			if(hr_values_list.get(0)[1] == 0) {
-				hr_values_list.remove(0);
+			if(hr_values_list.get(headIndex)[bpmValueIndex] == 0) {
+				hr_values_list.remove(headIndex);
 				data_cnt--;
 			}
-
 		hr_values_list.add(new int[]{data_cnt, hrValue});
 		data_cnt++;
 		List<Entry> entries = new ArrayList<Entry>();
 		for (int[] data : hr_values_list) {
-			// TODO dont magic number this, make a getX(), getY() func to return the relevant datum
-			entries.add(new Entry(data[0], data[1]));
+			entries.add(new Entry(data[xIndex], data[yIndex]));
 		}
-		LineDataSet dataSet = new LineDataSet(entries, "Heart Rate"); // add entries to dataset
-		dataSet.setColor(Color.parseColor("#0096FF"));
+		LineDataSet init_data = new LineDataSet(entries, "BPM"); // add entries to dataset
+		LineDataSet dataSet = formatSet(init_data);
+		//dataSet.setColor(Color.parseColor("#0096FF"));
 		LineData lineData = new LineData(dataSet);
 		chart.setData(lineData);
 	}
