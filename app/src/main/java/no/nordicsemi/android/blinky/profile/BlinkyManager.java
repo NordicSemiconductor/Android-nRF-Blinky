@@ -176,8 +176,8 @@ public class BlinkyManager extends ObservableBleManager {
 
 			boolean writeRequest = false;
 			if (ledCharacteristic != null) {
-				final int rxProperties = ledCharacteristic.getProperties();
-				writeRequest = (rxProperties & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0;
+				final int ledProperties = ledCharacteristic.getProperties();
+				writeRequest = (ledProperties & BluetoothGattCharacteristic.PROPERTY_WRITE) > 0;
 			}
 
 			supported = buttonCharacteristic != null && ledCharacteristic != null && writeRequest;
@@ -185,7 +185,7 @@ public class BlinkyManager extends ObservableBleManager {
 		}
 
 		@Override
-		protected void onDeviceDisconnected() {
+		protected void onServicesInvalidated() {
 			buttonCharacteristic = null;
 			ledCharacteristic = null;
 		}
@@ -206,8 +206,10 @@ public class BlinkyManager extends ObservableBleManager {
 			return;
 
 		log(Log.VERBOSE, "Turning LED " + (on ? "ON" : "OFF") + "...");
-		writeCharacteristic(ledCharacteristic,
-				on ? BlinkyLED.turnOn() : BlinkyLED.turnOff())
-				.with(ledCallback).enqueue();
+		writeCharacteristic(
+				ledCharacteristic,
+				BlinkyLED.turn(on),
+				BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+		).with(ledCallback).enqueue();
 	}
 }

@@ -47,7 +47,8 @@
 			android:name=".SplashScreenActivity"
 			android:theme="@style/AppTheme.SplashScreen"
 			android:noHistory="true"
-			android:launchMode="singleTop">
+			android:launchMode="singleTop"
+			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
@@ -57,7 +58,8 @@
 			android:name=".ScannerActivity"
 			android:icon="@drawable/ic_blinky_feature"
 			android:label="@string/feature_name"
-			android:launchMode="singleTop">
+			android:launchMode="singleTop"
+			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="no.nordicsemi.android.nrftoolbox.LAUNCHER"/>

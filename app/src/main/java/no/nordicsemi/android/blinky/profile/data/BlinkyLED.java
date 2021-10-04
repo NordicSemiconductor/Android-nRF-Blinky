@@ -31,6 +31,11 @@ public final class BlinkyLED {
     private static final byte STATE_ON = 0x01;
 
     @NonNull
+    public static Data turn(final boolean on) {
+        return on ? turnOn() : turnOff();
+    }
+
+    @NonNull
     public static Data turnOn() {
         return Data.opCode(STATE_ON);
     }

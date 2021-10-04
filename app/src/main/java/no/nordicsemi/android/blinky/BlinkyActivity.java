@@ -31,6 +31,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import no.nordicsemi.android.ble.livedata.state.ConnectionState;
+import no.nordicsemi.android.ble.observer.ConnectionObserver;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.databinding.ActivityBlinkyBinding;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
@@ -88,9 +89,9 @@ public class BlinkyActivity extends AppCompatActivity {
 						binding.deviceContainer.setVisibility(View.GONE);
 						binding.progressContainer.setVisibility(View.GONE);
 						final ConnectionState.Disconnected stateWithReason = (ConnectionState.Disconnected) state;
-						if (stateWithReason.isNotSupported()) {
+						if (stateWithReason.getReason() == ConnectionObserver.REASON_NOT_SUPPORTED) {
 							binding.infoNotSupported.container.setVisibility(View.VISIBLE);
-						} else if (stateWithReason.isTimeout()) {
+						} else {
 							binding.infoTimeout.container.setVisibility(View.VISIBLE);
 						}
 					}
