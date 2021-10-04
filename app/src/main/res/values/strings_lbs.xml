@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="state_connecting">Connecting…</string>
+    <string name="state_initializing">Initializing…</string>
+
+    <string name="action_not_supported">Fix and try again</string>
+    <string name="action_retry">Retry</string>
+
+    <string name="turn_on">On</string>
+    <string name="turn_off">Off</string>
+
+    <string name="title_led_state">LED</string>
+    <string name="title_button_state">Button</string>
+
+    <string name="state">State</string>
+    <string name="button_pressed">Pressed</string>
+    <string name="button_released">Released</string>
+    <string name="button_unknown">Unknown</string>
+
+    <string name="led_summary">Toggle the switch to turn the LED 3 on or off.</string>
+    <string name="button_summary">Press Button 1 on the dev kit.</string>
+
+    <string name="not_supported_title">DEVICE NOT SUPPORTED</string>
+    <string name="not_supported_info">1. The Blinky service hasn\'t been found on the device\'s
+		attribute table.\n\n2. Make sure the DK is flashed with the correct firmware.\n\n3. If you
+		used the DK with another firmware before, the old services might have been cached by
+		the system.</string>
+
+    <string name="timeout_title">CONNECTION TIMED OUT</string>
+    <string name="timeout_info">Make sure your device is powered ON and in range.</string>
+</resources>
