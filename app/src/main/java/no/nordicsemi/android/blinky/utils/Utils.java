@@ -59,9 +59,23 @@ public class Utils {
 	 * @param context the context.
 	 * @return Whether Bluetooth Scan permission has been granted.
 	 */
-	@RequiresApi(api = Build.VERSION_CODES.S)
 	public static boolean isBluetoothScanPermissionGranted(@NonNull final Context context) {
+		if (!isSorAbove())
+			return true;
 		return ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN)
+				== PackageManager.PERMISSION_GRANTED;
+	}
+
+	/**
+	 * Returns whether Bluetooth Connect permission has been granted.
+	 *
+	 * @param context the context.
+	 * @return Whether Bluetooth Connect permission has been granted.
+	 */
+	public static boolean isBluetoothConnectPermissionGranted(@NonNull final Context context) {
+		if (!isSorAbove())
+			return true;
+		return ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT)
 				== PackageManager.PERMISSION_GRANTED;
 	}
 
