@@ -167,7 +167,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
     }
 
     /**
-     * Start scanning for Bluetooth devices or displays a message based on the scanner state.
+     * Starts scanning for Bluetooth LE devices or displays a message based on the scanner state.
      */
     private void startScan(@NonNull final ScannerStateLiveData state) {
         // First, check the Location permission.
@@ -177,6 +177,12 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
                 Utils.isLocationPermissionGranted(this)) {
             binding.noLocationPermission.getRoot().setVisibility(View.GONE);
 
+            // On Android 12+ a new BLUETOOTH_SCAN and BLUETOOTH_CONNECT permissions need to be
+            // requested.
+            //
+            // Note: This has to be done before asking user to enable Bluetooth, as
+            //       sending BluetoothAdapter.ACTION_REQUEST_ENABLE intent requires
+            //       BLUETOOTH_CONNECT permission.
             if (!Utils.isSorAbove() || Utils.isBluetoothScanPermissionGranted(this)) {
                 binding.noBluetoothPermission.getRoot().setVisibility(View.GONE);
 
@@ -231,7 +237,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
     }
 
     /**
-     * stop scanning for bluetooth devices.
+     * Stops scanning for Bluetooth LE devices.
      */
     private void stopScan() {
         scannerViewModel.stopScan();
@@ -245,6 +251,9 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
         scannerViewModel.getScannerState().clearRecords();
     }
 
+    /**
+     * Opens application settings in Android Settings app.
+     */
     private void openPermissionSettings() {
         final Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.fromParts("package", getPackageName(), null));
@@ -252,13 +261,26 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
         startActivity(intent);
     }
 
+    /**
+     * Opens Location settings.
+     */
     private void openLocationSettings() {
         final Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
+    /**
+     * Shows a prompt to the user to enable Bluetooth on the device.
+     *
+     * @implSpec On Android 12+ BLUETOOTH_CONNECT permission needs to be granted before calling
+     *           this method. Otherwise, the app would crash with {@link SecurityException}.
+     * @see BluetoothAdapter#ACTION_REQUEST_ENABLE
+     */
     private void requestBluetoothEnabled() {
-        final Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivity(enableIntent);
+        if (Utils.isBluetoothConnectPermissionGranted(this)) {
+            final Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivity(enableIntent);
+        }
     }
 }
