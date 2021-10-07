@@ -75,6 +75,7 @@
 		app:layout_constraintTop_toBottomOf="@id/appbar_layout"
 		tools:listitem="@layout/device_item" />
 
+	<!-- A view shown when there are no devices matching filter criteria -->
 	<include
 		android:id="@+id/no_devices"
 		layout="@layout/info_no_devices"
@@ -86,6 +87,7 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
+	<!-- A view shown when the Bluetooth adapter is off -->
 	<include
 		android:id="@+id/bluetooth_off"
 		layout="@layout/info_no_bluetooth"
@@ -97,9 +99,10 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
 
+	<!-- A view shown when the Location is disabled and no devices are returned from the scanner -->
 	<include
 		android:id="@+id/no_location_permission"
-		layout="@layout/info_no_permission"
+		layout="@layout/info_no_location_permission"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:visibility="gone"
@@ -107,5 +110,17 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@id/appbar_layout" />
+
+	<!-- A view shown when the Bluetooth permissions aren't granted on Android 12+ -->
+	<include
+		android:id="@+id/no_bluetooth_permission"
+		layout="@layout/info_no_bluetooth_permission"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/appbar_layout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

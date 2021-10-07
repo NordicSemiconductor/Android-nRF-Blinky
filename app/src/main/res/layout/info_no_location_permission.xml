@@ -61,7 +61,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
-		android:text="@string/location_permission_action"/>
+		android:text="@string/action_grant_permission"/>
 
 	<com.google.android.material.button.MaterialButton
 		android:id="@+id/action_permission_settings"
@@ -69,7 +69,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
-		android:text="@string/location_permission_settings"
+		android:text="@string/action_settings"
 		android:visibility="gone"
 		tools:visibility="visible"/>
 </LinearLayout>

@@ -1,18 +1,31 @@
 apply plugin: 'com.android.application'
+apply from: rootProject.file("gradle/git-tag-version.gradle")
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "no.nordicsemi.android.nrfblinky"
         minSdkVersion 18
-        targetSdkVersion 30
-        versionCode 14
-        versionName "2.5.1"
+        targetSdkVersion 31
+        versionCode getVersionCodeFromTags()
+        versionName getVersionNameFromTags()
         resConfigs "en"
 
         vectorDrawables.useSupportLibrary = true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('../keystore')
+            storePassword System.env.KEYSTORE_PSWD
+            keyAlias System.env.KEYSTORE_ALIAS
+            keyPassword System.env.KEYSTORE_KEY_PSWD
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 
     buildTypes {
@@ -23,10 +36,8 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
-    }
-    buildFeatures {
-        viewBinding true
     }
 }
 
@@ -40,7 +51,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
 
     // Brings the new BluetoothLeScanner API to older platforms
-    implementation 'no.nordicsemi.android.support.v18:scanner:1.5.1'
+    implementation 'no.nordicsemi.android.support.v18:scanner:1.6.0'
 
     // Log Bluetooth LE events in nRF Logger
     implementation 'no.nordicsemi.android:log:2.3.0'
