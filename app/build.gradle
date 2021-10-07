@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply from: rootProject.file("gradle/git-tag-version.gradle")
 
 android {
     compileSdkVersion 31
@@ -7,11 +8,24 @@ android {
         applicationId "no.nordicsemi.android.nrfblinky"
         minSdkVersion 18
         targetSdkVersion 31
-        versionCode 14
-        versionName "2.5.1"
+        versionCode getVersionCodeFromTags()
+        versionName getVersionNameFromTags()
         resConfigs "en"
 
         vectorDrawables.useSupportLibrary = true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('../keystore')
+            storePassword System.env.KEYSTORE_PSWD
+            keyAlias System.env.KEYSTORE_ALIAS
+            keyPassword System.env.KEYSTORE_KEY_PSWD
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 
     buildTypes {
@@ -22,10 +36,8 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
-    }
-    buildFeatures {
-        viewBinding true
     }
 }
 
