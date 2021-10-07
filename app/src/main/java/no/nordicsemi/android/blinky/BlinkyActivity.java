@@ -25,43 +25,35 @@ package no.nordicsemi.android.blinky;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.switchmaterial.SwitchMaterial;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import no.nordicsemi.android.ble.livedata.state.ConnectionState;
+import no.nordicsemi.android.ble.observer.ConnectionObserver;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
+import no.nordicsemi.android.blinky.databinding.ActivityBlinkyBinding;
 import no.nordicsemi.android.blinky.viewmodels.BlinkyViewModel;
 
-@SuppressWarnings("ConstantConditions")
 public class BlinkyActivity extends AppCompatActivity {
 	public static final String EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE";
 
 	private BlinkyViewModel viewModel;
-
-	@BindView(R.id.led_switch) SwitchMaterial led;
-	@BindView(R.id.button_state) TextView buttonState;
+	private ActivityBlinkyBinding binding;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_blinky);
-		ButterKnife.bind(this);
+		binding = ActivityBlinkyBinding.inflate(getLayoutInflater());
+		setContentView(binding.getRoot());
 
 		final Intent intent = getIntent();
 		final DiscoveredBluetoothDevice device = intent.getParcelableExtra(EXTRA_DEVICE);
 		final String deviceName = device.getName();
 		final String deviceAddress = device.getAddress();
 
-		final MaterialToolbar toolbar = findViewById(R.id.toolbar);
+		final MaterialToolbar toolbar = binding.toolbar;
 		toolbar.setTitle(deviceName != null ? deviceName : getString(R.string.unknown_device));
 		toolbar.setSubtitle(deviceAddress);
 		setSupportActionBar(toolbar);
@@ -72,34 +64,35 @@ public class BlinkyActivity extends AppCompatActivity {
 		viewModel.connect(device);
 
 		// Set up views.
-		final TextView ledState = findViewById(R.id.led_state);
-		final LinearLayout progressContainer = findViewById(R.id.progress_container);
-		final TextView connectionState = findViewById(R.id.connection_state);
-		final View content = findViewById(R.id.device_container);
-		final View notSupported = findViewById(R.id.not_supported);
+		binding.ledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
+		binding.infoNotSupported.actionRetry.setOnClickListener(v -> viewModel.reconnect());
+		binding.infoTimeout.actionRetry.setOnClickListener(v -> viewModel.reconnect());
 
-		led.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setLedState(isChecked));
 		viewModel.getConnectionState().observe(this, state -> {
 			switch (state.getState()) {
 				case CONNECTING:
-					progressContainer.setVisibility(View.VISIBLE);
-					notSupported.setVisibility(View.GONE);
-					connectionState.setText(R.string.state_connecting);
+					binding.progressContainer.setVisibility(View.VISIBLE);
+					binding.infoNotSupported.container.setVisibility(View.GONE);
+					binding.infoTimeout.container.setVisibility(View.GONE);
+					binding.connectionState.setText(R.string.state_connecting);
 					break;
 				case INITIALIZING:
-					connectionState.setText(R.string.state_initializing);
+					binding.connectionState.setText(R.string.state_initializing);
 					break;
 				case READY:
-					progressContainer.setVisibility(View.GONE);
-					content.setVisibility(View.VISIBLE);
+					binding.progressContainer.setVisibility(View.GONE);
+					binding.deviceContainer.setVisibility(View.VISIBLE);
 					onConnectionStateChanged(true);
 					break;
 				case DISCONNECTED:
 					if (state instanceof ConnectionState.Disconnected) {
+						binding.deviceContainer.setVisibility(View.GONE);
+						binding.progressContainer.setVisibility(View.GONE);
 						final ConnectionState.Disconnected stateWithReason = (ConnectionState.Disconnected) state;
-						if (stateWithReason.isNotSupported()) {
-							progressContainer.setVisibility(View.GONE);
-							notSupported.setVisibility(View.VISIBLE);
+						if (stateWithReason.getReason() == ConnectionObserver.REASON_NOT_SUPPORTED) {
+							binding.infoNotSupported.container.setVisibility(View.VISIBLE);
+						} else {
+							binding.infoTimeout.container.setVisibility(View.VISIBLE);
 						}
 					}
 					// fallthrough
@@ -109,24 +102,19 @@ public class BlinkyActivity extends AppCompatActivity {
 			}
 		});
 		viewModel.getLedState().observe(this, isOn -> {
-			ledState.setText(isOn ? R.string.turn_on : R.string.turn_off);
-			led.setChecked(isOn);
+			binding.ledState.setText(isOn ? R.string.turn_on : R.string.turn_off);
+			binding.ledSwitch.setChecked(isOn);
 		});
 		viewModel.getButtonState().observe(this,
-				pressed -> buttonState.setText(pressed ?
+				pressed -> binding.buttonState.setText(pressed ?
 						R.string.button_pressed : R.string.button_released));
 	}
 
-	@OnClick(R.id.action_clear_cache)
-	public void onTryAgainClicked() {
-		viewModel.reconnect();
-	}
-
 	private void onConnectionStateChanged(final boolean connected) {
-		led.setEnabled(connected);
+		binding.ledSwitch.setEnabled(connected);
 		if (!connected) {
-			led.setChecked(false);
-			buttonState.setText(R.string.button_unknown);
+			binding.ledSwitch.setChecked(false);
+			binding.buttonState.setText(R.string.button_unknown);
 		}
 	}
 }

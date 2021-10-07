@@ -25,6 +25,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/container"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical"
@@ -42,9 +43,9 @@
 	<com.google.android.material.textview.MaterialTextView
 		android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
 		android:textColor="?colorSecondary"
-		android:layout_width="match_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:gravity="center_horizontal"
+		android:layout_gravity="center_horizontal"
 		android:text="@string/not_supported_title"/>
 
 	<com.google.android.material.textview.MaterialTextView
@@ -54,12 +55,12 @@
 		android:text="@string/not_supported_info"/>
 
 	<com.google.android.material.button.MaterialButton
-		android:id="@+id/action_clear_cache"
+		android:id="@+id/action_retry"
 		style="@style/Widget.MaterialComponents.Button"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
 		android:layout_marginTop="@dimen/activity_vertical_margin"
-		android:text="@string/not_supported_action"/>
+		android:text="@string/action_not_supported"/>
 
 </LinearLayout>

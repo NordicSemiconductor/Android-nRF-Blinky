@@ -26,9 +26,11 @@ import android.app.Application;
 import android.bluetooth.BluetoothDevice;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import no.nordicsemi.android.ble.ConnectRequest;
 import no.nordicsemi.android.ble.livedata.state.ConnectionState;
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice;
 import no.nordicsemi.android.blinky.profile.BlinkyManager;
@@ -38,6 +40,8 @@ import no.nordicsemi.android.log.Logger;
 public class BlinkyViewModel extends AndroidViewModel {
 	private final BlinkyManager blinkyManager;
 	private BluetoothDevice device;
+	@Nullable
+	private ConnectRequest connectRequest;
 
 	public BlinkyViewModel(@NonNull final Application application) {
 		super(application);
@@ -47,7 +51,7 @@ public class BlinkyViewModel extends AndroidViewModel {
 	}
 
 	public LiveData<ConnectionState> getConnectionState() {
-		return blinkyManager.getState();
+		return blinkyManager.state;
 	}
 
 	public LiveData<Boolean> getButtonState() {
@@ -81,10 +85,11 @@ public class BlinkyViewModel extends AndroidViewModel {
 	 */
 	public void reconnect() {
 		if (device != null) {
-			blinkyManager.connect(device)
+			connectRequest = blinkyManager.connect(device)
 					.retry(3, 100)
 					.useAutoConnect(false)
-					.enqueue();
+					.then(d -> connectRequest = null);
+			connectRequest.enqueue();
 		}
 	}
 
@@ -93,7 +98,11 @@ public class BlinkyViewModel extends AndroidViewModel {
 	 */
 	private void disconnect() {
 		device = null;
-		blinkyManager.disconnect().enqueue();
+		if (connectRequest != null) {
+			connectRequest.cancelPendingConnection();
+		} else if (blinkyManager.isConnected()) {
+			blinkyManager.disconnect().enqueue();
+		}
 	}
 
 	/**
@@ -108,8 +117,6 @@ public class BlinkyViewModel extends AndroidViewModel {
 	@Override
 	protected void onCleared() {
 		super.onCleared();
-		if (blinkyManager.isConnected()) {
-			disconnect();
-		}
+		disconnect();
 	}
 }

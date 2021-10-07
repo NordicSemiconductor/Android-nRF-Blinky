@@ -1,8 +1,14 @@
 include ':app'
 
-// To include BLE Library project as a module, clone it to Android-BLE-Library folder and
-// uncomment the following lines. Also, uncomment the dependency in gradle.build file.
+// To include Android Scanner Compat Library project as a module, clone it to
+// Android-Scanner-Compat-Library folder.
 
-// include ':ble', ':ble-livedata'
-// project(':ble').projectDir = file('../Android-BLE-Library/ble')
-// project(':ble-livedata').projectDir = file('../Android-BLE-Library/ble-livedata')
+if (file('../Android-Scanner-Compat-Library').exists()) {
+    includeBuild('../Android-Scanner-Compat-Library')
+}
+
+// To include BLE Library project as a module, clone it to Android-BLE-Library folder.
+
+if (file('../Android-BLE-Library').exists()) {
+    includeBuild('../Android-BLE-Library')
+}
