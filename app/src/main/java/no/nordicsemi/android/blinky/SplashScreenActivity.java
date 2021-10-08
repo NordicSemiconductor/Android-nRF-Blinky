@@ -24,27 +24,35 @@ package no.nordicsemi.android.blinky;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 
-public class SplashScreenActivity extends Activity {
-	private static final int DURATION = 1000;
+import androidx.core.splashscreen.SplashScreen;
 
+public class SplashScreenActivity extends Activity {
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_splash_screen);
 
-		new Handler().postDelayed(() -> {
-			final Intent intent = new Intent(this, ScannerActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			startActivity(intent);
-			finish();
-		}, DURATION);
+		// As setContentView() is not called, the exit animation will not be called.
+		// See: https://issuetracker.google.com/issues/197906327
+		// Instead, simply launch target activity here.
+		launchMainActivity();
+
+		// The compat Splash screen library requires API 21.
+		//
+		// On API 18-20 the activity is drawn with "android:windowBackground" set to
+		// the 9-patch with an icon on light background, which looks like the splash screen.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			// Handle the splash screen transition.
+			SplashScreen.installSplashScreen(this);
+		}
 	}
 
-	@Override
-	public void onBackPressed() {
-		// We don't want the splash screen to be interrupted
+	private void launchMainActivity() {
+		final Intent intent = new Intent(this, ScannerActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+		startActivity(intent);
 	}
 }

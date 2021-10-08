@@ -72,6 +72,7 @@
 	<uses-feature
 		android:name="android.hardware.bluetooth_le"
 		android:required="true"/>
+	<uses-sdk tools:overrideLibrary="androidx.core.splashscreen"/>
 
 	<queries>
 		<!-- Allow logging in nRF Logger. -->
