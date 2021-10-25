@@ -19,44 +19,26 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package no.nordicsemi.android.blinky.profile.data
 
-package no.nordicsemi.android.blinky.profile.callback;
+import no.nordicsemi.android.ble.data.Data
+import no.nordicsemi.android.blinky.profile.data.BlinkyLED
 
-import android.bluetooth.BluetoothDevice;
-import androidx.annotation.NonNull;
+object BlinkyLED {
 
-import no.nordicsemi.android.ble.callback.DataSentCallback;
-import no.nordicsemi.android.ble.callback.profile.ProfileDataCallback;
-import no.nordicsemi.android.ble.data.Data;
+    private const val STATE_OFF: Byte = 0x00
+    private const val STATE_ON: Byte = 0x01
 
-@SuppressWarnings("ConstantConditions")
-public abstract class BlinkyLedDataCallback implements ProfileDataCallback, DataSentCallback, BlinkyLedCallback {
-    private static final byte STATE_OFF = 0x00;
-    private static final byte STATE_ON = 0x01;
-
-    @Override
-    public void onDataReceived(@NonNull final BluetoothDevice device, @NonNull final Data data) {
-        parse(device, data);
+    @JvmStatic
+    fun turn(on: Boolean): Data {
+        return if (on) turnOn() else turnOff()
     }
 
-    @Override
-    public void onDataSent(@NonNull final BluetoothDevice device, @NonNull final Data data) {
-        parse(device, data);
+    fun turnOn(): Data {
+        return Data.opCode(STATE_ON)
     }
 
-    private void parse(@NonNull final BluetoothDevice device, @NonNull final Data data) {
-        if (data.size() != 1) {
-            onInvalidDataReceived(device, data);
-            return;
-        }
-
-        final int state = data.getIntValue(Data.FORMAT_UINT8, 0);
-        if (state == STATE_ON) {
-            onLedStateChanged(device, true);
-        } else if (state == STATE_OFF) {
-            onLedStateChanged(device, false);
-        } else {
-            onInvalidDataReceived(device, data);
-        }
+    fun turnOff(): Data {
+        return Data.opCode(STATE_OFF)
     }
 }

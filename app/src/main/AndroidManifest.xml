@@ -99,7 +99,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".ScannerActivity"
+			android:name=".scanner.view.ScannerActivity"
 			android:icon="@drawable/ic_blinky_feature"
 			android:label="@string/feature_name"
 			android:launchMode="singleTop"
@@ -112,7 +112,7 @@
 		<activity
 			android:name=".BlinkyActivity"
 			android:launchMode="singleTop"
-			android:parentActivityName=".ScannerActivity">
+			android:parentActivityName=".scanner.view.ScannerActivity">
 		</activity>
 
 	</application>

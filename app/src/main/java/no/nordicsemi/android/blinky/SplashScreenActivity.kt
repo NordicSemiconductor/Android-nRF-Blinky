@@ -19,20 +19,32 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package no.nordicsemi.android.blinky
 
-package no.nordicsemi.android.blinky.profile.callback;
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.os.Handler
+import no.nordicsemi.android.blinky.scanner.view.ScannerActivity
 
-import android.bluetooth.BluetoothDevice;
+class SplashScreenActivity : Activity() {
 
-import androidx.annotation.NonNull;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash_screen)
+        Handler().postDelayed({
+            val intent = Intent(this, ScannerActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(intent)
+            finish()
+        }, DURATION.toLong())
+    }
 
-public interface BlinkyLedCallback {
+    override fun onBackPressed() {
+        // We don't want the splash screen to be interrupted
+    }
 
-    /**
-     * Called when the data has been sent to the connected device.
-     *
-     * @param device the target device.
-     * @param on true when LED was enabled, false when disabled.
-     */
-    void onLedStateChanged(@NonNull final BluetoothDevice device, final boolean on);
+    companion object {
+        private const val DURATION = 1000
+    }
 }

@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'kotlin-kapt'
 apply from: rootProject.file("gradle/git-tag-version.gradle")
 
 android {
@@ -6,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "no.nordicsemi.android.nrfblinky"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 31
         versionCode getVersionCodeFromTags()
         versionName getVersionNameFromTags()
@@ -39,14 +42,43 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    /**
+     * There is an issue with recomposition performance when data objects doesn't belong to the module
+     * when composition is enabled, because those objects cannot be properly compared for the changes.
+     * Better to leave enabled for all modules.
+     */
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerVersion kotlin_version
+    }
+
+    buildFeatures {
+        compose true
+    }
 }
 
 dependencies {
-    implementation 'androidx.activity:activity:1.3.1'
-    implementation 'androidx.fragment:fragment:1.3.6'
+
+    def koin_version= "3.1.2"
+    implementation "io.insert-koin:koin-android:$koin_version"
+
+    implementation 'androidx.compose.ui:ui:1.0.4'
+
+    implementation 'androidx.activity:activity-ktx:1.3.1'
+    implementation 'androidx.fragment:fragment-ktx:1.3.6'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'com.google.android.material:material:1.4.0'
 
@@ -58,4 +90,5 @@ dependencies {
 
     // BLE library
     implementation 'no.nordicsemi.android:ble-livedata:2.3.1'
+    implementation "androidx.core:core-ktx:1.6.0"
 }

@@ -19,32 +19,31 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package no.nordicsemi.android.blinky.profile.callback
 
-package no.nordicsemi.android.blinky;
+import android.bluetooth.BluetoothDevice
+import no.nordicsemi.android.ble.callback.profile.ProfileDataCallback
+import no.nordicsemi.android.ble.data.Data
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
+abstract class BlinkyButtonDataCallback : ProfileDataCallback, BlinkyButtonCallback {
 
-public class SplashScreenActivity extends Activity {
-	private static final int DURATION = 1000;
+    override fun onDataReceived(device: BluetoothDevice, data: Data) {
+        if (data.size() != 1) {
+            onInvalidDataReceived(device, data)
+            return
+        }
+        val state = data.getIntValue(Data.FORMAT_UINT8, 0)!!
+        if (state == STATE_PRESSED) {
+            onButtonStateChanged(device, true)
+        } else if (state == STATE_RELEASED) {
+            onButtonStateChanged(device, false)
+        } else {
+            onInvalidDataReceived(device, data)
+        }
+    }
 
-	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_splash_screen);
-
-		new Handler().postDelayed(() -> {
-			final Intent intent = new Intent(this, ScannerActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			startActivity(intent);
-			finish();
-		}, DURATION);
-	}
-
-	@Override
-	public void onBackPressed() {
-		// We don't want the splash screen to be interrupted
-	}
+    companion object {
+        private const val STATE_RELEASED = 0x00
+        private const val STATE_PRESSED = 0x01
+    }
 }

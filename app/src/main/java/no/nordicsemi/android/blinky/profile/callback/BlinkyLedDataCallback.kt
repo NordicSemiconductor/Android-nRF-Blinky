@@ -19,29 +19,39 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package no.nordicsemi.android.blinky.profile.callback
 
-package no.nordicsemi.android.blinky.profile.data;
+import android.bluetooth.BluetoothDevice
+import no.nordicsemi.android.ble.callback.DataSentCallback
+import no.nordicsemi.android.ble.callback.profile.ProfileDataCallback
+import no.nordicsemi.android.ble.data.Data
 
-import androidx.annotation.NonNull;
-
-import no.nordicsemi.android.ble.data.Data;
-
-public final class BlinkyLED {
-    private static final byte STATE_OFF = 0x00;
-    private static final byte STATE_ON = 0x01;
-
-    @NonNull
-    public static Data turn(final boolean on) {
-        return on ? turnOn() : turnOff();
+abstract class BlinkyLedDataCallback : ProfileDataCallback, DataSentCallback, BlinkyLedCallback {
+    override fun onDataReceived(device: BluetoothDevice, data: Data) {
+        parse(device, data)
     }
 
-    @NonNull
-    public static Data turnOn() {
-        return Data.opCode(STATE_ON);
+    override fun onDataSent(device: BluetoothDevice, data: Data) {
+        parse(device, data)
     }
 
-    @NonNull
-    public static Data turnOff() {
-        return Data.opCode(STATE_OFF);
+    private fun parse(device: BluetoothDevice, data: Data) {
+        if (data.size() != 1) {
+            onInvalidDataReceived(device, data)
+            return
+        }
+        val state = data.getIntValue(Data.FORMAT_UINT8, 0)!!
+        if (state == STATE_ON.toInt()) {
+            onLedStateChanged(device, true)
+        } else if (state == STATE_OFF.toInt()) {
+            onLedStateChanged(device, false)
+        } else {
+            onInvalidDataReceived(device, data)
+        }
+    }
+
+    companion object {
+        private const val STATE_OFF: Byte = 0x00
+        private const val STATE_ON: Byte = 0x01
     }
 }

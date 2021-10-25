@@ -19,34 +19,16 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package no.nordicsemi.android.blinky.profile.callback
 
-package no.nordicsemi.android.blinky.profile.callback;
+import android.bluetooth.BluetoothDevice
 
-import android.bluetooth.BluetoothDevice;
-import androidx.annotation.NonNull;
-
-import no.nordicsemi.android.ble.callback.profile.ProfileDataCallback;
-import no.nordicsemi.android.ble.data.Data;
-
-@SuppressWarnings("ConstantConditions")
-public abstract class BlinkyButtonDataCallback implements ProfileDataCallback, BlinkyButtonCallback {
-    private static final int STATE_RELEASED = 0x00;
-    private static final int STATE_PRESSED = 0x01;
-
-    @Override
-    public void onDataReceived(@NonNull final BluetoothDevice device, @NonNull final Data data) {
-        if (data.size() != 1) {
-            onInvalidDataReceived(device, data);
-            return;
-        }
-
-        final int state = data.getIntValue(Data.FORMAT_UINT8, 0);
-        if (state == STATE_PRESSED) {
-            onButtonStateChanged(device, true);
-        } else if (state == STATE_RELEASED) {
-            onButtonStateChanged(device, false);
-        } else {
-            onInvalidDataReceived(device, data);
-        }
-    }
+interface BlinkyButtonCallback {
+    /**
+     * Called when a button was pressed or released on device.
+     *
+     * @param device the target device.
+     * @param pressed true if the button was pressed, false if released.
+     */
+    fun onButtonStateChanged(device: BluetoothDevice, pressed: Boolean)
 }

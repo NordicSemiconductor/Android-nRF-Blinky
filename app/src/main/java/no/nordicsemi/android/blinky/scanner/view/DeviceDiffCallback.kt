@@ -19,20 +19,30 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package no.nordicsemi.android.blinky.scanner.view
 
-package no.nordicsemi.android.blinky.profile.callback;
+import androidx.recyclerview.widget.DiffUtil
+import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice
 
-import android.bluetooth.BluetoothDevice;
+class DeviceDiffCallback internal constructor(
+    private val oldList: List<DiscoveredBluetoothDevice>,
+    private val newList: List<DiscoveredBluetoothDevice>
+) : DiffUtil.Callback() {
 
-import androidx.annotation.NonNull;
+    override fun getOldListSize(): Int {
+        return oldList.size
+    }
 
-public interface BlinkyButtonCallback {
+    override fun getNewListSize(): Int {
+        return newList.size
+    }
 
-    /**
-     * Called when a button was pressed or released on device.
-     *
-     * @param device the target device.
-     * @param pressed true if the button was pressed, false if released.
-     */
-    void onButtonStateChanged(@NonNull final BluetoothDevice device, final boolean pressed);
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] === newList[newItemPosition]
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val device = oldList[oldItemPosition]
+        return device.hasRssiLevelChanged()
+    }
 }
