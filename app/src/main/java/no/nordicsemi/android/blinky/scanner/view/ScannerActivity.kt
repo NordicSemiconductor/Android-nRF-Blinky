@@ -43,7 +43,7 @@ import no.nordicsemi.android.blinky.R
 import no.nordicsemi.android.blinky.adapter.DiscoveredBluetoothDevice
 import no.nordicsemi.android.blinky.databinding.ActivityScannerBinding
 import no.nordicsemi.android.blinky.utils.Utils
-import no.nordicsemi.android.blinky.viewmodels.ScannerState
+import no.nordicsemi.android.blinky.scanner.viewmodel.ScannerState
 import no.nordicsemi.android.blinky.scanner.viewmodel.ScannerViewModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel

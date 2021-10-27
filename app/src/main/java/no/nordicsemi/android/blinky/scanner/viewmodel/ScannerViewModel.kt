@@ -31,7 +31,6 @@ import androidx.lifecycle.ViewModel
 import no.nordicsemi.android.blinky.BroadcastManager
 import no.nordicsemi.android.blinky.LocalDataProvider
 import no.nordicsemi.android.blinky.utils.Utils
-import no.nordicsemi.android.blinky.viewmodels.ScannerStateLiveData
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
 import no.nordicsemi.android.support.v18.scanner.ScanCallback
 import no.nordicsemi.android.support.v18.scanner.ScanResult
@@ -150,9 +149,9 @@ class ScannerViewModel(
                 dataProvider.isLocationPermissionRequired = false
             }
             var atLeastOneMatchedFilter = false
-            for (result in results) atLeastOneMatchedFilter = devices.deviceDiscovered(
-                result
-            ) || atLeastOneMatchedFilter
+            for (result in results) {
+                atLeastOneMatchedFilter = devices.deviceDiscovered(result) || atLeastOneMatchedFilter
+            }
             if (atLeastOneMatchedFilter) {
                 devices.applyFilter()
                 scannerState.recordFound()

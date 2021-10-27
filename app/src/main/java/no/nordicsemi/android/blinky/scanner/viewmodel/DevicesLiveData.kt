@@ -37,11 +37,11 @@ class DevicesLiveData  /* package */ internal constructor(
     private var filterUuidRequired: Boolean,
     private var filterNearbyOnly: Boolean
 ) : LiveData<List<DiscoveredBluetoothDevice>?>() {
+
     private val devices: MutableList<DiscoveredBluetoothDevice> = ArrayList()
     private var filteredDevices: List<DiscoveredBluetoothDevice>? = null
 
     /* package */
-    @Synchronized
     fun bluetoothDisabled() {
         devices.clear()
         filteredDevices = null
@@ -61,7 +61,6 @@ class DevicesLiveData  /* package */ internal constructor(
     }
 
     /* package */
-    @Synchronized
     fun deviceDiscovered(result: ScanResult): Boolean {
         var device: DiscoveredBluetoothDevice
 
@@ -85,7 +84,6 @@ class DevicesLiveData  /* package */ internal constructor(
     /**
      * Clears the list of devices.
      */
-    @Synchronized
     fun clear() {
         devices.clear()
         filteredDevices = null
@@ -96,7 +94,6 @@ class DevicesLiveData  /* package */ internal constructor(
      * Refreshes the filtered device list based on the filter flags.
      */
     /* package */
-    @Synchronized
     fun applyFilter(): Boolean {
         val tmp: MutableList<DiscoveredBluetoothDevice> = ArrayList()
         for (device in devices) {
@@ -117,10 +114,8 @@ class DevicesLiveData  /* package */ internal constructor(
      * @return Index of -1 if not found.
      */
     private fun indexOf(result: ScanResult): Int {
-        var i = 0
-        for (device in devices) {
+        for ((i, device) in devices.withIndex()) {
             if (device.matches(result)) return i
-            i++
         }
         return -1
     }
