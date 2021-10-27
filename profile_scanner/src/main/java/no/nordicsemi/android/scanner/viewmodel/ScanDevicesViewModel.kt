@@ -1,24 +1,21 @@
 package no.nordicsemi.android.scanner.viewmodel
 
 import android.os.ParcelUuid
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import no.nordicsemi.android.scanner.data.ScanDevicesData
 import no.nordicsemi.android.scanner.view.OnCancelButtonClick
 import no.nordicsemi.android.scanner.view.OnDeviceSelected
 import no.nordicsemi.android.scanner.view.ScanDevicesViewEvent
-import no.nordicsemi.android.service.SelectedBluetoothDeviceHolder
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
 import no.nordicsemi.android.support.v18.scanner.ScanCallback
 import no.nordicsemi.android.support.v18.scanner.ScanFilter
 import no.nordicsemi.android.support.v18.scanner.ScanResult
 import no.nordicsemi.android.support.v18.scanner.ScanSettings
 import no.nordicsemi.android.theme.viewmodel.CloseableViewModel
+import no.nordicsemi.android.utils.SelectedBluetoothDeviceHolder
 import no.nordicsemi.android.utils.exhaustive
-import javax.inject.Inject
 
-@HiltViewModel
-class ScanDevicesViewModel @Inject constructor(
+class ScanDevicesViewModel(
     private val deviceHolder: SelectedBluetoothDeviceHolder
 ) : CloseableViewModel() {
 

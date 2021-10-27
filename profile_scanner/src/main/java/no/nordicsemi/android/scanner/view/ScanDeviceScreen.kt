@@ -18,10 +18,11 @@ import no.nordicsemi.android.theme.view.dialog.StringListDialogConfig
 import no.nordicsemi.android.theme.view.dialog.StringListDialogResult
 import no.nordicsemi.android.theme.view.dialog.StringListView
 import no.nordicsemi.android.utils.exhaustive
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun ScanDeviceScreen(serviceId: String, finishAction: (ScanDeviceScreenResult) -> Unit) {
-    val viewModel: ScanDevicesViewModel = hiltViewModel()
+    val viewModel = getViewModel<ScanDevicesViewModel>()
     val data = viewModel.data.collectAsState().value
 
     val isScreenActive = viewModel.isActive.collectAsState().value

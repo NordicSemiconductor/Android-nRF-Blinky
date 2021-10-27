@@ -2,10 +2,9 @@ package no.nordicsemi.android.permission.tools
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
-class NordicBleScanner @Inject constructor(private val bleAdapter: BluetoothAdapter?) {
+class NordicBleScanner(private val bleAdapter: BluetoothAdapter?) {
 
     fun getBluetoothStatus(): ScannerStatus {
         return when {

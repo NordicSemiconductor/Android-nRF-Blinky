@@ -48,7 +48,10 @@ dependencyResolutionManagement {
             alias('chart').to('com.github.PhilJay:MPAndroidChart:v3.1.0')
             alias('scanner').to('no.nordicsemi.android.support.v18:scanner:1.6.0')
 
-            alias('koin').to('io.insert-koin:koin-android:3.1.2')
+            version('koin', '3.1.2')
+            alias('koin-android').to('io.insert-koin', 'koin-android').versionRef('koin')
+            alias('koin-compose').to('io.insert-koin', 'koin-androidx-compose').versionRef('koin')
+            bundle('koin', ['koin-android', 'koin-compose'])
 
             //-- Test ------------------------------------------------------------------------------
             alias('test-junit').to('junit:junit:4.13.2')

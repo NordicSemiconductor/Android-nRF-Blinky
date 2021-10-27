@@ -1,18 +1,15 @@
 package no.nordicsemi.android.permission.bonding.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import no.nordicsemi.android.permission.bonding.repository.BondingStateObserver
-import no.nordicsemi.android.service.BondingState
-import no.nordicsemi.android.service.SelectedBluetoothDeviceHolder
 import no.nordicsemi.android.theme.viewmodel.CloseableViewModel
-import javax.inject.Inject
+import no.nordicsemi.android.utils.BondingState
+import no.nordicsemi.android.utils.SelectedBluetoothDeviceHolder
 
-@HiltViewModel
-class BondingViewModel @Inject constructor(
+class BondingViewModel(
     private val deviceHolder: SelectedBluetoothDeviceHolder,
     private val bondingStateObserver: BondingStateObserver
 ) : CloseableViewModel() {

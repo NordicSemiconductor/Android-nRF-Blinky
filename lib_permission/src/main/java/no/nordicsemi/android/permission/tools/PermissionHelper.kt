@@ -8,12 +8,12 @@ import androidx.core.content.ContextCompat
 
 class PermissionHelper(private val context: Context) {
 
-    fun isBluetoothScanPermissionGranted(): Boolean {
-        return if (!dataProvider.isSorAbove) true else ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.BLUETOOTH_SCAN
-        ) == PackageManager.PERMISSION_GRANTED
-    }
+//    fun isBluetoothScanPermissionGranted(): Boolean {
+//        return if (!dataProvider.isSorAbove) true else ContextCompat.checkSelfPermission(
+//            context,
+//            Manifest.permission.BLUETOOTH_SCAN
+//        ) == PackageManager.PERMISSION_GRANTED
+//    }
 
     fun isRequiredPermissionGranted(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

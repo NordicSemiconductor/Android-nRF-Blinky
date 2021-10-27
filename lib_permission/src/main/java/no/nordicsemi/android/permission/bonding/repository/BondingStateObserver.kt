@@ -8,7 +8,7 @@ import android.content.IntentFilter
 import android.util.Log
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import no.nordicsemi.android.service.BondingState
+import no.nordicsemi.android.utils.BondingState
 
 class BondingStateObserver(private val context: Context) {
 

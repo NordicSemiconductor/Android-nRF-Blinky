@@ -48,4 +48,6 @@ android {
 
 dependencies {
     implementation libs.bundles.compose
+
+    implementation libs.bundles.koin
 }
