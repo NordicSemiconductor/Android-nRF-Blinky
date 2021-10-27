@@ -82,6 +82,6 @@ class LocalDataProvider(private val context: Context) {
     val isMarshmallowOrAbove: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
-    val isSorAbove: Boolean
+    val isSOrAbove: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 }

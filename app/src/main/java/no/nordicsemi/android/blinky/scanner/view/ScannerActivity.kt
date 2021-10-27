@@ -106,7 +106,7 @@ class ScannerActivity : AppCompatActivity(), DevicesAdapter.OnItemClickListener 
             dataProvider.locationPermissionRequested = false
             openPermissionSettings()
         }
-        if (dataProvider.isSorAbove) {
+        if (dataProvider.isSOrAbove) {
             binding.noBluetoothPermission.actionGrantBluetoothPermission.setOnClickListener { v: View? ->
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
                         this,
@@ -173,22 +173,30 @@ class ScannerActivity : AppCompatActivity(), DevicesAdapter.OnItemClickListener 
         // First, check the Location permission.
         // This is required since Marshmallow up until Android 11 in order to scan for Bluetooth LE
         // devices.
-        if (dataProvider.isLocationPermissionRequired && !utils.isLocationPermissionGranted()) {
+        if (dataProvider.isLocationPermissionRequired && !utils.isLocationPermissionGranted() && utils.isLocationPermissionDeniedForever(this)) {
             binding.noLocationPermission.root.visibility = View.VISIBLE
             binding.noBluetoothPermission.root.visibility = View.GONE
             binding.bluetoothOff.root.visibility = View.GONE
             binding.stateScanning.visibility = View.INVISIBLE
             binding.noDevices.root.visibility = View.GONE
-            val deniedForever = utils.isLocationPermissionDeniedForever(this)
-            binding.noLocationPermission.actionGrantLocationPermission.visibility =
-                if (deniedForever) View.GONE else View.VISIBLE
-            binding.noLocationPermission.actionPermissionSettings.visibility =
-                if (deniedForever) View.VISIBLE else View.GONE
+            binding.noLocationPermission.actionGrantLocationPermission.visibility = View.GONE
+            binding.noLocationPermission.actionPermissionSettings.visibility = View.VISIBLE
             return
         }
-        binding.noLocationPermission.root.visibility = View.GONE
 
-        if (dataProvider.isSorAbove && !utils.isBluetoothScanPermissionGranted()) {
+        if (dataProvider.isLocationPermissionRequired && !utils.isLocationPermissionGranted() && !utils.isLocationPermissionDeniedForever(this)) {
+            binding.noLocationPermission.root.visibility = View.VISIBLE
+            binding.noBluetoothPermission.root.visibility = View.GONE
+            binding.bluetoothOff.root.visibility = View.GONE
+            binding.stateScanning.visibility = View.INVISIBLE
+            binding.noDevices.root.visibility = View.GONE
+            binding.noLocationPermission.actionGrantLocationPermission.visibility = View.VISIBLE
+            binding.noLocationPermission.actionPermissionSettings.visibility = View.GONE
+            return
+        }
+
+        if (dataProvider.isSOrAbove && !utils.isBluetoothScanPermissionGranted()) {
+            binding.noLocationPermission.root.visibility = View.GONE
             binding.noBluetoothPermission.root.visibility = View.VISIBLE
             binding.bluetoothOff.root.visibility = View.GONE
             binding.stateScanning.visibility = View.INVISIBLE
@@ -201,10 +209,9 @@ class ScannerActivity : AppCompatActivity(), DevicesAdapter.OnItemClickListener 
             return
         }
 
-
-        binding.noBluetoothPermission.root.visibility = View.GONE
-
         if (!state.isBluetoothEnabled) {
+            binding.noBluetoothPermission.root.visibility = View.GONE
+            binding.noLocationPermission.root.visibility = View.GONE
             binding.bluetoothOff.root.visibility = View.VISIBLE
             binding.stateScanning.visibility = View.INVISIBLE
             binding.noDevices.root.visibility = View.GONE
@@ -213,21 +220,38 @@ class ScannerActivity : AppCompatActivity(), DevicesAdapter.OnItemClickListener 
             return
         }
 
-        binding.bluetoothOff.root.visibility = View.GONE
-
         // We are now OK to start scanning
         scannerViewModel.startScan()
         binding.stateScanning.visibility = View.VISIBLE
-        if (!state.hasRecords) {
-            binding.noDevices.root.visibility = View.VISIBLE
-            if (!dataProvider.isLocationPermissionRequired || utils.isLocationEnabled()) {
-                binding.noDevices.noLocation.visibility = View.INVISIBLE
-            } else {
-                binding.noDevices.noLocation.visibility = View.VISIBLE
-            }
-        } else {
+
+        if (state.hasRecords) {
+            binding.noBluetoothPermission.root.visibility = View.GONE
+            binding.bluetoothOff.root.visibility = View.GONE
+            binding.noLocationPermission.root.visibility = View.GONE
             binding.noDevices.root.visibility = View.GONE
+            binding.stateScanning.visibility = View.GONE
+            return
         }
+
+        if (!state.hasRecords && dataProvider.isLocationPermissionRequired && !utils.isLocationEnabled()) {
+            binding.noBluetoothPermission.root.visibility = View.GONE
+            binding.bluetoothOff.root.visibility = View.GONE
+            binding.noLocationPermission.root.visibility = View.GONE
+            binding.noDevices.root.visibility = View.GONE
+            binding.stateScanning.visibility = View.GONE
+            binding.noDevices.root.visibility = View.VISIBLE
+            binding.noDevices.noLocation.visibility = View.VISIBLE
+            return
+        }
+
+        binding.noBluetoothPermission.root.visibility = View.GONE
+        binding.bluetoothOff.root.visibility = View.GONE
+        binding.noLocationPermission.root.visibility = View.GONE
+        binding.noDevices.root.visibility = View.GONE
+        binding.stateScanning.visibility = View.GONE
+        binding.noDevices.root.visibility = View.VISIBLE
+        binding.noDevices.noLocation.visibility = View.INVISIBLE
+
         return
     }
 
