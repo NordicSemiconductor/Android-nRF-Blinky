@@ -26,27 +26,59 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.core.splashscreen.SplashScreen;
 
+/**
+ * This is a Splash Screen activity.
+ * <p>
+ * It is using AndroidX SplashScreen class to emulate the native (API 31+) splashscreen on
+ * Android 5 - 11. The compat library does not show animated vector drawables, so a static drawable
+ * is used instead.
+ * @see <a href="https://developer.android.com/reference/kotlin/androidx/core/splashscreen/SplashScreen">androidx.core.splashscreen.SplashScreen</a>
+ */
 public class SplashScreenActivity extends Activity {
+	// This flag is false when the app is first started (cold start).
+	// In this case, the animation will be fully shown (1 sec).
+	// Subsequent launches will display it only briefly.
+	// It is only used on API 31+
+	public static boolean coldStart = true;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// As setContentView() is not called, the exit animation will not be called.
-		// See: https://issuetracker.google.com/issues/197906327
-		// Instead, simply launch target activity here.
-		launchMainActivity();
-
-		// The compat Splash screen library requires API 21.
-		//
-		// On API 18-20 the activity is drawn with "android:windowBackground" set to
-		// the 9-patch with an icon on light background, which looks like the splash screen.
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			// Handle the splash screen transition.
+		// Skip splash screen in debug. That allows running the app from Android Studio.
+		if (BuildConfig.DEBUG) {
+			launchMainActivity();
 			SplashScreen.installSplashScreen(this);
+			return;
+		}
+
+		// The compat SplashScreen library requires API 21.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			final SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+			splashScreen.setOnExitAnimationListener(provider -> launchMainActivity());
+
+			// Animated Vector Drawable is only supported on API 31+.
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+				if (coldStart) {
+					coldStart = false;
+					// Keep the splash screen on-screen for longer periods.
+					// Handle the splash screen transition.
+					final long then = System.currentTimeMillis();
+					splashScreen.setKeepVisibleCondition(() -> {
+						final long now = System.currentTimeMillis();
+						return now < then + 1000;
+					});
+				}
+			}
+		} else {
+			// On API 18-20 the activity is drawn with "android:windowBackground" set to
+			// the 9-patch with an icon on light background, which looks like the splash screen.
+			launchMainActivity();
 		}
 	}
 
@@ -54,5 +86,6 @@ public class SplashScreenActivity extends Activity {
 		final Intent intent = new Intent(this, ScannerActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		startActivity(intent);
+		finish();
 	}
 }

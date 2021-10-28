@@ -37,7 +37,7 @@
 		-->
 		<item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_screen</item>
 		<!-- Required for animated icons-->
-		<!--<item name="windowSplashScreenAnimationDuration">200</item>-->
+		<item name="windowSplashScreenAnimationDuration">1000</item>
 
 		<!--
 		Set the theme of the Activity that directly follows your splash screen.
