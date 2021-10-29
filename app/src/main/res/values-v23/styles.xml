@@ -23,6 +23,8 @@
 
 <resources>
 	<style name="AppTheme.SplashScreen" parent="AppTheme.SplashScreenBase">
+		<!-- Using translucent status bar. -->
+		<item name="android:windowTranslucentStatus">true</item>
 		<!-- Use white status bar text on light theme. -->
 		<item name="android:windowLightStatusBar">true</item>
 	</style>

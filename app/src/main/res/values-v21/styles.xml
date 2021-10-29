@@ -46,5 +46,8 @@
 		<item name="postSplashScreenTheme">@style/AppTheme</item>
 	</style>
 
-	<style name="AppTheme.SplashScreen" parent="AppTheme.SplashScreenBase" />
+	<style name="AppTheme.SplashScreen" parent="AppTheme.SplashScreenBase">
+		<!-- Status bar background. -->
+		<item name="colorPrimaryDark">@android:color/transparent</item>
+	</style>
 </resources>
