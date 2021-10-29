@@ -71,7 +71,7 @@ public class SplashScreenActivity extends Activity {
 					final long then = System.currentTimeMillis();
 					splashScreen.setKeepVisibleCondition(() -> {
 						final long now = System.currentTimeMillis();
-						return now < then + 1000;
+						return now < then + 1300;
 					});
 				}
 			}
@@ -84,7 +84,6 @@ public class SplashScreenActivity extends Activity {
 
 	private void launchMainActivity() {
 		final Intent intent = new Intent(this, ScannerActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		startActivity(intent);
 		finish();
 	}
