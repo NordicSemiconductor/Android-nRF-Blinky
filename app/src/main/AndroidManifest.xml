@@ -90,9 +90,8 @@
 		tools:ignore="GoogleAppIndexingWarning">
 
 		<activity
-			android:name=".SplashScreenActivity"
+			android:name=".ScannerActivity"
 			android:theme="@style/AppTheme.SplashScreen"
-			android:noHistory="true"
 			android:launchMode="singleTop"
 			android:exported="true">
 			<intent-filter>
@@ -101,8 +100,14 @@
 			</intent-filter>
 		</activity>
 
-		<activity
-			android:name=".ScannerActivity"
+		<!--
+		 This activity alias is used to allow opening nRF Blinky from nRF Toolbox.
+		 This is not required if this feature is not desired.
+		 nRF Toolbox is displaying a different name and an icon, which are taken from this alias.
+		-->
+		<activity-alias
+			android:name="SplashScreenActivity"
+			android:targetActivity=".ScannerActivity"
 			android:icon="@drawable/ic_blinky_feature"
 			android:label="@string/feature_name"
 			android:launchMode="singleTop"
@@ -111,7 +116,7 @@
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="no.nordicsemi.android.nrftoolbox.LAUNCHER"/>
 			</intent-filter>
-		</activity>
+		</activity-alias>
 
 		<activity
 			android:name=".BlinkyActivity"
