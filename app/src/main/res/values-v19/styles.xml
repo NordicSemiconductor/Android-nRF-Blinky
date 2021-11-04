@@ -22,8 +22,11 @@
   -->
 
 <resources>
-	<style name="AppTheme.SplashScreen">
+	<!-- Splash screen customization per API. -->
+	<style name="AppTheme.SplashScreen" parent="AppTheme.SplashScreenBase">
+		<!-- Status bar background. -->
 		<item name="colorPrimaryDark">@android:color/transparent</item>
+		<!-- Using translucent status bar. -->
 		<item name="android:windowTranslucentStatus">true</item>
 	</style>
 </resources>

@@ -22,9 +22,32 @@
   -->
 
 <resources>
-	<style name="AppTheme.SplashScreen">
+
+	<!-- Configuration for compat splashscreen, from androidx.core.core-splashscreen. -->
+	<style name="AppTheme.SplashScreenBase" parent="Theme.SplashScreen">
+		<!--
+		Set the splash screen background.
+		The window background will be white in light mode, and black in dark mode.
+		-->
+		<item name="windowSplashScreenBackground">@color/colorBackground</item>
+
+		<!--
+		Use windowSplashScreenAnimatedIcon to add either a drawable or an
+		animated drawable. One of these is required.
+		-->
+		<item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_screen</item>
+		<!-- Required for animated icons-->
+		<item name="windowSplashScreenAnimationDuration">1000</item>
+
+		<!--
+		Set the theme of the Activity that directly follows your splash screen.
+		This is required.
+		-->
+		<item name="postSplashScreenTheme">@style/AppTheme</item>
+	</style>
+
+	<style name="AppTheme.SplashScreen" parent="AppTheme.SplashScreenBase">
+		<!-- Status bar background. -->
 		<item name="colorPrimaryDark">@android:color/transparent</item>
-		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
-		<item name="android:statusBarColor">@android:color/transparent</item>
 	</style>
 </resources>

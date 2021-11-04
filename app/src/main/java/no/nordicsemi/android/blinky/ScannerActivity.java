@@ -26,6 +26,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Menu;
@@ -40,6 +41,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -53,12 +55,44 @@ import no.nordicsemi.android.blinky.viewmodels.ScannerStateLiveData;
 import no.nordicsemi.android.blinky.viewmodels.ScannerViewModel;
 
 public class ScannerActivity extends AppCompatActivity implements DevicesAdapter.OnItemClickListener {
+    // This flag is false when the app is first started (cold start).
+    // In this case, the animation will be fully shown (1 sec).
+    // Subsequent launches will display it only briefly.
+    // It is only used on API 31+
+    public static boolean coldStart = true;
+
     private ScannerViewModel scannerViewModel;
     private ActivityScannerBinding binding;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set up the splash screen.
+        // The app is using SplashScreen compat library, which is supported on Android 5+.
+        // On Android 12+ the splash screen will be animated, while on 5-11 will present a still
+        // image. See more: https://developer.android.com/guide/topics/ui/splash-screen/
+        //
+        // As nRF Blinky supports Android 4.3+, on older platforms a 9-patch image is presented
+        // without the use of SplashScreen compat library.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            final SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+
+            // Animated Vector Drawable is only supported on API 31+.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (coldStart) {
+                    coldStart = false;
+                    // Keep the splash screen on-screen for longer periods.
+                    // Handle the splash screen transition.
+                    final long then = System.currentTimeMillis();
+                    splashScreen.setKeepVisibleCondition(() -> {
+                        final long now = System.currentTimeMillis();
+                        return now < then + 900;
+                    });
+                }
+            }
+        }
+
         binding = ActivityScannerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

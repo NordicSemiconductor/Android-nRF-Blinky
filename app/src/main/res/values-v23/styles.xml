@@ -22,10 +22,10 @@
   -->
 
 <resources>
-	<style name="AppTheme.SplashScreen">
-		<item name="colorPrimaryDark">@android:color/transparent</item>
-		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
-		<item name="android:statusBarColor">@android:color/transparent</item>
+	<style name="AppTheme.SplashScreen" parent="AppTheme.SplashScreenBase">
+		<!-- Using translucent status bar. -->
+		<item name="android:windowTranslucentStatus">true</item>
+		<!-- Use white status bar text on light theme. -->
 		<item name="android:windowLightStatusBar">true</item>
 	</style>
 </resources>
