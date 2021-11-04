@@ -66,6 +66,12 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
+        // The splash screen compat library does not work for pre-Lollipop devices
+        // so for them the theme needs to be set back to AppTheme.
+        // The AppTheme.SplashScreen theme will only be used to display the loading image.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            setTheme(R.style.AppTheme);
+        }
         super.onCreate(savedInstanceState);
 
         // Set up the splash screen.
