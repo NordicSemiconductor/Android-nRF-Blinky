@@ -59,7 +59,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
     // In this case, the animation will be fully shown (1 sec).
     // Subsequent launches will display it only briefly.
     // It is only used on API 31+
-    public static boolean coldStart = true;
+    private static boolean coldStart = true;
 
     private ScannerViewModel scannerViewModel;
     private ActivityScannerBinding binding;
