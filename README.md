@@ -1,8 +1,13 @@
 # nRF BLINKY
 
 nRF Blinky is an application developed targeting an audience of developers who are new to 
-Bluetooth Low Energy. This is a very simple application with two basic features to turn on LED 3 
+Bluetooth Low Energy. 
+
+This is a very simple application with two basic features to turn on LED 3 
 on the nRF DK and to receive the Button 1 press event from a nRF DK on the nRF Blinky Application.
+
+![Scanner](images/scanner.png) ![Blinky](images/blinky.png)
+
 It demonstrates how to the **BleManager** class from 
 [Android BLE Library](https://github.com/NordicSemiconductor/Android-BLE-Library/) 
 library can be used from View Model 
@@ -25,38 +30,32 @@ control LED 3 and Button 1:
   - Value: **`1`** => Button Pressed
   - Value: **`0`** => Button Released
   
-For full specification, check out 
-[documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v16.0.0/ble_sdk_app_blinky.html?cp=7_1_4_2_2_3).
+For documentation for nRF5 SDK, check out 
+[this link](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.1.0/ble_sdk_app_blinky.html?cp=8_1_4_2_2_3)
+and for one based on nRF Connect SDK 
+[this link](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/samples/bluetooth/peripheral_lbs/README.html).
 
 ## Requirements
 
-* This application depends on [Android BLE Library](https://github.com/NordicSemiconductor/Android-BLE-Library/) version 2.2.
+* This application depends on [Android BLE Library](https://github.com/NordicSemiconductor/Android-BLE-Library/).
 * Android 4.3 or newer is required.
-* nRF5 DK is required in order to test the BLE Blinky service.
+* Any nRF5 DK is required in order to test the BLE Blinky service. The service can also be emulated
+using nRF Connect for Android, iOS or Desktop.
 
 ## Installation and usage
 
-Prepare your Development kit.
-  - Plug in the Development Kit to your computer via USB.
-  - Power On the Development Kit.
-  - The Development Kit will now appear as a Mass storage device.
-  - Drag (or copy/paste) the appropriate HEX file onto that new device.
-  - The Development Kit LEDs will flash and it will disconnect and reconnect.
-  - The Development Kit is now ready and flashed with the nRF Blinky example firmware.
+Flash your device with LED Button sample from nRF5 SDK or nRF Connect SDK.
 
-For your convenience, we have bundled two firmwares in this project under the 
-[Firmwares](https://github.com/NordicSemiconductor/Android-nRF-Blinky/tree/master/Firmwares) 
-directory.
+The device should appear on the scanner screen after granting required permissions.
 
-To get the latest firmwares and check the source code, you may go directly to our 
-[Developers website](http://developer.nordicsemi.com/nRF5_SDK/) 
-and download the SDK version you need. Then, find the source code and hex files in the 
-directory `/examples/ble_peripheral/ble_app_blinky/`.
+### Required permissions
 
-More information about the nRF Blinky example firmware can be found in the 
-[documentation](https://www.nordicsemi.com/DocLib/Content/SDK_Doc/nRF5_SDK/v15-2-0/ble_sdk_app_blinky).
+On Android 6 - 11 nRF Blinky will ask for Location Permission and Location services. 
+This permission is required on Android in order to obtain Bluetooth LE scan results. The app does not
+use location in any way and has no Internet permission so can be used safely.
 
-## Note
-
-In order to scan for Bluetooth LE device the Location permission must be granted and, on some phones, 
-the Location must be enabled. This app will not use the location information in any way.
+This permission is not required from Android 12 onwards, where new 
+[Bluetooth permissions](https://developer.android.com/guide/topics/connectivity/bluetooth/permissions)
+were introduced. The `BLUETOOTH_SCAN` permission can now be requested with 
+`usesPermissionFlags="neverForLocation"` parameter, which excludes location related data from the
+scan results, making requesting location not needed anymore.
