@@ -27,11 +27,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.RecyclerView;
 import no.nordicsemi.android.blinky.R;
 import no.nordicsemi.android.blinky.ScannerActivity;
@@ -39,7 +37,8 @@ import no.nordicsemi.android.blinky.databinding.DeviceItemBinding;
 import no.nordicsemi.android.blinky.viewmodels.DevicesLiveData;
 
 public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHolder> {
-	private List<DiscoveredBluetoothDevice> devices;
+	private final AsyncListDiffer<DiscoveredBluetoothDevice> differ =
+			new AsyncListDiffer<>(this, new DeviceDiffCallback());
 	private OnItemClickListener onItemClickListener;
 
 	@FunctionalInterface
@@ -54,12 +53,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 	public DevicesAdapter(@NonNull final ScannerActivity activity,
 						  @NonNull final DevicesLiveData devicesLiveData) {
 		setHasStableIds(true);
-		devicesLiveData.observe(activity, newDevices -> {
-			final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
-					new DeviceDiffCallback(devices, newDevices), false);
-			devices = newDevices;
-			result.dispatchUpdatesTo(this);
-		});
+		devicesLiveData.observe(activity, differ::submitList);
 	}
 
 	@NonNull
@@ -72,7 +66,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 
 	@Override
 	public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-		final DiscoveredBluetoothDevice device = devices.get(position);
+		final DiscoveredBluetoothDevice device = differ.getCurrentList().get(position);
 		final String deviceName = device.getName();
 
 		if (!TextUtils.isEmpty(deviceName))
@@ -86,12 +80,12 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 
 	@Override
 	public long getItemId(final int position) {
-		return devices.get(position).hashCode();
+		return differ.getCurrentList().get(position).hashCode();
 	}
 
 	@Override
 	public int getItemCount() {
-		return devices != null ? devices.size() : 0;
+		return differ.getCurrentList().size();
 	}
 
 	final class ViewHolder extends RecyclerView.ViewHolder {
@@ -102,7 +96,8 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 			binding = DeviceItemBinding.bind(view);
 			binding.deviceContainer.setOnClickListener(v -> {
 				if (onItemClickListener != null) {
-					onItemClickListener.onItemClick(devices.get(getBindingAdapterPosition()));
+					final DiscoveredBluetoothDevice device = differ.getCurrentList().get(getBindingAdapterPosition());
+					onItemClickListener.onItemClick(device);
 				}
 			});
 		}
