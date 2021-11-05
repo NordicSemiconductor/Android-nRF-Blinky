@@ -66,22 +66,27 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
-        // The splash screen compat library does not work for pre-Lollipop devices
-        // so for them the theme needs to be set back to AppTheme.
-        // The AppTheme.SplashScreen theme will only be used to display the loading image.
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            setTheme(R.style.AppTheme);
-        }
+        // Set the proper theme for the Activity. This could have been set in "v23/styles..xml"
+        // as "postSplashScreenTheme", but as this app works on pre-API-23 devices, it needs to be
+        // set for them as well, and that code would not apply in suce case.
+        // As "postSplashScreenTheme" is optional, and setting the theme can be done using
+        // setTheme, this is preferred in our case, as this also work for older platforms.
+        setTheme(R.style.AppTheme);
+
         super.onCreate(savedInstanceState);
 
         // Set up the splash screen.
-        // The app is using SplashScreen compat library, which is supported on Android 5+.
-        // On Android 12+ the splash screen will be animated, while on 5-11 will present a still
+        // The app is using SplashScreen compat library, which is supported on Android 5+, but the
+        // icon is only supported on API 23+.
+        //
+        // See: https://android.googlesource.com/platform/frameworks/support/+/androidx-main/core/core-splashscreen/src/main/java/androidx/core/splashscreen/package-info.java
+        //
+        // On Android 12+ the splash screen will be animated, while on 6 - 11 will present a still
         // image. See more: https://developer.android.com/guide/topics/ui/splash-screen/
         //
         // As nRF Blinky supports Android 4.3+, on older platforms a 9-patch image is presented
         // without the use of SplashScreen compat library.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             final SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
 
             // Animated Vector Drawable is only supported on API 31+.
