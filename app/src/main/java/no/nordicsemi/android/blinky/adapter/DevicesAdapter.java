@@ -29,16 +29,16 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.AsyncListDiffer;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import no.nordicsemi.android.blinky.R;
 import no.nordicsemi.android.blinky.ScannerActivity;
 import no.nordicsemi.android.blinky.databinding.DeviceItemBinding;
 import no.nordicsemi.android.blinky.viewmodels.DevicesLiveData;
 
-public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHolder> {
-	private final AsyncListDiffer<DiscoveredBluetoothDevice> differ =
-			new AsyncListDiffer<>(this, new DeviceDiffCallback());
+public class DevicesAdapter extends ListAdapter<DiscoveredBluetoothDevice, DevicesAdapter.ViewHolder> {
+	private static final DiffUtil.ItemCallback<DiscoveredBluetoothDevice> DIFFER = new DeviceDiffCallback();
 	private OnItemClickListener onItemClickListener;
 
 	@FunctionalInterface
@@ -52,8 +52,9 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 
 	public DevicesAdapter(@NonNull final ScannerActivity activity,
 						  @NonNull final DevicesLiveData devicesLiveData) {
+		super(DIFFER);
 		setHasStableIds(true);
-		devicesLiveData.observe(activity, differ::submitList);
+		devicesLiveData.observe(activity, this::submitList);
 	}
 
 	@NonNull
@@ -66,26 +67,12 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 
 	@Override
 	public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-		final DiscoveredBluetoothDevice device = differ.getCurrentList().get(position);
-		final String deviceName = device.getName();
-
-		if (!TextUtils.isEmpty(deviceName))
-			holder.binding.deviceName.setText(deviceName);
-		else
-			holder.binding.deviceName.setText(R.string.unknown_device);
-		holder.binding.deviceAddress.setText(device.getAddress());
-		final int rssiPercent = (int) (100.0f * (127.0f + device.getRssi()) / (127.0f + 20.0f));
-		holder.binding.rssi.setImageLevel(rssiPercent);
+		holder.bind(getItem(position));
 	}
 
 	@Override
 	public long getItemId(final int position) {
-		return differ.getCurrentList().get(position).hashCode();
-	}
-
-	@Override
-	public int getItemCount() {
-		return differ.getCurrentList().size();
+		return getItem(position).hashCode();
 	}
 
 	final class ViewHolder extends RecyclerView.ViewHolder {
@@ -96,10 +83,22 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.ViewHold
 			binding = DeviceItemBinding.bind(view);
 			binding.deviceContainer.setOnClickListener(v -> {
 				if (onItemClickListener != null) {
-					final DiscoveredBluetoothDevice device = differ.getCurrentList().get(getBindingAdapterPosition());
+					final DiscoveredBluetoothDevice device = getItem(getBindingAdapterPosition());
 					onItemClickListener.onItemClick(device);
 				}
 			});
+		}
+
+		private void bind(@NonNull final DiscoveredBluetoothDevice device) {
+			final String deviceName = device.getName();
+
+			if (!TextUtils.isEmpty(deviceName))
+				binding.deviceName.setText(deviceName);
+			else
+				binding.deviceName.setText(R.string.unknown_device);
+			binding.deviceAddress.setText(device.getAddress());
+			final int rssiPercent = (int) (100.0f * (127.0f + device.getRssi()) / (127.0f + 20.0f));
+			binding.rssi.setImageLevel(rssiPercent);
 		}
 	}
 }
