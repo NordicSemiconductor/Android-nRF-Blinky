@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<!--
-	From API 31 the splash screen is using native implementation, so no additional parameters a
-	are needed.
-	-->
-	<style name="AppTheme.SplashScreen" parent="AppTheme.SplashScreenBase" />
-</resources>
