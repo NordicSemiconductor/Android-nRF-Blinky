@@ -11,13 +11,13 @@
     <string name="unknown_device">Unknown Device</string>
 
     <string name="location_permission_title">LOCATION PERMISSION REQUIRED</string>
-    <string name="location_permission_info">From Android 6.0 Marshmallow until Android 11 the application
+    <string name="location_permission_info">From Android 6.0 until 11 the application
         requires Location permission in order to scan for Bluetooth Low Energy devices. This
         is because Bluetooth LE beacons, for example iBeacons or Eddystone, may be used to
-        determine the phone\'s and user\'s location.\n\n<b>nRF Connect Device Manager</b> will not use
+        determine the phone\'s and user\'s location.\n\n<b>nRF Blinky</b> will not use
 		this information in any way.\n\nOn Android 12 and above, a new Bluetooth Scan permission
-		could be requested with a flag that disables scanning for location, but on this system
-		version no scan results are returned without location enabled.</string>
+		is requested with a flag that prevents using scanning for estimating location, but on this system
+        version, unfortunately, no scan results are returned without location enabled.</string>
 
     <string name="bluetooth_permission_title">BLUETOOTH PERMISSIONS REQUIRED</string>
     <string name="bluetooth_permission_info">The app needs to scan and connect to\nBluetooth LE devices.</string>
@@ -27,11 +27,10 @@
         below to enable it.</string>
 
     <string name="blinky_guide_title">CAN\'T SEE YOUR BLINKY?</string>
-    <string name="blinky_guide_info">1. Make sure the DK is <b>turned on</b> and is connected to
-		a power source using a micro USB cable or a coin cell is plugged in.\n\n2. Make sure the
-		<b>ble_app_blinky</b> firmware and SoftDevice are flashed.</string>
-    <string name="blinky_guide_location_info">3. Location is turned off. Most Android phones
-        require it in order to scan for Bluetooth LE devices. If you are sure your
-        device is advertising and it doesn\'t show up here, click the button below to
-        enable Location.</string>
+    <string name="blinky_guide_info">1. <b>Turn on</b> the device and is connect to
+		a power source using a micro USB cable or a coin cell is plugged in.\n\n2. Make sure
+        the application advertises LED Button Service (LBS), or change the filter in the menu.</string>
+    <string name="blinky_guide_location_info">3. Location is turned off.\n\nLocation service is required
+        in order to scan for Bluetooth LE devices. If you are sure your device is advertising and
+        it doesn\'t show up here, click the button below to enable Location.</string>
 </resources>

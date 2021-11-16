@@ -188,7 +188,9 @@ public class ScannerViewModel extends AndroidViewModel {
 			// This callback will be called only if the report delay set above is greater then 0.
 
 			// If the packet has been obtained while Location was disabled, mark Location as not required
-			if (Utils.isLocationRequired(getApplication()) && !Utils.isLocationEnabled(getApplication()))
+			if (!results.isEmpty()
+					&& Utils.isLocationRequired(getApplication())
+					&& !Utils.isLocationEnabled(getApplication()))
 				Utils.markLocationNotRequired(getApplication());
 
 			boolean atLeastOneMatchedFilter = false;
