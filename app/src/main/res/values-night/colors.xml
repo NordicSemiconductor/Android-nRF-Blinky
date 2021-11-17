@@ -29,6 +29,7 @@
     <color name="colorAccentOnPrimary">@color/nordicBlue</color>
     <color name="colorSecondary">@color/nordicBlue</color>
     <color name="colorStatusBar">@color/black</color>
+    <color name="colorError">@color/nordicRed</color>
 
     <color name="colorBackground">@color/black</color>
     <color name="colorOnBackground">@color/white</color>

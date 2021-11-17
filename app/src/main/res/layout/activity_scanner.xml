@@ -34,9 +34,11 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:theme="@style/AppTheme.AppBarOverlay"
+		android:touchscreenBlocksFocus="false"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent">
+		app:layout_constraintTop_toTopOf="parent"
+		tools:ignore="UnusedAttribute">
 
 		<com.google.android.material.appbar.MaterialToolbar
 			android:id="@+id/toolbar"
