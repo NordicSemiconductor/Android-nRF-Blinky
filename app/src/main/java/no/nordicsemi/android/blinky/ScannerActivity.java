@@ -68,7 +68,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         // Set the proper theme for the Activity. This could have been set in "v23/styles..xml"
         // as "postSplashScreenTheme", but as this app works on pre-API-23 devices, it needs to be
-        // set for them as well, and that code would not apply in suce case.
+        // set for them as well, and that code would not apply in such case.
         // As "postSplashScreenTheme" is optional, and setting the theme can be done using
         // setTheme, this is preferred in our case, as this also work for older platforms.
         setTheme(R.style.AppTheme);
