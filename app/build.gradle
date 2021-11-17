@@ -60,4 +60,7 @@ dependencies {
 
     // BLE library
     implementation 'no.nordicsemi.android:ble-livedata:2.3.1'
+
+    // Use this dependency to verify no memory leaks in the app.
+    // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }
