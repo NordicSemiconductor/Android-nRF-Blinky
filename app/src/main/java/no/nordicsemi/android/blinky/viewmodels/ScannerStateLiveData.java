@@ -118,12 +118,4 @@ public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
 	public boolean isLocationEnabled() {
 		return locationEnabled;
 	}
-
-	/**
-	 * Notifies the observer that scanner has no records to show.
-	 */
-	public void clearRecords() {
-		hasRecords = false;
-		postValue(this);
-	}
 }
