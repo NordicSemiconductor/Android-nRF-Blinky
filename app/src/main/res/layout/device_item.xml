@@ -21,61 +21,68 @@
   ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/device_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/colorSurface"
-    android:paddingStart="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/item_padding_top"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/item_padding_bottom"
-    tools:ignore="ContentDescription">
+    android:focusable="true"
+    android:foreground="?selectableItemBackground"
+    android:background="?colorSurface">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/icon"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:background="@drawable/ic_device_bg"
-        android:scaleType="center"
-        app:srcCompat="@drawable/ic_device_blinky"/>
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/item_padding_top"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/item_padding_bottom"
+        tools:ignore="ContentDescription">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/device_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_toStartOf="@+id/rssi"
-        android:layout_toEndOf="@id/icon"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textSize="18sp"
-        tools:text="Nordic_Blinky"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_device_bg"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_device_blinky"/>
 
-    <com.google.android.material.textview.MaterialTextView
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textColor="?android:attr/textColorSecondary"
-        android:id="@+id/device_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/device_name"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_toEndOf="@id/icon"
-        tools:text="AA:BB:CC:DD:EE:FF"/>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/device_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_toStartOf="@+id/rssi"
+            android:layout_toEndOf="@id/icon"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="18sp"
+            tools:text="Nordic_Blinky"/>
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/rssi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        app:srcCompat="@drawable/ic_signal_bar"
-        tools:src="@drawable/ic_signal_3_bar"/>
-</RelativeLayout>
+        <com.google.android.material.textview.MaterialTextView
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="?android:attr/textColorSecondary"
+            android:id="@+id/device_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/device_name"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_toEndOf="@id/icon"
+            tools:text="AA:BB:CC:DD:EE:FF"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/rssi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/ic_signal_bar"
+            tools:src="@drawable/ic_signal_3_bar"/>
+    </RelativeLayout>
+</FrameLayout>
