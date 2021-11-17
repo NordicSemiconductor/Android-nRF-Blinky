@@ -31,12 +31,12 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
+import android.util.Log;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import no.nordicsemi.android.blinky.utils.Utils;
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
@@ -204,8 +204,12 @@ public class ScannerViewModel extends AndroidViewModel {
 
 		@Override
 		public void onScanFailed(final int errorCode) {
-			// TODO This should be handled
-			scannerStateLiveData.scanningStopped();
+			Log.w("ScannerViewModel", "Scanning failed with code " + errorCode);
+
+			if (errorCode == ScanCallback.SCAN_FAILED_APPLICATION_REGISTRATION_FAILED) {
+				stopScan();
+				startScan();
+			}
 		}
 	};
 
