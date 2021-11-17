@@ -82,11 +82,7 @@ public class ScannerViewModel extends AndroidViewModel {
 	@Override
 	protected void onCleared() {
 		super.onCleared();
-		getApplication().unregisterReceiver(bluetoothStateBroadcastReceiver);
-
-		if (Utils.isMarshmallowOrAbove()) {
-			getApplication().unregisterReceiver(locationProviderChangedReceiver);
-		}
+		unregisterBroadcastReceivers(getApplication());
 	}
 
 	public boolean isUuidFilterEnabled() {
@@ -224,10 +220,21 @@ public class ScannerViewModel extends AndroidViewModel {
 	/**
 	 * Register for required broadcast receivers.
 	 */
-	private void registerBroadcastReceivers(@NonNull final Application application) {
-		application.registerReceiver(bluetoothStateBroadcastReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+	private void registerBroadcastReceivers(@NonNull final Context context) {
+		context.registerReceiver(bluetoothStateBroadcastReceiver, new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
 		if (Utils.isMarshmallowOrAbove()) {
-			application.registerReceiver(locationProviderChangedReceiver, new IntentFilter(LocationManager.MODE_CHANGED_ACTION));
+			context.registerReceiver(locationProviderChangedReceiver, new IntentFilter(LocationManager.MODE_CHANGED_ACTION));
+		}
+	}
+
+	/**
+	 * Unregister all broadcast receivers.
+	 */
+	private void unregisterBroadcastReceivers(@NonNull final Context context) {
+		context.unregisterReceiver(bluetoothStateBroadcastReceiver);
+
+		if (Utils.isMarshmallowOrAbove()) {
+			context.unregisterReceiver(locationProviderChangedReceiver);
 		}
 	}
 
