@@ -37,6 +37,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import no.nordicsemi.android.blinky.utils.FilterUtils;
 import no.nordicsemi.android.blinky.utils.Utils;
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
@@ -181,7 +182,7 @@ public class ScannerViewModel extends AndroidViewModel {
 			if (Utils.isLocationRequired(getApplication()) && !Utils.isLocationEnabled(getApplication()))
 				Utils.markLocationNotRequired(getApplication());
 
-			if (devicesLiveData.deviceDiscovered(result)) {
+			if (!isNoise(result) && devicesLiveData.deviceDiscovered(result)) {
 				devicesLiveData.applyFilter();
 				scannerStateLiveData.recordFound();
 			}
@@ -199,7 +200,9 @@ public class ScannerViewModel extends AndroidViewModel {
 
 			boolean atLeastOneMatchedFilter = false;
 			for (final ScanResult result : results)
-				atLeastOneMatchedFilter = devicesLiveData.deviceDiscovered(result) || atLeastOneMatchedFilter;
+				atLeastOneMatchedFilter =
+						(!isNoise(result) && devicesLiveData.deviceDiscovered(result))
+								|| atLeastOneMatchedFilter;
 			if (atLeastOneMatchedFilter) {
 				devicesLiveData.applyFilter();
 				scannerStateLiveData.recordFound();
@@ -272,4 +275,42 @@ public class ScannerViewModel extends AndroidViewModel {
 			}
 		}
 	};
+
+	/**
+	 * This method returns true if the scan result may be considered as noise.
+	 * This is to make the device list on the scanner screen shorter.
+	 * <p>
+	 * This implementation considers as noise devices that:
+	 * <ul>
+	 * <li>Are not connectable (Android Oreo or newer only),</li>
+	 * <li>Are far away (RSSI < -80),</li>
+	 * <li>Advertise as beacons (iBeacons, Nordic Beacons, Microsoft Advertising Beacons,
+	 * Eddystone),</li>
+	 * <li>Advertise with AirDrop footprint,</li>
+	 * </ul>
+	 * Noise devices will no the shown on the scanner screen even with all filters disabled.
+	 *
+	 * @param result the scan result.
+	 * @return true, if the device may be dismissed, false otherwise.
+	 */
+	@SuppressWarnings({"BooleanMethodIsAlwaysInverted", "RedundantIfStatement"})
+	private boolean isNoise(@NonNull final ScanResult result) {
+		// Do not show non-connectable devices.
+		// Only Android Oreo or newer can say if a device is connectable. On older Android versions
+		// the Support Scanner Library assumes all devices are connectable (compatibility mode).
+		if (!result.isConnectable())
+			return true;
+
+		// Very distant devices are noise.
+		if (result.getRssi() < -80)
+			return true;
+
+		if (FilterUtils.isBeacon(result))
+			return true;
+
+		if (FilterUtils.isAirDrop(result))
+			return true;
+
+		return false;
+	}
 }
