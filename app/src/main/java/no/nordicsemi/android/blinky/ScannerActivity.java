@@ -136,6 +136,10 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
                 registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
                         result -> scannerViewModel.refresh()
                 );
+        binding.refreshLayout.setOnRefreshListener(() -> {
+            scannerViewModel.clear();
+            binding.refreshLayout.setRefreshing(false);
+        });
 
         // Configure views
         binding.noDevices.actionEnableLocation.setOnClickListener(v -> openLocationSettings());
@@ -170,14 +174,14 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        clear();
+    protected void onResume() {
+        super.onResume();
+        startScan();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         stopScan();
     }
 
@@ -256,7 +260,8 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
                     binding.stateScanning.setVisibility(View.INVISIBLE);
                     binding.noDevices.getRoot().setVisibility(View.GONE);
                     binding.noBluetoothPermission.getRoot().setVisibility(View.GONE);
-                    clear();
+
+                    scannerViewModel.clear();
                 }
             } else {
                 binding.noBluetoothPermission.getRoot().setVisibility(View.VISIBLE);
@@ -282,18 +287,17 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
     }
 
     /**
+     * Starts scanning for Bluetooth LE devices.
+     */
+    private void startScan() {
+        startScan(scannerViewModel.getScannerState());
+    }
+
+    /**
      * Stops scanning for Bluetooth LE devices.
      */
     private void stopScan() {
         scannerViewModel.stopScan();
-    }
-
-    /**
-     * Clears the list of devices, which will notify the observer.
-     */
-    private void clear() {
-        scannerViewModel.getDevices().clear();
-        scannerViewModel.getScannerState().clearRecords();
     }
 
     /**

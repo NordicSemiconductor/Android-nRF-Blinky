@@ -107,6 +107,14 @@ public class ScannerViewModel extends AndroidViewModel {
 	}
 
 	/**
+	 * Forgets discovered devices.
+	 */
+	public void clear() {
+		devicesLiveData.clear();
+		scannerStateLiveData.clearRecords();
+	}
+
+	/**
 	 * Updates the device filter. Devices that once passed the filter will still be shown
 	 * even if they move away from the phone, or change the advertising packet. This is to
 	 * avoid removing devices from the list.

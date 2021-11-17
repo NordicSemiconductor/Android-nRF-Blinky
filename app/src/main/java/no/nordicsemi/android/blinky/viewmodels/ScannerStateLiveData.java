@@ -39,7 +39,6 @@ public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
 		this.scanningStarted = false;
 		this.bluetoothEnabled = bluetoothEnabled;
 		this.locationEnabled = locationEnabled;
-		postValue(this);
 	}
 
 	/* package */ void refresh() {
@@ -72,15 +71,30 @@ public class ScannerStateLiveData extends LiveData<ScannerStateLiveData> {
 		postValue(this);
 	}
 
+	/**
+	 * Notifies observers that a record has been found.
+	 */
 	/* package */ void recordFound() {
-		hasRecords = true;
-		postValue(this);
+		if (!hasRecords) {
+			hasRecords = true;
+			postValue(this);
+		}
+	}
+
+	/**
+	 * Notifies observers that scanner has no records to show.
+	 */
+	/* package */ void clearRecords() {
+		if (hasRecords) {
+			hasRecords = false;
+			postValue(this);
+		}
 	}
 
 	/**
 	 * Returns whether scanning is in progress.
 	 */
-	boolean isScanning() {
+	/* package */ boolean isScanning() {
 		return scanningStarted;
 	}
 
