@@ -43,7 +43,7 @@ android {
 
 dependencies {
     implementation 'androidx.activity:activity:1.4.0'
-    implementation 'androidx.fragment:fragment:1.3.6'
+    implementation 'androidx.fragment:fragment:1.4.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
