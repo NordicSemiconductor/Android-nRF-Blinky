@@ -33,6 +33,8 @@
 		<item name="colorSecondary">@color/colorSecondary</item>
 		<!-- Status bar. -->
 		<item name="colorPrimaryDark">@color/colorStatusBar</item>
+		<!-- Color for displaying error messages.  -->
+		<item name="colorError">@color/colorError</item>
 	</style>
 
 	<!-- Main theme customization per API. -->

@@ -27,7 +27,6 @@
 	<style name="AppTheme" parent="AppTheme.Base">
 		<!-- Black navigation bar. -->
 		<item name="android:navigationBarColor">@android:color/black</item>
-		<!-- Use white status bar text on any theme. -->
-		<item name="android:windowLightStatusBar">false</item>
 	</style>
+
 </resources>
