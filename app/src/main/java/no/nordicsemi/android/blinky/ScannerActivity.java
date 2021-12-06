@@ -136,12 +136,12 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
                 registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
                         result -> scannerViewModel.refresh()
                 );
+
+        // Configure views
         binding.refreshLayout.setOnRefreshListener(() -> {
             scannerViewModel.clear();
             binding.refreshLayout.setRefreshing(false);
         });
-
-        // Configure views
         binding.noDevices.actionEnableLocation.setOnClickListener(v -> openLocationSettings());
         binding.bluetoothOff.actionEnableBluetooth.setOnClickListener(v -> requestBluetoothEnabled());
         binding.noLocationPermission.actionGrantLocationPermission.setOnClickListener(v -> {
@@ -174,14 +174,14 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         startScan();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         stopScan();
     }
 

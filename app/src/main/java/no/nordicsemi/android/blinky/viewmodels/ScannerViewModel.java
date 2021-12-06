@@ -191,11 +191,11 @@ public class ScannerViewModel extends AndroidViewModel {
 		@Override
 		public void onBatchScanResults(@NonNull final List<ScanResult> results) {
 			// This callback will be called only if the report delay set above is greater then 0.
+			if (results.isEmpty())
+				return;
 
 			// If the packet has been obtained while Location was disabled, mark Location as not required
-			if (!results.isEmpty()
-					&& Utils.isLocationRequired(getApplication())
-					&& !Utils.isLocationEnabled(getApplication()))
+			if (Utils.isLocationRequired(getApplication()) && !Utils.isLocationEnabled(getApplication()))
 				Utils.markLocationNotRequired(getApplication());
 
 			boolean atLeastOneMatchedFilter = false;
