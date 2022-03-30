@@ -96,7 +96,7 @@ public class ScannerActivity extends AppCompatActivity implements DevicesAdapter
                     // Keep the splash screen on-screen for longer periods.
                     // Handle the splash screen transition.
                     final long then = System.currentTimeMillis();
-                    splashScreen.setKeepVisibleCondition(() -> {
+                    splashScreen.setKeepOnScreenCondition(() -> {
                         final long now = System.currentTimeMillis();
                         return now < then + 900;
                     });
