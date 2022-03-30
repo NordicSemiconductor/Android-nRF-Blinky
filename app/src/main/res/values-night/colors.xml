@@ -41,7 +41,5 @@
     -->
     <color name="colorNordicLogo">@color/white</color>
     <color name="colorNordicLogoText">@color/white</color>
-    <color name="colorNordicLogoBottom">@color/black</color>
-    <color name="colorNordicLogoTop">@color/nordicDarkGray</color>
 
 </resources>
