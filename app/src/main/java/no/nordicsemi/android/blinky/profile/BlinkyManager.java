@@ -22,6 +22,7 @@
 
 package no.nordicsemi.android.blinky.profile;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -112,10 +113,14 @@ public class BlinkyManager extends ObservableBleManager {
 	 * will be called with the data received.
 	 */
 	private	final BlinkyButtonDataCallback buttonCallback = new BlinkyButtonDataCallback() {
+		@SuppressLint("WrongConstant")
 		@Override
 		public void onButtonStateChanged(@NonNull final BluetoothDevice device,
 										 final boolean pressed) {
 			log(LogContract.Log.Level.APPLICATION, "Button " + (pressed ? "pressed" : "released"));
+			// The BlinkyManager is initialized with a default Handler, which will use
+			// UI thread for the callbacks. setValue can be called safely.
+			// If you're using a different handler, or coroutines, use postValue(..) instead.
 			buttonState.setValue(pressed);
 		}
 
@@ -138,11 +143,15 @@ public class BlinkyManager extends ObservableBleManager {
 	 * called.
 	 */
 	private final BlinkyLedDataCallback ledCallback = new BlinkyLedDataCallback() {
+		@SuppressLint("WrongConstant")
 		@Override
 		public void onLedStateChanged(@NonNull final BluetoothDevice device,
 									  final boolean on) {
 			ledOn = on;
 			log(LogContract.Log.Level.APPLICATION, "LED " + (on ? "ON" : "OFF"));
+			// The BlinkyManager is initialized with a default Handler, which will use
+			// UI thread for the callbacks. setValue can be called safely.
+			// If you're using a different handler, or coroutines, use postValue(..) instead.
 			ledState.setValue(on);
 		}
 
