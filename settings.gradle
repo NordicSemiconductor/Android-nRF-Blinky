@@ -15,6 +15,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "nRF Blinky"
 include ':app'
+include ':scanner'
 
 if (file('../Android-Common-Libraries').exists()) {
     includeBuild('../Android-Common-Libraries')

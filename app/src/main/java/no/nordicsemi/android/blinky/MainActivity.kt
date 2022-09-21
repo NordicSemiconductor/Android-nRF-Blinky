@@ -2,12 +2,13 @@ package no.nordicsemi.android.blinky
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Surface
 import dagger.hilt.android.AndroidEntryPoint
+import no.nordicsemi.android.blinky.navigation.BlinkyDestinations
+import no.nordicsemi.android.blinky.navigation.ScannerDestinations
+import no.nordicsemi.android.common.navigation.NavigationView
 import no.nordicsemi.android.common.theme.NordicActivity
 import no.nordicsemi.android.common.theme.NordicTheme
-import no.nordicsemi.android.common.theme.view.NordicAppBar
 
 @AndroidEntryPoint
 class MainActivity: NordicActivity() {
@@ -18,9 +19,7 @@ class MainActivity: NordicActivity() {
         setContent {
             NordicTheme {
                 Surface {
-                    Column {
-                        NordicAppBar(text = "Blinky")
-                    }
+                    NavigationView(ScannerDestinations + BlinkyDestinations)
                 }
             }
         }
