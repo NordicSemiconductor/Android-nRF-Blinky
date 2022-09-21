@@ -1,14 +1,21 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+}
+rootProject.name = "nRF Blinky"
 include ':app'
 
-// To include Android Scanner Compat Library project as a module, clone it to
-// Android-Scanner-Compat-Library folder.
-
-if (file('../Android-Scanner-Compat-Library').exists()) {
-    includeBuild('../Android-Scanner-Compat-Library')
-}
-
-// To include BLE Library project as a module, clone it to Android-BLE-Library folder.
-
-if (file('../Android-BLE-Library').exists()) {
-    includeBuild('../Android-BLE-Library')
+if (file('../Android-Common-Libraries').exists()) {
+    includeBuild('../Android-Common-Libraries')
 }

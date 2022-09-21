@@ -1,128 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2018, Nordic Semiconductor
-  ~ All rights reserved.
-  ~
-  ~ Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-  ~
-  ~ 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-  ~
-  ~ 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the
-  ~ documentation and/or other materials provided with the distribution.
-  ~
-  ~ 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this
-  ~ software without specific prior written permission.
-  ~
-  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-  ~ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-  ~ HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-  ~ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-  ~ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-  ~ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-<manifest package="no.nordicsemi.android.blinky"
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools">
+    <application
+        android:name=".HiltApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:targetApi="31">
 
-	<!--
-	 Bluetooth permission is required on Android 4.3 - 11 in order to communicate with
-	 Bluetooth LE devices.
-	-->
-	<uses-permission
-		android:name="android.permission.BLUETOOTH"
-		android:maxSdkVersion="30"/>
-	<!--
-	 Bluetooth Admin permission is required on Android 4.3 - 11 in order to scan for
-	 Bluetooth LE devices.
-	-->
-	<uses-permission
-		android:name="android.permission.BLUETOOTH_ADMIN"
-		android:maxSdkVersion="30"/>
-	<!--
-	 Location permission is required from Android 6 to 11 to be able to scan for advertising
-	 Bluetooth LE devices. Some BLE devices, called beacons, may be used to position the phone.
-	 This is to ensure that the user agrees to do so.
-	 This app does not use this location information in any way.
-	 Since Android 10 ACCESS_FINE_LOCATION is required and for that, the COARSE one also needs
-	 to be specified.
-    -->
-	<uses-permission
-		android:name="android.permission.ACCESS_COARSE_LOCATION"
-		android:maxSdkVersion="30"/>
-	<uses-permission
-		android:name="android.permission.ACCESS_FINE_LOCATION"
-		android:maxSdkVersion="30"/>
-	<!--
-     On Android 12 new set of Bluetooth permissions were added. BLUETOOTH_SCAN permission is
-     needed to scan for Bluetooth LE devices. The "never for location" flag is set, as we are not
-     interested in finding the user location, and we are OK with the fact, that beacons info
-     will be removed from the scan results.
-    -->
-	<uses-permission
-		android:name="android.permission.BLUETOOTH_SCAN"
-		android:usesPermissionFlags="neverForLocation"
-		tools:targetApi="s" />
-	<!--
-	 This permission is required in order to connect to a Bluetooth LE device on Android 12
-	 onwards.
-	-->
-	<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.SplashScreen"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-	<uses-feature
-		android:name="android.hardware.bluetooth_le"
-		android:required="true"/>
-	<uses-sdk tools:overrideLibrary="androidx.core.splashscreen"/>
-
-	<queries>
-		<!-- Allow logging in nRF Logger. -->
-		<package android:name="no.nordicsemi.android.log" />
-	</queries>
-
-	<application
-		android:name=".BlinkyApplication"
-		android:allowBackup="true"
-		android:fullBackupContent="true"
-		android:icon="@mipmap/ic_launcher"
-		android:roundIcon="@mipmap/ic_launcher_round"
-		android:label="@string/app_name"
-		android:theme="@style/AppTheme"
-		tools:ignore="GoogleAppIndexingWarning">
-
-		<activity
-			android:name=".ScannerActivity"
-			android:theme="@style/AppTheme.SplashScreen"
-			android:launchMode="singleTop"
-			android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<category android:name="android.intent.category.LAUNCHER"/>
-			</intent-filter>
-		</activity>
-
-		<!--
-		 This activity alias is used to allow opening nRF Blinky from nRF Toolbox.
-		 This is not required if this feature is not desired.
-		 nRF Toolbox is displaying a different name and an icon, which are taken from this alias.
-		-->
-		<activity-alias
-			android:name="SplashScreenActivity"
-			android:targetActivity=".ScannerActivity"
-			android:icon="@drawable/ic_blinky_feature"
-			android:label="@string/feature_name"
-			android:launchMode="singleTop"
-			android:exported="true">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<category android:name="no.nordicsemi.android.nrftoolbox.LAUNCHER"/>
-			</intent-filter>
-		</activity-alias>
-
-		<activity
-			android:name=".BlinkyActivity"
-			android:launchMode="singleTop"
-			android:parentActivityName=".ScannerActivity">
-		</activity>
-	</application>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 
 </manifest>
