@@ -1,6 +1,7 @@
 package no.nordicsemi.android.blinky.control
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lightbulb
@@ -37,7 +38,7 @@ fun LedControlView(
                 Image(
                     imageVector = Icons.Default.Lightbulb,
                     contentDescription = null,
-                    modifier = Modifier.size(48.dp).padding(end = 16.dp),
+                    modifier = Modifier.padding(end = 16.dp),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                 )
                 Text(
@@ -47,7 +48,8 @@ fun LedControlView(
             }
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clickable { onStateChanged(!state) },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(

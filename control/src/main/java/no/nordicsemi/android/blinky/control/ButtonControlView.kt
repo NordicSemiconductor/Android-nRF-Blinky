@@ -1,9 +1,12 @@
 package no.nordicsemi.android.blinky.control
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -33,11 +36,9 @@ fun ButtonControlView(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Image(
-                    imageVector = Icons.Default.Lightbulb,
+                    imageVector = Icons.Default.RadioButtonChecked,
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(end = 16.dp),
+                    modifier = Modifier.padding(end = 16.dp),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                 )
                 Text(
@@ -47,7 +48,8 @@ fun ButtonControlView(
             }
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
