@@ -10,7 +10,7 @@ import java.util.*
 
 @Composable
 fun BlinkyScanner(
-    onDeviceSelected: (BluetoothDevice) -> Unit,
+    onDeviceSelected: (BluetoothDevice, String?) -> Unit,
 ) {
     ScannerScreen(
         title = stringResource(id = R.string.scanner_title),
@@ -18,7 +18,7 @@ fun BlinkyScanner(
         cancellable = false,
         onResult = { result ->
             when (result) {
-                is DeviceSelected -> onDeviceSelected(result.device.device)
+                is DeviceSelected -> onDeviceSelected(result.device.device, result.device.name)
                 else -> {}
             }
         }

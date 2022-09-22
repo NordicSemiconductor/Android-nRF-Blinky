@@ -9,8 +9,8 @@ val ScannerDestination = DestinationId("scanner")
 
 private val Scanner = ComposeDestination(ScannerDestination) { navigationManager ->
     BlinkyScanner(
-        onDeviceSelected = { device ->
-            navigationManager.navigateTo(BlinkyDestination, BlinkyParams(device))
+        onDeviceSelected = { device, name ->
+            navigationManager.navigateTo(BlinkyDestination, BlinkyParams(device, name))
         }
     )
 }
