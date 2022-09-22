@@ -11,6 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import no.nordicsemi.android.blinky.control.state.ConnectionState
+import no.nordicsemi.android.blinky.control.view.ButtonControlView
+import no.nordicsemi.android.blinky.control.view.ConnectionView
+import no.nordicsemi.android.blinky.control.view.LedControlView
 import no.nordicsemi.android.blinky.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.common.theme.view.NordicAppBar
 
@@ -21,25 +25,37 @@ fun BlinkyScreen(
     onNavigateUp: () -> Unit,
 ) {
     val viewModel: BlinkyViewModel = hiltViewModel()
-    val ledState by viewModel.ledState.collectAsState(initial = false)
-    val buttonState by viewModel.buttonState.collectAsState(initial = false)
+    val state by viewModel.state.collectAsState(initial = ConnectionState.Connecting)
 
     Column {
         NordicAppBar(
             text = name ?: stringResource(R.string.blinky_no_name),
             onNavigationButtonClick = onNavigateUp
         )
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-        ) {
-            LedControlView(state = ledState, onStateChanged = {})
+        when (state) {
+            is ConnectionState.Connected -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp)
+                ) {
+                    val ledState by viewModel.ledState.collectAsState(initial = false)
+                    val buttonState by viewModel.buttonState.collectAsState(initial = false)
 
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            ButtonControlView(state = buttonState)
+                    LedControlView(state = ledState, onStateChanged = {})
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    ButtonControlView(state = buttonState)
+                }
+            }
+            else -> {
+                ConnectionView(
+                    state = state,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }
