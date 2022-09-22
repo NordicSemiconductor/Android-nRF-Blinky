@@ -1,11 +1,11 @@
 package no.nordicsemi.android.blinky.navigation
 
+import no.nordicsemi.android.blinky.control.BlinkyDestination
+import no.nordicsemi.android.blinky.control.BlinkyParams
 import no.nordicsemi.android.blinky.scanner.BlinkyScanner
+import no.nordicsemi.android.blinky.scanner.ScannerDestination
 import no.nordicsemi.android.common.navigation.ComposeDestination
 import no.nordicsemi.android.common.navigation.ComposeDestinations
-import no.nordicsemi.android.common.navigation.DestinationId
-
-val ScannerDestination = DestinationId("scanner")
 
 private val Scanner = ComposeDestination(ScannerDestination) { navigationManager ->
     BlinkyScanner(
@@ -15,4 +15,4 @@ private val Scanner = ComposeDestination(ScannerDestination) { navigationManager
     )
 }
 
-val ScannerDestinations = ComposeDestinations(Scanner)
+internal val ScannerDestinations = ComposeDestinations(Scanner)

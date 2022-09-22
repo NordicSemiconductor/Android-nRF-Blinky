@@ -4,9 +4,9 @@ import android.bluetooth.BluetoothDevice
 import android.os.ParcelUuid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import no.nordicsemi.android.blinky.spec.BlinkySpec
 import no.nordicsemi.android.common.ui.scanner.DeviceSelected
 import no.nordicsemi.android.common.ui.scanner.ScannerScreen
-import java.util.*
 
 @Composable
 fun BlinkyScanner(
@@ -14,7 +14,7 @@ fun BlinkyScanner(
 ) {
     ScannerScreen(
         title = stringResource(id = R.string.scanner_title),
-        uuid = ParcelUuid(UUID.fromString("00001523-1212-efde-1523-785feabcd123")), // TODO externalize
+        uuid = ParcelUuid(BlinkySpec.BLINKY_SERVICE_UUID),
         cancellable = false,
         onResult = { result ->
             when (result) {

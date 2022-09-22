@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+     Bluetooth permission is required on Android 4.3 - 11 in order to communicate with
+     Bluetooth LE devices.
+    -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30"/>
+    <!--
+     Bluetooth Admin permission is required on Android 4.3 - 11 in order to scan for
+     Bluetooth LE devices.
+    -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30"/>
+    <!--
+     This permission is required in order to connect to a Bluetooth LE device on Android 12
+     onwards.
+    -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+</manifest>

@@ -1,4 +1,7 @@
 package no.nordicsemi.android.blinky.control.repository
 
-class BlinkyRepository {
+import javax.inject.Inject
+
+class BlinkyRepository @Inject constructor() {
+
 }

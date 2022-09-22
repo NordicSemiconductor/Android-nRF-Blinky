@@ -1,6 +1,5 @@
 package no.nordicsemi.android.blinky.control
 
-import android.bluetooth.BluetoothDevice
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,8 +19,6 @@ import no.nordicsemi.android.common.theme.view.NordicAppBar
 
 @Composable
 fun BlinkyScreen(
-    device: BluetoothDevice,
-    name: String? = device.name,
     onNavigateUp: () -> Unit,
 ) {
     val viewModel: BlinkyViewModel = hiltViewModel()
@@ -29,7 +26,7 @@ fun BlinkyScreen(
 
     Column {
         NordicAppBar(
-            text = name ?: stringResource(R.string.blinky_no_name),
+            text = viewModel.deviceName ?: stringResource(R.string.blinky_no_name),
             onNavigationButtonClick = onNavigateUp
         )
         when (state) {
