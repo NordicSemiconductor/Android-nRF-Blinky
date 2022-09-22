@@ -12,6 +12,7 @@ import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.ktx.asValidResponseFlow
 import no.nordicsemi.android.ble.ktx.getCharacteristic
 import no.nordicsemi.android.ble.ktx.suspend
+import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.BlinkySpec
 import no.nordicsemi.android.blinky.transport_ble.data.ButtonCallback
 import no.nordicsemi.android.blinky.transport_ble.data.ButtonState
@@ -21,39 +22,26 @@ class BlinkyManager(
     context: Context,
     private val device: BluetoothDevice,
     private val scope: CoroutineScope
-): BleManager(context) {
+): BleManager(context), Blinky {
     private var ledCharacteristic: BluetoothGattCharacteristic? = null
     private var buttonCharacteristic: BluetoothGattCharacteristic? = null
 
     private val _ledState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    /**
-     * Returns the current state of the LED.
-     */
-    val ledState = _ledState.asSharedFlow()
+    override val ledState = _ledState.asSharedFlow()
 
     private val _buttonState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    /**
-     * Returns the current state of the button.
-     */
-    val buttonState = _buttonState.asStateFlow()
+    override val buttonState = _buttonState.asStateFlow()
 
-    /**
-     * Connects to the device.
-     */
-    suspend fun connect() {
-        connect(device)
+    override suspend fun connect() = connect(device)
             .retry(3, 300)
             .useAutoConnect(false)
             .timeout(2000)
             .suspend()
-    }
 
-    /**
-     * Sends a command to the device.
-     *
-     * @param state the new state of the LED.
-     */
-    suspend fun turnLed(state: Boolean) {
+    override suspend fun release() = disconnect()
+            .suspend()
+
+    override suspend fun turnLed(state: Boolean) {
         writeCharacteristic(
             ledCharacteristic,
             LedData.from(state),
