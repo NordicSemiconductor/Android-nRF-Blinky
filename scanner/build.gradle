@@ -7,6 +7,7 @@ plugins {
 android {
     namespace 'no.nordicsemi.android.blinky.scanner'
     compileSdk android_api_version
+
     defaultConfig {
         minSdk android_min_api_version
         targetSdk android_api_version
