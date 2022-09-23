@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +18,9 @@ import no.nordicsemi.android.ble.ktx.stateAsFlow
 import no.nordicsemi.android.ble.ktx.suspend
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.BlinkySpec
+import no.nordicsemi.android.blinky.transport_ble.data.ButtonCallback
 import no.nordicsemi.android.blinky.transport_ble.data.ButtonState
+import no.nordicsemi.android.blinky.transport_ble.data.LedCallback
 import no.nordicsemi.android.blinky.transport_ble.data.LedData
 
 class BlinkyManager(
@@ -76,7 +79,34 @@ private class BlinkyManagerImpl(
         return BlinkyManagerGattCallback()
     }
 
+    override fun log(priority: Int, message: String) {
+        Log.println(priority, "BlinkyManager", message)
+    }
+
+    @Suppress("RedundantOverride")
+    override fun getMinLogPriority(): Int {
+        // By default, the library logs only INFO or
+        // higher priority messages. You may change it here.
+        return super.getMinLogPriority() // Log.VERBOSE
+    }
+
     private inner class BlinkyManagerGattCallback: BleManagerGattCallback() {
+
+        private val buttonCallback by lazy {
+            object : ButtonCallback() {
+                override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
+                    _buttonState.tryEmit(state)
+                }
+            }
+        }
+
+        private val ledCallback by lazy {
+            object : LedCallback() {
+                override fun onLedStateChanged(device: BluetoothDevice, state: Boolean) {
+                    _ledState.tryEmit(state)
+                }
+            }
+        }
 
         override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
             // Get the LBS Service from the gatt object.
@@ -100,22 +130,27 @@ private class BlinkyManagerImpl(
 
         @OptIn(ExperimentalCoroutinesApi::class)
         override fun initialize() {
+            // Enable notifications for the button characteristic.
             val flow: Flow<ButtonState> = setNotificationCallback(buttonCharacteristic)
                 .asValidResponseFlow()
 
+            // Forward the button state to the buttonState flow.
             scope.launch {
                 flow.map { it.state }.collect { _buttonState.tryEmit(it) }
             }
 
             enableNotifications(buttonCharacteristic)
                 .enqueue()
-//            readCharacteristic(buttonCharacteristic)
-//                .with(object : ButtonCallback() {
-//                    override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
-//                        _buttonState.tryEmit(state)
-//                    }
-//                })
-//                .enqueue()
+
+            // Read the initial value of the button characteristic.
+            readCharacteristic(buttonCharacteristic)
+                .with(buttonCallback)
+                .enqueue()
+
+            // Read the initial value of the LED characteristic.
+            readCharacteristic(ledCharacteristic)
+                .with(ledCallback)
+                .enqueue()
         }
 
         override fun onServicesInvalidated() {
