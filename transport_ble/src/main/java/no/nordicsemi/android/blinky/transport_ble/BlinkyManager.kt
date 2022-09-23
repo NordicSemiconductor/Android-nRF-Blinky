@@ -11,11 +11,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import no.nordicsemi.android.ble.BleManager
-import no.nordicsemi.android.ble.ktx.asValidResponseFlow
-import no.nordicsemi.android.ble.ktx.getCharacteristic
+import no.nordicsemi.android.ble.ktx.*
 import no.nordicsemi.android.ble.ktx.state.ConnectionState
-import no.nordicsemi.android.ble.ktx.stateAsFlow
-import no.nordicsemi.android.ble.ktx.suspend
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.BlinkySpec
 import no.nordicsemi.android.blinky.transport_ble.data.ButtonCallback
@@ -67,12 +64,19 @@ private class BlinkyManagerImpl(
     }
 
     override suspend fun turnLed(state: Boolean) {
+        // First, we need to write the value to the characteristic.
         writeCharacteristic(
             ledCharacteristic,
             LedData.from(state),
             BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
         ).suspend()
-        _ledState.value = state
+
+        // Then, we need to read the value back to make sure it was written correctly.
+        val newState = readCharacteristic(ledCharacteristic)
+            .suspendForResponse<ButtonState>().state
+
+        // Finally, we update the state flow with the new value.
+        _ledState.value = newState
     }
 
     override fun getGattCallback(): BleManagerGattCallback {
