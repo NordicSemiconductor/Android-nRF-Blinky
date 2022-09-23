@@ -11,11 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import no.nordicsemi.android.blinky.control.state.ConnectionState
+import no.nordicsemi.android.blinky.spec.Blinky
 
 @Composable
 fun ConnectionView(
-    state: ConnectionState,
+    state: Blinky.State,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -34,12 +34,11 @@ fun ConnectionView(
 @Preview
 @Composable
 fun ConnectionViewPreview() {
-    ConnectionView(state = ConnectionState.Connecting)
+    ConnectionView(state = Blinky.State.LOADING)
 }
 
-private fun ConnectionState.toText(): String = when (this) {
-    ConnectionState.Connecting -> "Connecting..."
-    ConnectionState.Initializing -> "Initializing..."
-    ConnectionState.Connected -> "Connected"
-    is ConnectionState.Disconnected -> "Disconnected\n$reason"
+private fun Blinky.State.toText(): String = when (this) {
+    Blinky.State.LOADING -> "Connecting..."
+    Blinky.State.READY -> "Connected"
+    Blinky.State.NOT_AVAILABLE -> "Disconnected"
 }

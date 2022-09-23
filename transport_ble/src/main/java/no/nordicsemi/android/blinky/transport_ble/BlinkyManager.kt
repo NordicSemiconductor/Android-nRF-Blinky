@@ -108,13 +108,13 @@ private class BlinkyManagerImpl(
 
             enableNotifications(buttonCharacteristic)
                 .enqueue()
-            readCharacteristic(buttonCharacteristic)
-                .with(object : ButtonCallback() {
-                    override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
-                        _buttonState.tryEmit(state)
-                    }
-                })
-                .enqueue()
+//            readCharacteristic(buttonCharacteristic)
+//                .with(object : ButtonCallback() {
+//                    override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
+//                        _buttonState.tryEmit(state)
+//                    }
+//                })
+//                .enqueue()
         }
 
         override fun onServicesInvalidated() {

@@ -10,11 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import no.nordicsemi.android.blinky.control.state.ConnectionState
 import no.nordicsemi.android.blinky.control.view.ButtonControlView
 import no.nordicsemi.android.blinky.control.view.ConnectionView
 import no.nordicsemi.android.blinky.control.view.LedControlView
 import no.nordicsemi.android.blinky.control.viewmodel.BlinkyViewModel
+import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.common.theme.view.NordicAppBar
 
 @Composable
@@ -22,7 +22,7 @@ fun BlinkyScreen(
     onNavigateUp: () -> Unit,
 ) {
     val viewModel: BlinkyViewModel = hiltViewModel()
-    val state by viewModel.state.collectAsState(initial = ConnectionState.Connecting)
+    val state by viewModel.state.collectAsState(initial = Blinky.State.NOT_AVAILABLE)
 
     Column {
         NordicAppBar(
@@ -30,7 +30,7 @@ fun BlinkyScreen(
             onNavigationButtonClick = onNavigateUp
         )
         when (state) {
-            is ConnectionState.Connected -> {
+            Blinky.State.READY -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
