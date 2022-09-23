@@ -5,24 +5,32 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.ktx.asValidResponseFlow
 import no.nordicsemi.android.ble.ktx.getCharacteristic
+import no.nordicsemi.android.ble.ktx.state.ConnectionState
+import no.nordicsemi.android.ble.ktx.stateAsFlow
 import no.nordicsemi.android.ble.ktx.suspend
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.BlinkySpec
-import no.nordicsemi.android.blinky.transport_ble.data.ButtonCallback
 import no.nordicsemi.android.blinky.transport_ble.data.ButtonState
 import no.nordicsemi.android.blinky.transport_ble.data.LedData
 
 class BlinkyManager(
     context: Context,
+    device: BluetoothDevice
+): Blinky by BlinkyManagerImpl(context, device)
+
+private class BlinkyManagerImpl(
+    context: Context,
     private val device: BluetoothDevice,
-    private val scope: CoroutineScope
 ): BleManager(context), Blinky {
+    private val scope = CoroutineScope(Dispatchers.IO)
+
     private var ledCharacteristic: BluetoothGattCharacteristic? = null
     private var buttonCharacteristic: BluetoothGattCharacteristic? = null
 
@@ -32,14 +40,28 @@ class BlinkyManager(
     private val _buttonState: MutableStateFlow<Boolean> = MutableStateFlow(false)
     override val buttonState = _buttonState.asStateFlow()
 
+    override val state = stateAsFlow().map {
+        when (it) {
+            is ConnectionState.Connecting,
+            is ConnectionState.Initializing -> Blinky.State.LOADING
+            is ConnectionState.Ready -> Blinky.State.READY
+            is ConnectionState.Disconnecting,
+            is ConnectionState.Disconnected -> Blinky.State.NOT_AVAILABLE
+        }
+    }
+
     override suspend fun connect() = connect(device)
             .retry(3, 300)
             .useAutoConnect(false)
             .timeout(2000)
             .suspend()
 
-    override suspend fun release() = disconnect()
-            .suspend()
+    override fun release() {
+        scope.launch {
+            cancelQueue()
+            disconnect().suspend()
+        }
+    }
 
     override suspend fun turnLed(state: Boolean) {
         writeCharacteristic(
