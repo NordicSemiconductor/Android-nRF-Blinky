@@ -35,6 +35,7 @@ dependencies {
     implementation project(':spec')
     implementation "no.nordicsemi.android.common:theme:1.0.23"
     implementation "no.nordicsemi.android.common:navigation:1.0.23"
+    implementation "no.nordicsemi.android.common:permission:1.0.23"
 
     implementation "androidx.compose.ui:ui:$compose_version"
     // Tooling support (Previews, etc.)

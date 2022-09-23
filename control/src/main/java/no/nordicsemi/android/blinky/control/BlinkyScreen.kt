@@ -17,6 +17,7 @@ import no.nordicsemi.android.blinky.control.view.DisconnectedView
 import no.nordicsemi.android.blinky.control.view.LedControlView
 import no.nordicsemi.android.blinky.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.blinky.spec.Blinky
+import no.nordicsemi.android.common.permission.RequireBluetooth
 import no.nordicsemi.android.common.theme.view.NordicAppBar
 
 @Composable
@@ -24,34 +25,36 @@ fun BlinkyScreen(
     onNavigateUp: () -> Unit,
 ) {
     val viewModel: BlinkyViewModel = hiltViewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsState(initial = Blinky.State.NOT_AVAILABLE)
 
     Column {
         NordicAppBar(
             text = viewModel.deviceName ?: stringResource(R.string.blinky_no_name),
             onNavigationButtonClick = onNavigateUp
         )
-        when (state) {
-            Blinky.State.LOADING -> {
-                ConnectingView(
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-            Blinky.State.READY -> {
-                val ledState by viewModel.ledState.collectAsState()
-                val buttonState by viewModel.buttonState.collectAsState()
+        RequireBluetooth(scanning = false) {
+            when (state) {
+                Blinky.State.LOADING -> {
+                    ConnectingView(
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                Blinky.State.READY -> {
+                    val ledState by viewModel.ledState.collectAsState()
+                    val buttonState by viewModel.buttonState.collectAsState()
 
-                BlinkyControl(
-                    ledState = ledState,
-                    buttonState = buttonState,
-                    onStateChanged = { viewModel.toggleLed(it) }
-                )
-            }
-            Blinky.State.NOT_AVAILABLE -> {
-                DisconnectedView(
-                    modifier = Modifier.fillMaxSize(),
-                    onReconnect = { viewModel.reconnect() }
-                )
+                    BlinkyControl(
+                        ledState = ledState,
+                        buttonState = buttonState,
+                        onStateChanged = { viewModel.toggleLed(it) }
+                    )
+                }
+                Blinky.State.NOT_AVAILABLE -> {
+                    DisconnectedView(
+                        modifier = Modifier.fillMaxSize(),
+                        onReconnect = { viewModel.reconnect() }
+                    )
+                }
             }
         }
     }
