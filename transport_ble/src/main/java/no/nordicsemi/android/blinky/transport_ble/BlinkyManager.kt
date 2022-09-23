@@ -40,15 +40,17 @@ private class BlinkyManagerImpl(
     private val _buttonState = MutableStateFlow(false)
     override val buttonState = _buttonState.asStateFlow()
 
-    override val state = stateAsFlow().map {
-        when (it) {
-            is ConnectionState.Connecting,
-            is ConnectionState.Initializing -> Blinky.State.LOADING
-            is ConnectionState.Ready -> Blinky.State.READY
-            is ConnectionState.Disconnecting,
-            is ConnectionState.Disconnected -> Blinky.State.NOT_AVAILABLE
+    override val state = stateAsFlow()
+        .map {
+            when (it) {
+                is ConnectionState.Connecting,
+                is ConnectionState.Initializing -> Blinky.State.LOADING
+                is ConnectionState.Ready -> Blinky.State.READY
+                is ConnectionState.Disconnecting,
+                is ConnectionState.Disconnected -> Blinky.State.NOT_AVAILABLE
+            }
         }
-    }
+        .stateIn(scope, SharingStarted.Lazily, Blinky.State.NOT_AVAILABLE)
 
     override suspend fun connect() = connect(device)
             .retry(3, 300)

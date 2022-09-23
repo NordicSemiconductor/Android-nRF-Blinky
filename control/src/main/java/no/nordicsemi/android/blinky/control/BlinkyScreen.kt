@@ -25,7 +25,7 @@ fun BlinkyScreen(
     onNavigateUp: () -> Unit,
 ) {
     val viewModel: BlinkyViewModel = hiltViewModel()
-    val state by viewModel.state.collectAsState(initial = Blinky.State.NOT_AVAILABLE)
+    val state by viewModel.state.collectAsState()
 
     Column {
         NordicAppBar(
