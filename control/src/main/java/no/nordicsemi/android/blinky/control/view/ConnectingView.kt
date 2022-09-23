@@ -9,13 +9,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import no.nordicsemi.android.blinky.spec.Blinky
+import no.nordicsemi.android.blinky.control.R
 
 @Composable
-fun ConnectionView(
-    state: Blinky.State,
+fun ConnectingView(
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -27,18 +27,12 @@ fun ConnectionView(
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        Text(text = state.toText())
+        Text(text = stringResource(id = R.string.blinky_state_connecting))
     }
 }
 
 @Preview
 @Composable
 fun ConnectionViewPreview() {
-    ConnectionView(state = Blinky.State.LOADING)
-}
-
-private fun Blinky.State.toText(): String = when (this) {
-    Blinky.State.LOADING -> "Connecting..."
-    Blinky.State.READY -> "Connected"
-    Blinky.State.NOT_AVAILABLE -> "Disconnected"
+    ConnectingView()
 }

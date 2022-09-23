@@ -35,6 +35,18 @@ class BlinkyViewModel @Inject constructor(
         }
     }
 
+    fun reconnect() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.connect()
+        }
+    }
+
+    fun toggleLed(state: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.turnLed(state)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
 

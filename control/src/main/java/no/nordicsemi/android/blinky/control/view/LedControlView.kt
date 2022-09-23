@@ -29,6 +29,7 @@ fun LedControlView(
     ) {
         Column(
             modifier = Modifier
+                .clickable { onStateChanged(!state) }
                 .padding(16.dp)
         ) {
             Row(
@@ -49,8 +50,7 @@ fun LedControlView(
             }
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onStateChanged(!state) },
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(

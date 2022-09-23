@@ -34,10 +34,10 @@ private class BlinkyManagerImpl(
     private var ledCharacteristic: BluetoothGattCharacteristic? = null
     private var buttonCharacteristic: BluetoothGattCharacteristic? = null
 
-    private val _ledState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _ledState = MutableStateFlow(false)
     override val ledState = _ledState.asSharedFlow()
 
-    private val _buttonState: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _buttonState = MutableStateFlow(false)
     override val buttonState = _buttonState.asStateFlow()
 
     override val state = stateAsFlow().map {
@@ -69,6 +69,7 @@ private class BlinkyManagerImpl(
             LedData.from(state),
             BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
         ).suspend()
+        _ledState.value = state
     }
 
     override fun getGattCallback(): BleManagerGattCallback {

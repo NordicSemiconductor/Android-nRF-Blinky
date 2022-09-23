@@ -8,10 +8,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import no.nordicsemi.android.blinky.control.view.ButtonControlView
-import no.nordicsemi.android.blinky.control.view.ConnectionView
+import no.nordicsemi.android.blinky.control.view.ConnectingView
+import no.nordicsemi.android.blinky.control.view.DisconnectedView
 import no.nordicsemi.android.blinky.control.view.LedControlView
 import no.nordicsemi.android.blinky.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.blinky.spec.Blinky
@@ -30,29 +32,62 @@ fun BlinkyScreen(
             onNavigationButtonClick = onNavigateUp
         )
         when (state) {
-            Blinky.State.READY -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
-                ) {
-                    val ledState by viewModel.ledState.collectAsState(initial = false)
-                    val buttonState by viewModel.buttonState.collectAsState(initial = false)
-
-                    LedControlView(state = ledState, onStateChanged = {})
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    ButtonControlView(state = buttonState)
-                }
-            }
-            else -> {
-                ConnectionView(
-                    state = state,
+            Blinky.State.LOADING -> {
+                ConnectingView(
                     modifier = Modifier.fillMaxSize()
+                )
+            }
+            Blinky.State.READY -> {
+                val ledState by viewModel.ledState.collectAsState(initial = false)
+                val buttonState by viewModel.buttonState.collectAsState(initial = false)
+
+                BlinkyControl(
+                    ledState = ledState,
+                    buttonState = buttonState,
+                    onStateChanged = { viewModel.toggleLed(it) }
+                )
+            }
+            Blinky.State.NOT_AVAILABLE -> {
+                DisconnectedView(
+                    modifier = Modifier.fillMaxSize(),
+                    onReconnect = { viewModel.reconnect() }
                 )
             }
         }
     }
+}
+
+@Composable
+private fun BlinkyControl(
+    ledState: Boolean,
+    buttonState: Boolean,
+    onStateChanged: (Boolean) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+    ) {
+        LedControlView(
+            state = ledState,
+            onStateChanged = onStateChanged
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ButtonControlView(
+            state = buttonState
+        )
+    }
+}
+
+@Preview
+@Composable
+fun BlinkyControlPreview() {
+    BlinkyControl(
+        ledState = true,
+        buttonState = true,
+        onStateChanged = {}
+    )
 }
