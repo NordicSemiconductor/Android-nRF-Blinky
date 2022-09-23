@@ -16,13 +16,11 @@ class BlinkyViewModel @Inject constructor(
     private val repository: BlinkyRepository,
     navigationManager: NavigationManager,
 ) : ViewModel() {
-
+    val state = repository.state
     val ledState = repository.ledState
-
     val buttonState = repository.buttonState
 
-    val state = repository.state
-
+    /** The Blinky device name, as advertised. */
     val deviceName: String?
 
     init {
