@@ -1,5 +1,6 @@
 package no.nordicsemi.android.blinky.spec
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface Blinky {
@@ -23,7 +24,7 @@ interface Blinky {
     /**
      * The current state of the blinky.
      */
-    val state: StateFlow<State>
+    val state: Flow<State>
 
     /**
      * The current state of the LED.

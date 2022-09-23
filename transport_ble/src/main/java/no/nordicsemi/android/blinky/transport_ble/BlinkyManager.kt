@@ -35,7 +35,7 @@ private class BlinkyManagerImpl(
     private var buttonCharacteristic: BluetoothGattCharacteristic? = null
 
     private val _ledState = MutableStateFlow(false)
-    override val ledState = _ledState.asSharedFlow()
+    override val ledState = _ledState.asStateFlow()
 
     private val _buttonState = MutableStateFlow(false)
     override val buttonState = _buttonState.asStateFlow()
