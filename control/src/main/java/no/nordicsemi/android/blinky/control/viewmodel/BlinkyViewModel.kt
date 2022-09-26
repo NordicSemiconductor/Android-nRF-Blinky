@@ -3,6 +3,7 @@ package no.nordicsemi.android.blinky.control.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import no.nordicsemi.android.blinky.control.BlinkyDestination
@@ -28,13 +29,12 @@ class BlinkyViewModel @Inject constructor(
 
         deviceName = parameters.deviceName
 
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.connect()
-        }
+        reconnect()
     }
 
     fun reconnect() {
-        viewModelScope.launch(Dispatchers.IO) {
+        val exceptionHandler = CoroutineExceptionHandler { _, _ -> }
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             repository.connect()
         }
     }
