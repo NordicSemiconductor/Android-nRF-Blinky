@@ -68,9 +68,9 @@ dependencies {
     // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
     implementation "androidx.compose.foundation:foundation:$compose_version"
     // Material 3
-    implementation "androidx.compose.material3:material3:1.0.0-beta02"
+    implementation "androidx.compose.material3:material3:1.0.0-beta03"
     // Integration with activities
-    implementation "androidx.activity:activity-compose:1.6.0-rc02"
+    implementation "androidx.activity:activity-compose:1.6.0"
 
     // Tests
     testImplementation 'junit:junit:4.13.2'
