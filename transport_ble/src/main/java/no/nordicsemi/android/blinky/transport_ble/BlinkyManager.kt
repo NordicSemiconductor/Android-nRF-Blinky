@@ -5,11 +5,8 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.ktx.*
 import no.nordicsemi.android.ble.ktx.state.ConnectionState
@@ -19,6 +16,7 @@ import no.nordicsemi.android.blinky.transport_ble.data.ButtonCallback
 import no.nordicsemi.android.blinky.transport_ble.data.ButtonState
 import no.nordicsemi.android.blinky.transport_ble.data.LedCallback
 import no.nordicsemi.android.blinky.transport_ble.data.LedData
+import timber.log.Timber
 
 class BlinkyManager(
     context: Context,
@@ -87,14 +85,13 @@ private class BlinkyManagerImpl(
     }
 
     override fun log(priority: Int, message: String) {
-        Log.println(priority, "BlinkyManager", message)
+        Timber.log(priority, message)
     }
 
-    @Suppress("RedundantOverride")
     override fun getMinLogPriority(): Int {
         // By default, the library logs only INFO or
         // higher priority messages. You may change it here.
-        return super.getMinLogPriority() // Log.VERBOSE
+        return Log.VERBOSE
     }
 
     private inner class BlinkyManagerGattCallback: BleManagerGattCallback() {
