@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    implementation project(':spec')
+    implementation project(':blinky:spec')
 
     implementation "no.nordicsemi.android.common:uiscanner:1.0.23"
     implementation "no.nordicsemi.android.common:navigation:1.0.23"

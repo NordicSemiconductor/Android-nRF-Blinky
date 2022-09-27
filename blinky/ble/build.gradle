@@ -18,7 +18,7 @@ android {
 }
 
 dependencies {
-    implementation project(':spec')
+    implementation project(':blinky:spec')
 
     // Import BLE Library
     implementation 'no.nordicsemi.android:ble-ktx:2.4.0'

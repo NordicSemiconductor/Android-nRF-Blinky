@@ -54,10 +54,10 @@ android {
 }
 
 dependencies {
-    implementation project(':spec')
     implementation project(':scanner')
-    implementation project(':control')
-    implementation project(':transport_ble')
+    implementation project(':blinky:spec')
+    implementation project(':blinky:ui')
+    implementation project(':blinky:ble')
 
     implementation "no.nordicsemi.android.common:theme:1.0.23"
     implementation "no.nordicsemi.android.common:navigation:1.0.23"
