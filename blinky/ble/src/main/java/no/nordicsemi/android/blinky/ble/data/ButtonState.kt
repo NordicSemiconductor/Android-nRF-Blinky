@@ -1,4 +1,4 @@
-package no.nordicsemi.android.blinky.transport_ble.data
+package no.nordicsemi.android.blinky.ble.data
 
 import android.bluetooth.BluetoothDevice
 

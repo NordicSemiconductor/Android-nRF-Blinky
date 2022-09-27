@@ -1,4 +1,4 @@
-package no.nordicsemi.android.blinky.transport_ble
+package no.nordicsemi.android.blinky.ble
 
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
@@ -12,10 +12,10 @@ import no.nordicsemi.android.ble.ktx.*
 import no.nordicsemi.android.ble.ktx.state.ConnectionState
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.BlinkySpec
-import no.nordicsemi.android.blinky.transport_ble.data.ButtonCallback
-import no.nordicsemi.android.blinky.transport_ble.data.ButtonState
-import no.nordicsemi.android.blinky.transport_ble.data.LedCallback
-import no.nordicsemi.android.blinky.transport_ble.data.LedData
+import no.nordicsemi.android.blinky.ble.data.ButtonCallback
+import no.nordicsemi.android.blinky.ble.data.ButtonState
+import no.nordicsemi.android.blinky.ble.data.LedCallback
+import no.nordicsemi.android.blinky.ble.data.LedData
 import timber.log.Timber
 
 class BlinkyManager(

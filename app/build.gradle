@@ -18,8 +18,6 @@ android {
         versionCode getVersionCodeFromTags()
         versionName getVersionNameFromTags()
         resConfigs "en"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -73,11 +71,6 @@ dependencies {
     implementation "androidx.compose.material3:material3:1.0.0-beta03"
     // Integration with activities
     implementation "androidx.activity:activity-compose:1.6.0"
-
-    // Tests
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     // Hilt and Dagger
     implementation 'com.google.dagger:hilt-android:2.43.2'

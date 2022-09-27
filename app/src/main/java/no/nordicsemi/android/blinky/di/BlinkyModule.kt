@@ -10,7 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import no.nordicsemi.android.blinky.control.BlinkyDestination
 import no.nordicsemi.android.blinky.control.BlinkyParams
 import no.nordicsemi.android.blinky.spec.Blinky
-import no.nordicsemi.android.blinky.transport_ble.BlinkyManager
+import no.nordicsemi.android.blinky.ble.BlinkyManager
 import no.nordicsemi.android.common.navigation.NavigationManager
 
 @Module
