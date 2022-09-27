@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -17,6 +16,7 @@ import no.nordicsemi.android.blinky.control.view.DisconnectedView
 import no.nordicsemi.android.blinky.control.view.LedControlView
 import no.nordicsemi.android.blinky.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.blinky.spec.Blinky
+import no.nordicsemi.android.common.logger.view.LoggerAppBarIcon
 import no.nordicsemi.android.common.permission.RequireBluetooth
 import no.nordicsemi.android.common.theme.view.NordicAppBar
 
@@ -29,8 +29,11 @@ fun BlinkyScreen(
 
     Column {
         NordicAppBar(
-            text = viewModel.deviceName ?: stringResource(R.string.blinky_no_name),
-            onNavigationButtonClick = onNavigateUp
+            text = viewModel.deviceName,
+            onNavigationButtonClick = onNavigateUp,
+            actions = {
+                LoggerAppBarIcon(onClick = { viewModel.openLogger() })
+            }
         )
         RequireBluetooth(scanning = false) {
             when (state) {
@@ -52,7 +55,7 @@ fun BlinkyScreen(
                 Blinky.State.NOT_AVAILABLE -> {
                     DisconnectedView(
                         modifier = Modifier.fillMaxSize(),
-                        onReconnect = { viewModel.reconnect() }
+                        onReconnect = { viewModel.connect() }
                     )
                 }
             }
