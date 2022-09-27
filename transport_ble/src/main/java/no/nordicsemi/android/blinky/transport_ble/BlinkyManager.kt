@@ -76,10 +76,10 @@ private class BlinkyManagerImpl(
 
         // Then, we need to read the value back to make sure it was written correctly.
         val newState = readCharacteristic(ledCharacteristic)
-            .suspendForResponse<ButtonState>().state
+            .suspendForResponse<ButtonState>()
 
         // Finally, we update the state flow with the new value.
-        _ledState.value = newState
+        _ledState.value = newState.state
     }
 
     override fun getGattCallback(): BleManagerGattCallback {
