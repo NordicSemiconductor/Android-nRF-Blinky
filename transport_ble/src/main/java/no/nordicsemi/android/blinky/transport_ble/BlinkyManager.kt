@@ -59,7 +59,8 @@ private class BlinkyManagerImpl(
             .suspend()
 
     override fun release() {
-        scope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { _, _ -> }
+        scope.launch(exceptionHandler) {
             cancelQueue()
             disconnect().suspend()
         }
