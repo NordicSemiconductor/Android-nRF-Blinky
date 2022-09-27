@@ -7,7 +7,7 @@ import no.nordicsemi.android.common.navigation.ComposeDestinations
 
 private val Blinky = ComposeDestination(BlinkyDestination) { navigationManager ->
     BlinkyScreen(
-        onNavigateUp = { navigationManager.navigateUp() }
+        onNavigateUp = { navigationManager.navigateUp() },
     )
 }
 
