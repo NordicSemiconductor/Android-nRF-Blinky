@@ -121,6 +121,9 @@ private class BlinkyManagerImpl(
                 // Get the LED characteristic.
                 ledCharacteristic = getCharacteristic(
                     BlinkySpec.BLINKY_LED_CHARACTERISTIC_UUID,
+                    // Mind, that below we pass required properties.
+                    // If your implementation supports only WRITE_NO_RESPONSE,
+                    // change the property to BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE.
                     BluetoothGattCharacteristic.PROPERTY_WRITE
                 )
                 // Get the Button characteristic.
