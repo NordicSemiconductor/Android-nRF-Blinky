@@ -3,22 +3,26 @@ package no.nordicsemi.android.blinky.control
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import no.nordicsemi.android.blinky.control.view.ButtonControlView
-import no.nordicsemi.android.blinky.control.view.ConnectingView
-import no.nordicsemi.android.blinky.control.view.DisconnectedView
 import no.nordicsemi.android.blinky.control.view.LedControlView
 import no.nordicsemi.android.blinky.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.common.logger.view.LoggerAppBarIcon
 import no.nordicsemi.android.common.permission.RequireBluetooth
 import no.nordicsemi.android.common.theme.view.NordicAppBar
+import no.nordicsemi.android.common.ui.scanner.view.DeviceConnectingView
+import no.nordicsemi.android.common.ui.scanner.view.DeviceDisconnectedView
+import no.nordicsemi.android.common.ui.scanner.view.Reason
 
 @Composable
 fun BlinkyScreen(
@@ -38,9 +42,13 @@ fun BlinkyScreen(
         RequireBluetooth(scanning = false) {
             when (state) {
                 Blinky.State.LOADING -> {
-                    ConnectingView(
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    DeviceConnectingView(
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        Button(onClick = onNavigateUp) {
+                            Text(text = stringResource(id = R.string.action_cancel))
+                        }
+                    }
                 }
                 Blinky.State.READY -> {
                     val ledState by viewModel.ledState.collectAsState()
@@ -53,10 +61,14 @@ fun BlinkyScreen(
                     )
                 }
                 Blinky.State.NOT_AVAILABLE -> {
-                    DisconnectedView(
-                        modifier = Modifier.fillMaxSize(),
-                        onReconnect = { viewModel.connect() }
-                    )
+                    DeviceDisconnectedView(
+                        reason = Reason.LINK_LOSS,
+                        modifier = Modifier.padding(16.dp),
+                    ) {
+                        Button(onClick = { viewModel.connect() }) {
+                            Text(text = stringResource(id = R.string.action_retry))
+                        }
+                    }
                 }
             }
         }

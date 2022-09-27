@@ -37,6 +37,7 @@ dependencies {
     implementation 'no.nordicsemi.android:log-timber:2.3.0'
     implementation "no.nordicsemi.android.common:theme:1.0.23"
     implementation "no.nordicsemi.android.common:uilogger:1.0.23"
+    implementation "no.nordicsemi.android.common:uiscanner:1.0.23"
     implementation "no.nordicsemi.android.common:navigation:1.0.23"
     implementation "no.nordicsemi.android.common:permission:1.0.23"
 
