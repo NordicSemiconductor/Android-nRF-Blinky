@@ -71,7 +71,7 @@ private class BlinkyManagerImpl(
         writeCharacteristic(
             ledCharacteristic,
             LedData.from(state),
-            BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
         ).suspend()
 
         // Then, we need to read the value back to make sure it was written correctly.
