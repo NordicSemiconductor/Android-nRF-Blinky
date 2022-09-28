@@ -53,14 +53,18 @@ private class BlinkyManagerImpl(
     override suspend fun connect() = connect(device)
             .retry(3, 300)
             .useAutoConnect(false)
-            .timeout(2000)
+            .timeout(3000)
             .suspend()
 
     override fun release() {
-        val exceptionHandler = CoroutineExceptionHandler { _, _ -> }
-        scope.launch(exceptionHandler) {
-            cancelQueue()
-            disconnect().suspend()
+        val wasConnected = isReady
+        // If the device wasn't connected, it means that ConnectRequest was still pending.
+        // Cancelling queue will initiate disconnecting automatically.
+        cancelQueue()
+
+        // If the device was connected, we have to disconnect manually.
+        if (wasConnected) {
+            disconnect().enqueue()
         }
     }
 
