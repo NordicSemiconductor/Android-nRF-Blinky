@@ -5,17 +5,20 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
 import android.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.ktx.*
 import no.nordicsemi.android.ble.ktx.state.ConnectionState
-import no.nordicsemi.android.blinky.spec.Blinky
-import no.nordicsemi.android.blinky.spec.BlinkySpec
 import no.nordicsemi.android.blinky.ble.data.ButtonCallback
 import no.nordicsemi.android.blinky.ble.data.ButtonState
 import no.nordicsemi.android.blinky.ble.data.LedCallback
 import no.nordicsemi.android.blinky.ble.data.LedData
+import no.nordicsemi.android.blinky.spec.Blinky
+import no.nordicsemi.android.blinky.spec.BlinkySpec
 import timber.log.Timber
 
 class BlinkyManager(
@@ -51,10 +54,10 @@ private class BlinkyManagerImpl(
         .stateIn(scope, SharingStarted.Lazily, Blinky.State.NOT_AVAILABLE)
 
     override suspend fun connect() = connect(device)
-            .retry(3, 300)
-            .useAutoConnect(false)
-            .timeout(3000)
-            .suspend()
+        .retry(3, 300)
+        .useAutoConnect(false)
+        .timeout(3000)
+        .suspend()
 
     override fun release() {
         val wasConnected = isReady
