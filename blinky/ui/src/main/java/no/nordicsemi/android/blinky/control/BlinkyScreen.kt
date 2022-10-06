@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,6 +25,7 @@ import no.nordicsemi.android.common.ui.scanner.view.DeviceConnectingView
 import no.nordicsemi.android.common.ui.scanner.view.DeviceDisconnectedView
 import no.nordicsemi.android.common.ui.scanner.view.Reason
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BlinkyScreen(
     onNavigateUp: () -> Unit,
@@ -44,8 +46,11 @@ fun BlinkyScreen(
                 Blinky.State.LOADING -> {
                     DeviceConnectingView(
                         modifier = Modifier.padding(16.dp),
-                    ) {
-                        Button(onClick = onNavigateUp) {
+                    ) { padding ->
+                        Button(
+                            onClick = onNavigateUp,
+                            modifier = Modifier.padding(padding),
+                        ) {
                             Text(text = stringResource(id = R.string.action_cancel))
                         }
                     }
@@ -64,8 +69,11 @@ fun BlinkyScreen(
                     DeviceDisconnectedView(
                         reason = Reason.LINK_LOSS,
                         modifier = Modifier.padding(16.dp),
-                    ) {
-                        Button(onClick = { viewModel.connect() }) {
+                    ) { padding ->
+                        Button(
+                            onClick = { viewModel.connect() },
+                            modifier = Modifier.padding(padding),
+                        ) {
                             Text(text = stringResource(id = R.string.action_retry))
                         }
                     }

@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'kotlin-kapt'
 }
 
 android {
@@ -19,7 +18,7 @@ dependencies {
     implementation project(':blinky:spec')
 
     // Import BLE Library
-    implementation 'no.nordicsemi.android:ble-ktx:2.4.0'
+    implementation 'no.nordicsemi.android:ble-ktx:2.6.0-alpha03'
     // BLE events are logged using Timber
     implementation 'com.jakewharton.timber:timber:5.0.1'
     // Coroutines
