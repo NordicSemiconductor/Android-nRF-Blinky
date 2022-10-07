@@ -72,19 +72,15 @@ private class BlinkyManagerImpl(
     }
 
     override suspend fun turnLed(state: Boolean) {
-        // First, we need to write the value to the characteristic.
+        // Write the value to the characteristic.
         writeCharacteristic(
             ledCharacteristic,
             LedData.from(state),
             BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
         ).suspend()
 
-        // Then, we need to read the value back to make sure it was written correctly.
-        val newState = readCharacteristic(ledCharacteristic)
-            .suspendForResponse<ButtonState>()
-
-        // Finally, we update the state flow with the new value.
-        _ledState.value = newState.state
+        // Update the state flow with the new value.
+        _ledState.value = state
     }
 
     override fun getGattCallback(): BleManagerGattCallback {
