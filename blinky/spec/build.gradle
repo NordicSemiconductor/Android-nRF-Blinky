@@ -11,8 +11,6 @@ android {
         minSdk android_min_api_version
         targetSdk android_api_version
         resConfigs "en"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 }
 
