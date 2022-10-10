@@ -1,6 +1,8 @@
-package no.nordicsemi.android.blinky.control
+package no.nordicsemi.android.blinky.control.view
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -9,13 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import no.nordicsemi.android.blinky.control.view.ButtonControlView
-import no.nordicsemi.android.blinky.control.view.LedControlView
+import no.nordicsemi.android.blinky.control.R
 import no.nordicsemi.android.blinky.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.common.logger.view.LoggerAppBarIcon
@@ -27,13 +28,15 @@ import no.nordicsemi.android.common.ui.scanner.view.Reason
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BlinkyScreen(
+internal fun BlinkyScreen(
     onNavigateUp: () -> Unit,
 ) {
     val viewModel: BlinkyViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
 
-    Column {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         NordicAppBar(
             text = viewModel.deviceName,
             onNavigationButtonClick = onNavigateUp,
@@ -59,10 +62,14 @@ fun BlinkyScreen(
                     val ledState by viewModel.ledState.collectAsState()
                     val buttonState by viewModel.buttonState.collectAsState()
 
-                    BlinkyControl(
+                    BlinkyControlView(
                         ledState = ledState,
                         buttonState = buttonState,
-                        onStateChanged = { viewModel.toggleLed(it) }
+                        onStateChanged = { viewModel.toggleLed(it) },
+                        modifier = Modifier
+                            .widthIn(max = 460.dp)
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp)
                     )
                 }
                 Blinky.State.NOT_AVAILABLE -> {
@@ -81,39 +88,4 @@ fun BlinkyScreen(
             }
         }
     }
-}
-
-@Composable
-private fun BlinkyControl(
-    ledState: Boolean,
-    buttonState: Boolean,
-    onStateChanged: (Boolean) -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-    ) {
-        LedControlView(
-            state = ledState,
-            onStateChanged = onStateChanged
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        ButtonControlView(
-            state = buttonState
-        )
-    }
-}
-
-@Preview
-@Composable
-fun BlinkyControlPreview() {
-    BlinkyControl(
-        ledState = true,
-        buttonState = true,
-        onStateChanged = {}
-    )
 }

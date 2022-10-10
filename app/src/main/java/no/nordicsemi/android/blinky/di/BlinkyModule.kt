@@ -1,18 +1,19 @@
 package no.nordicsemi.android.blinky.di
 
+import android.bluetooth.BluetoothDevice
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import no.nordicsemi.android.blinky.control.BlinkyDestination
-import no.nordicsemi.android.blinky.control.BlinkyParams
-import no.nordicsemi.android.blinky.spec.Blinky
+import dagger.hilt.android.scopes.ViewModelScoped
 import no.nordicsemi.android.blinky.ble.BlinkyManager
-import no.nordicsemi.android.common.navigation.NavigationManager
+import no.nordicsemi.android.blinky.spec.Blinky
 
+@Suppress("unused")
 @Module
 @InstallIn(ViewModelComponent::class)
 abstract class BlinkyModule {
@@ -20,13 +21,17 @@ abstract class BlinkyModule {
     companion object {
 
         @Provides
+        @ViewModelScoped
+        fun provideBluetoothDevice(handle: SavedStateHandle): BluetoothDevice {
+            return handle["device"]!!
+        }
+
+        @Provides
+        @ViewModelScoped
         fun provideBlinkyManager(
             @ApplicationContext context: Context,
-            navigationManager: NavigationManager,
-        ): BlinkyManager {
-            val parameters = navigationManager.getArgument(BlinkyDestination) as BlinkyParams
-            return BlinkyManager(context, parameters.device)
-        }
+            device: BluetoothDevice,
+        ) = BlinkyManager(context, device)
 
     }
 

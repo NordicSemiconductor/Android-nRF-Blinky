@@ -1,9 +1,11 @@
 package no.nordicsemi.android.blinky.control.viewmodel
 
 import android.app.Application
+import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -13,12 +15,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import no.nordicsemi.android.blinky.control.BlinkyDestination
-import no.nordicsemi.android.blinky.control.BlinkyParams
 import no.nordicsemi.android.blinky.control.R
 import no.nordicsemi.android.blinky.control.repository.BlinkyRepository
 import no.nordicsemi.android.common.logger.NordicLogger
-import no.nordicsemi.android.common.navigation.NavigationManager
 import no.nordicsemi.android.log.LogContract.Log
 import no.nordicsemi.android.log.timber.nRFLoggerTree
 import timber.log.Timber
@@ -27,8 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BlinkyViewModel @Inject constructor(
     @ApplicationContext context: Context,
+    savedStateHandle: SavedStateHandle,
     private val repository: BlinkyRepository,
-    navigationManager: NavigationManager,
 ) : AndroidViewModel(context as Application) {
     /** The Blinky device name, as advertised. */
     val deviceName: String
@@ -50,17 +49,18 @@ class BlinkyViewModel @Inject constructor(
 
     init {
         // Get the navigation arguments.
-        val parameters = navigationManager.getArgument(BlinkyDestination) as BlinkyParams
+        val device: BluetoothDevice = savedStateHandle["device"]!!
+        val deviceName: String? = savedStateHandle["deviceName"]
 
         // Plant a new Tree that logs to nRF Logger.
-        val key = parameters.device.address
-        val name = parameters.deviceName ?: context.getString(R.string.unnamed_device)
+        val key = device.address
+        val name = deviceName ?: context.getString(R.string.unnamed_device)
         tree = nRFLoggerTree(context, null, key, name)
             .also { Timber.plant(it) }
             .also { sessionUri = it.session?.sessionUri }
 
         // Update the device name.
-        deviceName = name
+        this.deviceName = name
 
         connect()
     }

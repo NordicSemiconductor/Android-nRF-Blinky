@@ -1,14 +1,16 @@
 package no.nordicsemi.android.blinky.control
 
-import android.bluetooth.BluetoothDevice
+import no.nordicsemi.android.blinky.control.view.BlinkyScreen
 import no.nordicsemi.android.common.navigation.DestinationId
-import no.nordicsemi.android.common.navigation.NavigationArgument
+import no.nordicsemi.android.common.navigation.NavigationDestination
+import no.nordicsemi.android.common.navigation.NavigationDestinations
 
 val BlinkyDestination = DestinationId("blinky")
 
-data class BlinkyParams(
-    val device: BluetoothDevice,
-    val deviceName: String?,
-) : NavigationArgument {
-    override val destinationId = BlinkyDestination
+private val Blinky = NavigationDestination(BlinkyDestination) { navigator ->
+    BlinkyScreen(
+        onNavigateUp = { navigator.navigateUp() },
+    )
 }
+
+val BlinkyDestinations = NavigationDestinations(Blinky)
