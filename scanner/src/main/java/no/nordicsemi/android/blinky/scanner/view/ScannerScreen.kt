@@ -1,4 +1,4 @@
-package no.nordicsemi.android.blinky.scanner
+package no.nordicsemi.android.blinky.scanner.view
 
 import android.bluetooth.BluetoothDevice
 import android.os.ParcelUuid
