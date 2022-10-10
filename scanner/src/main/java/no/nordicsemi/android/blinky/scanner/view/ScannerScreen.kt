@@ -4,8 +4,8 @@ import android.bluetooth.BluetoothDevice
 import android.os.ParcelUuid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import no.nordicsemi.android.blinky.spec.R
 import no.nordicsemi.android.blinky.spec.BlinkySpec
+import no.nordicsemi.android.blinky.spec.R
 import no.nordicsemi.android.common.ui.scanner.DeviceSelected
 import no.nordicsemi.android.common.ui.scanner.ScannerScreen
 
@@ -19,7 +19,9 @@ fun BlinkyScanner(
         cancellable = false,
         onResult = { result ->
             when (result) {
-                is DeviceSelected -> onDeviceSelected(result.device.device, result.device.name)
+                is DeviceSelected -> with(result.device) {
+                    onDeviceSelected(device, name)
+                }
                 else -> {}
             }
         }
