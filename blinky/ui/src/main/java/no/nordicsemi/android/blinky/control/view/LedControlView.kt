@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import no.nordicsemi.android.blinky.control.R
 
 @Composable
-fun LedControlView(
+internal fun LedControlView(
     state: Boolean,
     onStateChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -65,6 +65,6 @@ fun LedControlView(
 
 @Composable
 @Preview
-fun LecControlViewPreview() {
+private fun LecControlViewPreview() {
     LedControlView(state = true, onStateChanged = {})
 }

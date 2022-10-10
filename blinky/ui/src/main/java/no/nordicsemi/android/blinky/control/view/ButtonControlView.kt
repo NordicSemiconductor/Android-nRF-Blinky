@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import no.nordicsemi.android.blinky.control.R
 
 @Composable
-fun ButtonControlView(
+internal fun ButtonControlView(
     state: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -67,6 +67,6 @@ fun ButtonControlView(
 
 @Composable
 @Preview
-fun ButtonControlViewPreview() {
+private fun ButtonControlViewPreview() {
     ButtonControlView(state = true)
 }
