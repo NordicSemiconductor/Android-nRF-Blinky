@@ -12,6 +12,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import no.nordicsemi.android.blinky.ble.BlinkyManager
 import no.nordicsemi.android.blinky.spec.Blinky
+import no.nordicsemi.android.blinky.spec.R
+import javax.inject.Named
 
 @Suppress("unused")
 @Module
@@ -25,6 +27,23 @@ abstract class BlinkyModule {
         fun provideBluetoothDevice(handle: SavedStateHandle): BluetoothDevice {
             return handle["device"]!!
         }
+
+        @Provides
+        @ViewModelScoped
+        @Named("deviceName")
+        fun provideDeviceName(
+            @ApplicationContext context: Context,
+            handle: SavedStateHandle,
+        ): String {
+            return handle["deviceName"] ?: context.getString(R.string.unnamed_device)
+        }
+
+        @Provides
+        @ViewModelScoped
+        @Named("deviceId")
+        fun provideDeviceId(
+            bluetoothDevice: BluetoothDevice
+        ): String = bluetoothDevice.address
 
         @Provides
         @ViewModelScoped
