@@ -19,7 +19,7 @@ class MainActivity: NordicActivity() {
 
         setContent {
             NordicTheme {
-                NavigationView( ScannerDestinations + BlinkyDestinations) { from, _ ->
+                NavigationView(ScannerDestinations + BlinkyDestinations) { from, _ ->
                     when (from) {
                         ScannerDestination -> BlinkyDestination
                         else -> null
