@@ -44,7 +44,7 @@ internal fun BlinkyScreen(
                 LoggerAppBarIcon(onClick = { viewModel.openLogger() })
             }
         )
-        RequireBluetooth(scanning = false) {
+        RequireBluetooth {
             when (state) {
                 Blinky.State.LOADING -> {
                     DeviceConnectingView(
