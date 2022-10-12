@@ -1,16 +1,16 @@
 package no.nordicsemi.android.blinky.control
 
 import no.nordicsemi.android.blinky.control.view.BlinkyScreen
-import no.nordicsemi.android.common.navigation.DestinationId
-import no.nordicsemi.android.common.navigation.NavigationDestination
-import no.nordicsemi.android.common.navigation.NavigationDestinations
+import no.nordicsemi.android.common.navigation.asDestinations
+import no.nordicsemi.android.common.navigation.defineDestination
+import no.nordicsemi.android.common.navigation.createDestination
 
-val BlinkyDestination = DestinationId("blinky")
+val Blinky = createDestination("blinky")
 
-private val Blinky = NavigationDestination(BlinkyDestination) { navigator ->
+private val BlinkyDestination = defineDestination(Blinky) { navigator ->
     BlinkyScreen(
         onNavigateUp = { navigator.navigateUp() },
     )
 }
 
-val BlinkyDestinations = NavigationDestinations(Blinky)
+val BlinkyDestinations = BlinkyDestination.asDestinations()

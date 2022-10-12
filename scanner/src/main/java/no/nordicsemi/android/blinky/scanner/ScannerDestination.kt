@@ -2,13 +2,13 @@ package no.nordicsemi.android.blinky.scanner
 
 import androidx.core.os.bundleOf
 import no.nordicsemi.android.blinky.scanner.view.BlinkyScanner
-import no.nordicsemi.android.common.navigation.DestinationId
-import no.nordicsemi.android.common.navigation.NavigationDestination
-import no.nordicsemi.android.common.navigation.NavigationDestinations
+import no.nordicsemi.android.common.navigation.asDestinations
+import no.nordicsemi.android.common.navigation.createDestination
+import no.nordicsemi.android.common.navigation.defineDestination
 
-val ScannerDestination = DestinationId("scanner")
+val Scanner = createDestination("scanner")
 
-private val Scanner = NavigationDestination(ScannerDestination) { navigator ->
+private val ScannerDestination = defineDestination(Scanner) { navigator, _ ->
     BlinkyScanner(
         onDeviceSelected = { device, name ->
             navigator.navigate(
@@ -22,4 +22,4 @@ private val Scanner = NavigationDestination(ScannerDestination) { navigator ->
     )
 }
 
-val ScannerDestinations = NavigationDestinations(Scanner)
+val ScannerDestinations = ScannerDestination.asDestinations()
