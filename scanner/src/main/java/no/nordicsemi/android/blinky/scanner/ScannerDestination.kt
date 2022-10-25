@@ -1,25 +1,21 @@
 package no.nordicsemi.android.blinky.scanner
 
-import androidx.core.os.bundleOf
+import androidx.hilt.navigation.compose.hiltViewModel
+import no.nordicsemi.android.blinky.control.Blinky
+import no.nordicsemi.android.blinky.control.BlinkyDevice
 import no.nordicsemi.android.blinky.scanner.view.BlinkyScanner
-import no.nordicsemi.android.common.navigation.asDestinations
-import no.nordicsemi.android.common.navigation.createDestination
+import no.nordicsemi.android.common.navigation.createSimpleDestination
 import no.nordicsemi.android.common.navigation.defineDestination
+import no.nordicsemi.android.common.navigation.viewmodel.SimpleNavigationViewModel
 
-val Scanner = createDestination("scanner")
+val Scanner = createSimpleDestination("scanner")
 
-private val ScannerDestination = defineDestination(Scanner) { navigator, _ ->
+val ScannerDestination = defineDestination(Scanner) {
+    val viewModel: SimpleNavigationViewModel = hiltViewModel()
+
     BlinkyScanner(
         onDeviceSelected = { device, name ->
-            navigator.navigate(
-                hint = null,
-                args = bundleOf(
-                    "device" to device,
-                    "deviceName" to name,
-                )
-            )
+            viewModel.navigateTo(Blinky, BlinkyDevice(device, name))
         }
     )
 }
-
-val ScannerDestinations = ScannerDestination.asDestinations()

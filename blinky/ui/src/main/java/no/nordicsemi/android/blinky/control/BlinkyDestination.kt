@@ -1,16 +1,26 @@
 package no.nordicsemi.android.blinky.control
 
+import android.bluetooth.BluetoothDevice
+import android.os.Parcelable
+import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.parcelize.Parcelize
 import no.nordicsemi.android.blinky.control.view.BlinkyScreen
-import no.nordicsemi.android.common.navigation.asDestinations
-import no.nordicsemi.android.common.navigation.defineDestination
 import no.nordicsemi.android.common.navigation.createDestination
+import no.nordicsemi.android.common.navigation.defineDestination
+import no.nordicsemi.android.common.navigation.viewmodel.SimpleNavigationViewModel
 
-val Blinky = createDestination("blinky")
+val Blinky = createDestination<BlinkyDevice, Unit>("blinky")
 
-private val BlinkyDestination = defineDestination(Blinky) { navigator ->
+@Parcelize
+data class BlinkyDevice(
+    val device: BluetoothDevice,
+    val name: String?,
+): Parcelable
+
+val BlinkyDestination = defineDestination(Blinky) {
+    val viewModel: SimpleNavigationViewModel = hiltViewModel()
+
     BlinkyScreen(
-        onNavigateUp = { navigator.navigateUp() },
+        onNavigateUp = { viewModel.navigateUp() }
     )
 }
-
-val BlinkyDestinations = BlinkyDestination.asDestinations()
