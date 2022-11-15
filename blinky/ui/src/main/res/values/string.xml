@@ -3,8 +3,6 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_retry">Retry</string>
 
-    <string name="unnamed_device">No name</string>
-
     <string name="blinky_led">LED</string>
     <string name="blinky_led_descr">Toggle the LED1 on the DK.</string>
 

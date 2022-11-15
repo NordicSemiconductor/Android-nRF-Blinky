@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -29,18 +31,22 @@ android {
 
 dependencies {
     implementation project(':blinky:spec')
+    implementation project(':blinky:ui')
 
     implementation "no.nordicsemi.android.common:uiscanner:$nordic_common_version"
     implementation "no.nordicsemi.android.common:navigation:$nordic_common_version"
 
-    // Fundamental components of compose UI
-    implementation "androidx.compose.ui:ui:$compose_version"
-    // Previews
-    implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
-    implementation "androidx.compose.foundation:foundation:$compose_version"
+    implementation platform("androidx.compose:compose-bom:$compose_version")
     // Material 3
-    implementation "androidx.compose.material3:material3:$material3_version"
+    implementation "androidx.compose.material3:material3"
+    // Android Studio Preview support
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
     // Integration with activities
-    implementation "androidx.activity:activity-compose:1.6.0"
+    implementation "androidx.activity:activity-compose:1.6.1"
+
+    // Hilt and Dagger
+    implementation "com.google.dagger:hilt-android:$dagger_version"
+    kapt "com.google.dagger:hilt-compiler:$dagger_version"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
 }

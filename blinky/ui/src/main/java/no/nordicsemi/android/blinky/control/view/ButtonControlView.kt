@@ -18,9 +18,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import no.nordicsemi.android.blinky.control.R
+import no.nordicsemi.android.common.theme.NordicTheme
 
 @Composable
-fun ButtonControlView(
+internal fun ButtonControlView(
     state: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -67,6 +68,8 @@ fun ButtonControlView(
 
 @Composable
 @Preview
-fun ButtonControlViewPreview() {
-    ButtonControlView(state = true)
+private fun ButtonControlViewPreview() {
+    NordicTheme {
+        ButtonControlView(state = true)
+    }
 }
