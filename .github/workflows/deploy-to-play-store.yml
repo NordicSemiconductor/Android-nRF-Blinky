@@ -13,11 +13,11 @@ jobs:
           fetch-depth: 0
       - shell: bash
         env:
-          # The following env variables are used by signing configuration in sample/build.gradle
+          # The following env variables are used by signing configuration
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
           KEYSTORE_KEY_PSWD: ${{ secrets.KEYSTORE_KEY_PSWD }}
           KEYSTORE_PSWD: ${{ secrets.KEYSTORE_PSWD }}
-        # The script decodes keystore (required by sample/build.gradle) and fastlane-api.json
+        # The script decodes keystore (required by the app signing conf) and fastlane-api.json
         # needed by fastlane (see fastlane/Appfile).
         run: |
           echo "${{ secrets.KEYSTORE_FILE }}" > keystore.asc
