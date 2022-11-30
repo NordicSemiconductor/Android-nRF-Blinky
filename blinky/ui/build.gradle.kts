@@ -5,9 +5,6 @@ plugins {
 
 android {
     namespace = "no.nordicsemi.android.blinky.control"
-    defaultConfig {
-        resConfigs("en")
-    }
 }
 
 dependencies {

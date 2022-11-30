@@ -4,9 +4,6 @@ plugins {
 
 android {
     namespace = "no.nordicsemi.android.blinky.scanner"
-    defaultConfig {
-        resConfigs("en")
-    }
 }
 
 dependencies {
