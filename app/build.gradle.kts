@@ -1,7 +1,7 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.nordic.application)
+    // https://github.com/NordicSemiconductor/Android-Gradle-Plugins/blob/main/plugins/src/main/kotlin/AndroidApplicationComposeConventionPlugin.kt
     alias(libs.plugins.nordic.application.compose)
+    // https://github.com/NordicSemiconductor/Android-Gradle-Plugins/blob/main/plugins/src/main/kotlin/AndroidHiltConventionPlugin.kt
     alias(libs.plugins.nordic.hilt)
 }
 

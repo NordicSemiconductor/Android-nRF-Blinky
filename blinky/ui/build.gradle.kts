@@ -1,5 +1,7 @@
 plugins {
+    // https://github.com/NordicSemiconductor/Android-Gradle-Plugins/blob/main/plugins/src/main/kotlin/AndroidFeatureConventionPlugin.kt
     alias(libs.plugins.nordic.feature)
+    // https://developer.android.com/kotlin/parcelize
     id("kotlin-parcelize")
 }
 
@@ -15,7 +17,7 @@ dependencies {
     implementation(libs.nordic.uiscanner)
     implementation(libs.nordic.navigation)
     implementation(libs.nordic.permission)
+    implementation(libs.nordic.log.timber)
 
     implementation(libs.androidx.compose.material.iconsExtended)
-    implementation(libs.nordic.log.timber)
 }
