@@ -68,6 +68,10 @@ internal fun LedControlView(
 @Preview
 private fun LecControlViewPreview() {
     NordicTheme {
-        LedControlView(state = true, onStateChanged = {})
+        LedControlView(
+            state = true,
+            onStateChanged = {},
+            modifier = Modifier.padding(16.dp),
+        )
     }
 }

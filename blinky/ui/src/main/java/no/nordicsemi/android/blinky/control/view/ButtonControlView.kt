@@ -70,6 +70,9 @@ internal fun ButtonControlView(
 @Preview
 private fun ButtonControlViewPreview() {
     NordicTheme {
-        ButtonControlView(state = true)
+        ButtonControlView(
+            state = true,
+            modifier = Modifier.padding(16.dp),
+        )
     }
 }
