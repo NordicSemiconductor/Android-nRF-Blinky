@@ -8,6 +8,7 @@ plugins {
 android {
     namespace = "no.nordicsemi.android.blinky"
     defaultConfig {
+        applicationId = "no.nordicsemi.android.nrfblinky"
         resourceConfigurations.add("en")
     }
 }
