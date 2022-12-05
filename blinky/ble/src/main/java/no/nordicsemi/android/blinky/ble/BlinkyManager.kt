@@ -5,11 +5,8 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import no.nordicsemi.android.ble.BleManager
 import no.nordicsemi.android.ble.ktx.asValidResponseFlow
 import no.nordicsemi.android.ble.ktx.getCharacteristic
@@ -63,6 +60,9 @@ private class BlinkyManagerImpl(
         .suspend()
 
     override fun release() {
+        // Cancel all coroutines.
+        scope.cancel()
+
         val wasConnected = isReady
         // If the device wasn't connected, it means that ConnectRequest was still pending.
         // Cancelling queue will initiate disconnecting automatically.
