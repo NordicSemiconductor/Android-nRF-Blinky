@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_retry">Retry</string>
+
+    <string name="blinky_led">LED</string>
+    <string name="blinky_led_descr">Switch to toggle the LED</string>
+
+    <string name="blinky_button">Button</string>
+    <string name="blinky_button_descr">The button state</string>
+    <string name="blinky_on">ON</string>
+    <string name="blinky_off">OFF</string>
+</resources>
