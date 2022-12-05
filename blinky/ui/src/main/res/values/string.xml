@@ -4,10 +4,10 @@
     <string name="action_retry">Retry</string>
 
     <string name="blinky_led">LED</string>
-    <string name="blinky_led_descr">Toggle the LED1 on the DK.</string>
+    <string name="blinky_led_descr">Switch to toggle the LED</string>
 
     <string name="blinky_button">Button</string>
-    <string name="blinky_button_descr">The BTN1 state.</string>
+    <string name="blinky_button_descr">The button state</string>
     <string name="blinky_on">ON</string>
     <string name="blinky_off">OFF</string>
 </resources>
