@@ -39,23 +39,39 @@ class BlinkyViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     init {
+        // In this sample we want to connect to the device as soon as the view model is created.
         connect()
     }
 
+    /**
+     * Connects to the device.
+     */
     fun connect() {
         val exceptionHandler = CoroutineExceptionHandler { _, _ -> }
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            // This method may throw an exception if the connection fails,
+            // Bluetooth is disabled, etc.
+            // The exception will be caught by the exception handler and will be ignored.
             repository.connect()
         }
     }
 
-    fun toggleLed(state: Boolean) {
+    /**
+     * Sends a command to the device to toggle the LED state.
+     * @param on The new state of the LED.
+     */
+    fun turnLed(on: Boolean) {
         val exceptionHandler = CoroutineExceptionHandler { _, _ -> }
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            repository.turnLed(state)
+            // Just like above, when this method throws an exception, it will be caught by the
+            // exception handler and ignored.
+            repository.turnLed(on)
         }
     }
 
+    /**
+     * Opens nRF Logger app with the log or Google Play if the app is not installed.
+     */
     fun openLogger() {
         NordicLogger.launch(getApplication(), repository.sessionUri)
     }
