@@ -9,5 +9,6 @@ plugins {
     alias(libs.plugins.nordic.library) apply false
     alias(libs.plugins.nordic.library.compose) apply false
     alias(libs.plugins.nordic.feature) apply false
+    alias(libs.plugins.nordic.kotlin) apply false
     alias(libs.plugins.nordic.hilt) apply false
 }
