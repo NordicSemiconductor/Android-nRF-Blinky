@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from("no.nordicsemi.android.gradle:version-catalog:1.0.16")
+            from("no.nordicsemi.android.gradle:version-catalog:1.1.3")
         }
     }
 }
@@ -28,9 +28,9 @@ include(":blinky:spec")
 include(":blinky:ui")
 include(":blinky:ble")
 
-if (file("../Android-Common-Libraries").exists()) {
-    includeBuild("../Android-Common-Libraries")
-}
+//if (file("../Android-Common-Libraries").exists()) {
+//    includeBuild("../Android-Common-Libraries")
+//}
 //if (file("../Android-BLE-Library").exists()) {
 //    includeBuild("../Android-BLE-Library")
 //}
