@@ -28,9 +28,9 @@ include(":blinky:spec")
 include(":blinky:ui")
 include(":blinky:ble")
 
-if (file("../Android-Common-Libraries").exists()) {
-    includeBuild("../Android-Common-Libraries")
-}
+//if (file("../Android-Common-Libraries").exists()) {
+//    includeBuild("../Android-Common-Libraries")
+//}
 //if (file("../Android-BLE-Library").exists()) {
 //    includeBuild("../Android-BLE-Library")
 //}
