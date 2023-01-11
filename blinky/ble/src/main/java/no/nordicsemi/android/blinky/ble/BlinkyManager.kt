@@ -86,10 +86,6 @@ private class BlinkyManagerImpl(
         _ledState.value = state
     }
 
-    override fun getGattCallback(): BleManagerGattCallback {
-        return BlinkyManagerGattCallback()
-    }
-
     override fun log(priority: Int, message: String) {
         Timber.log(priority, message)
     }
@@ -100,76 +96,73 @@ private class BlinkyManagerImpl(
         return Log.VERBOSE
     }
 
-    private inner class BlinkyManagerGattCallback: BleManagerGattCallback() {
-
-        private val buttonCallback by lazy {
-            object : ButtonCallback() {
-                override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
-                    _buttonState.tryEmit(state)
-                }
+    private val buttonCallback by lazy {
+        object : ButtonCallback() {
+            override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
+                _buttonState.tryEmit(state)
             }
         }
+    }
 
-        private val ledCallback by lazy {
-            object : LedCallback() {
-                override fun onLedStateChanged(device: BluetoothDevice, state: Boolean) {
-                    _ledState.tryEmit(state)
-                }
+    private val ledCallback by lazy {
+        object : LedCallback() {
+            override fun onLedStateChanged(device: BluetoothDevice, state: Boolean) {
+                _ledState.tryEmit(state)
             }
         }
+    }
 
-        override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
-            // Get the LBS Service from the gatt object.
-            gatt.getService(BlinkySpec.BLINKY_SERVICE_UUID)?.apply {
-                // Get the LED characteristic.
-                ledCharacteristic = getCharacteristic(
-                    BlinkySpec.BLINKY_LED_CHARACTERISTIC_UUID,
-                    // Mind, that below we pass required properties.
-                    // If your implementation supports only WRITE_NO_RESPONSE,
-                    // change the property to BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE.
-                    BluetoothGattCharacteristic.PROPERTY_WRITE
-                )
-                // Get the Button characteristic.
-                buttonCharacteristic = getCharacteristic(
-                    BlinkySpec.BLINKY_BUTTON_CHARACTERISTIC_UUID,
-                    BluetoothGattCharacteristic.PROPERTY_NOTIFY
-                )
+    override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
+        // Get the LBS Service from the gatt object.
+        gatt.getService(BlinkySpec.BLINKY_SERVICE_UUID)?.apply {
+            // Get the LED characteristic.
+            ledCharacteristic = getCharacteristic(
+                BlinkySpec.BLINKY_LED_CHARACTERISTIC_UUID,
+                // Mind, that below we pass required properties.
+                // If your implementation supports only WRITE_NO_RESPONSE,
+                // change the property to BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE.
+                BluetoothGattCharacteristic.PROPERTY_WRITE
+            )
+            // Get the Button characteristic.
+            buttonCharacteristic = getCharacteristic(
+                BlinkySpec.BLINKY_BUTTON_CHARACTERISTIC_UUID,
+                BluetoothGattCharacteristic.PROPERTY_NOTIFY
+            )
 
-                // Return true if all required characteristics are supported.
-                return ledCharacteristic != null && buttonCharacteristic != null
-            }
-            return false
+            // Return true if all required characteristics are supported.
+            return ledCharacteristic != null && buttonCharacteristic != null
+        }
+        return false
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun initialize() {
+        // Enable notifications for the button characteristic.
+        val flow: Flow<ButtonState> = setNotificationCallback(buttonCharacteristic)
+            .asValidResponseFlow()
+
+        // Forward the button state to the buttonState flow.
+        scope.launch {
+            flow.map { it.state }.collect { _buttonState.tryEmit(it) }
         }
 
-        @OptIn(ExperimentalCoroutinesApi::class)
-        override fun initialize() {
-            // Enable notifications for the button characteristic.
-            val flow: Flow<ButtonState> = setNotificationCallback(buttonCharacteristic)
-                .asValidResponseFlow()
+        enableNotifications(buttonCharacteristic)
+            .enqueue()
 
-            // Forward the button state to the buttonState flow.
-            scope.launch {
-                flow.map { it.state }.collect { _buttonState.tryEmit(it) }
-            }
+        // Read the initial value of the button characteristic.
+        readCharacteristic(buttonCharacteristic)
+            .with(buttonCallback)
+            .enqueue()
 
-            enableNotifications(buttonCharacteristic)
-                .enqueue()
+        // Read the initial value of the LED characteristic.
+        readCharacteristic(ledCharacteristic)
+            .with(ledCallback)
+            .enqueue()
+    }
 
-            // Read the initial value of the button characteristic.
-            readCharacteristic(buttonCharacteristic)
-                .with(buttonCallback)
-                .enqueue()
-
-            // Read the initial value of the LED characteristic.
-            readCharacteristic(ledCharacteristic)
-                .with(ledCallback)
-                .enqueue()
-        }
-
-        override fun onServicesInvalidated() {
-            ledCharacteristic = null
-            buttonCharacteristic = null
-        }
+    override fun onServicesInvalidated() {
+        ledCharacteristic = null
+        buttonCharacteristic = null
     }
 
 }
