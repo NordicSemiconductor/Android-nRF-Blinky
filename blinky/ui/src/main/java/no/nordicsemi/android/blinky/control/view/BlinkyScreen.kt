@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import no.nordicsemi.android.blinky.control.R
 import no.nordicsemi.android.blinky.control.viewmodel.BlinkyViewModel
@@ -27,7 +26,7 @@ import no.nordicsemi.android.common.ui.scanner.view.DeviceConnectingView
 import no.nordicsemi.android.common.ui.scanner.view.DeviceDisconnectedView
 import no.nordicsemi.android.common.ui.scanner.view.Reason
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun BlinkyScreen(
     onNavigateUp: () -> Unit,
