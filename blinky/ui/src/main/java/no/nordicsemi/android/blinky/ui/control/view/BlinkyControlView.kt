@@ -1,4 +1,4 @@
-package no.nordicsemi.android.blinky.control.view
+package no.nordicsemi.android.blinky.ui.control.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

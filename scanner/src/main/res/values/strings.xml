@@ -1,4 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="scanner_title">nRF Blinky</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="location">Location</string>
+
+    <string name="filters">Filters</string>
+    <string name="filter_uuid">All</string>
+    <string name="filter_nearby">Nearby</string>
+    <string name="filter_name">Name</string>
+
+    <string name="device_no_name">No name</string>
+    <string name="bonded_devices">Bonded devices</string>
+    <string name="discovered_devices">Discovered devices</string>
+
+    <string name="scan_failed">Scanning failed with error %d.</string>
+    <string name="scanner_screen">Scanner</string>
+    <string name="scanner_error">Scanning failed</string>
+    <string name="action_location_settings">Location settings</string>
+    <string name="action_go_up">Back</string>
+
+    <string name="no_device_guide_title">CAN\'T SEE YOUR DEVICE?</string>
+    <string name="no_device_guide_info">1. Make sure the device is <b>turned on</b> and is connected to
+		a power source.\n\n2. Make sure the appropriate firmware and SoftDevice are flashed.</string>
+    <string name="no_device_guide_location_info">3. Location is turned off. Most Android phones
+        require it in order to scan for Bluetooth LE devices. If you are sure your
+        device is advertising and it doesn\'t show up here, click the button below to
+        enable Location.</string>
+
+    <string name="navigation_item_accessibility">App bar navigation back icon.</string>
+
+    <string name="bonding_in_progress">Bonding in progress. Please follow instruction on the screen.</string>
+    <string name="bonding_success">Bonding success. Please wait for the redirect to chosen profile screen.</string>
+    <string name="bonding_error">We cannot get data from the peripheral without bonding. Please bond the device.</string>
+
+    <string name="device_disconnected">Disconnected</string>
+    <string name="device_reason_user">Device disconnected successfully.</string>
+    <string name="device_reason_unknown">Device disconnected with unknown reason.</string>
+    <string name="device_reason_link_loss">Device signal has been lost.</string>
+    <string name="device_reason_missing_service">Device was disconnected, because required services are missing.</string>
+
+    <string name="device_connecting">Connecting…</string>
+    <string name="device_explanation">The mobile is trying to connect to peripheral device.</string>
+    <string name="device_please_wait">Please wait…</string>
 </resources>
