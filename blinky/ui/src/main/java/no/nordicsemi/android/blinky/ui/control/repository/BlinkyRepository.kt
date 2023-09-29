@@ -1,4 +1,4 @@
-package no.nordicsemi.android.blinky.control.repository
+package no.nordicsemi.android.blinky.ui.control.repository
 
 import android.content.Context
 import android.net.Uri

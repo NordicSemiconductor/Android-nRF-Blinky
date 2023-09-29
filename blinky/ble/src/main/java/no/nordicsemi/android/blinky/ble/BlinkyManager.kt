@@ -53,6 +53,23 @@ private class BlinkyManagerImpl(
         }
         .stateIn(scope, SharingStarted.Lazily, Blinky.State.NOT_AVAILABLE)
 
+
+    private val buttonCallback by lazy {
+        object : ButtonCallback() {
+            override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
+                _buttonState.tryEmit(state)
+            }
+        }
+    }
+
+    private val ledCallback by lazy {
+        object : LedCallback() {
+            override fun onLedStateChanged(device: BluetoothDevice, state: Boolean) {
+                _ledState.tryEmit(state)
+            }
+        }
+    }
+
     override suspend fun connect() = connect(device)
         .retry(3, 300)
         .useAutoConnect(false)
@@ -94,22 +111,6 @@ private class BlinkyManagerImpl(
         // By default, the library logs only INFO or
         // higher priority messages. You may change it here.
         return Log.VERBOSE
-    }
-
-    private val buttonCallback by lazy {
-        object : ButtonCallback() {
-            override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
-                _buttonState.tryEmit(state)
-            }
-        }
-    }
-
-    private val ledCallback by lazy {
-        object : LedCallback() {
-            override fun onLedStateChanged(device: BluetoothDevice, state: Boolean) {
-                _ledState.tryEmit(state)
-            }
-        }
     }
 
     override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
@@ -164,5 +165,4 @@ private class BlinkyManagerImpl(
         ledCharacteristic = null
         buttonCharacteristic = null
     }
-
 }

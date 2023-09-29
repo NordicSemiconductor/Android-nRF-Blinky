@@ -11,7 +11,7 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import no.nordicsemi.android.blinky.ble.BlinkyManager
-import no.nordicsemi.android.blinky.control.Blinky
+import no.nordicsemi.android.blinky.ui.control.Blinky
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.R
 import no.nordicsemi.android.common.navigation.get
@@ -58,7 +58,7 @@ abstract class BlinkyModule {
 
     @Binds
     abstract fun bindBlinky(
-        BlinkManager: BlinkyManager
+        blinkyManager: BlinkyManager
     ): Blinky
 
 }

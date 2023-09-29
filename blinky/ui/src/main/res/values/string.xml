@@ -10,4 +10,6 @@
     <string name="blinky_button_descr">The button state</string>
     <string name="blinky_on">ON</string>
     <string name="blinky_off">OFF</string>
+
+    <string name="scanner_title">nRF Blinky</string>
 </resources>

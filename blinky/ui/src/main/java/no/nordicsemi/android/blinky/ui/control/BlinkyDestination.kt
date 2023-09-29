@@ -1,10 +1,10 @@
-package no.nordicsemi.android.blinky.control
+package no.nordicsemi.android.blinky.ui.control
 
 import android.bluetooth.BluetoothDevice
 import android.os.Parcelable
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.parcelize.Parcelize
-import no.nordicsemi.android.blinky.control.view.BlinkyScreen
+import no.nordicsemi.android.blinky.ui.control.view.BlinkyScreen
 import no.nordicsemi.android.common.navigation.createDestination
 import no.nordicsemi.android.common.navigation.defineDestination
 import no.nordicsemi.android.common.navigation.viewmodel.SimpleNavigationViewModel

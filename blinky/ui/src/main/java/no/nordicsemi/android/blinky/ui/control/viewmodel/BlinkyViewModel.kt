@@ -1,4 +1,4 @@
-package no.nordicsemi.android.blinky.control.viewmodel
+package no.nordicsemi.android.blinky.ui.control.viewmodel
 
 import android.app.Application
 import android.content.Context
@@ -11,8 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import no.nordicsemi.android.blinky.control.repository.BlinkyRepository
-import no.nordicsemi.android.common.logger.NordicLogger
+import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
+import no.nordicsemi.android.common.logger.LoggerLauncher
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -73,7 +73,7 @@ class BlinkyViewModel @Inject constructor(
      * Opens nRF Logger app with the log or Google Play if the app is not installed.
      */
     fun openLogger() {
-        NordicLogger.launch(getApplication(), repository.sessionUri)
+        LoggerLauncher.launch(getApplication(), repository.sessionUri)
     }
 
     override fun onCleared() {
