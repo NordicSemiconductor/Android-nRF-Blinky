@@ -31,7 +31,13 @@
 
 package no.nordicsemi.android.scanner.view
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HighlightOff
 import androidx.compose.material3.Button
@@ -45,9 +51,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import no.nordicsemi.android.common.ui.view.CircularIcon
 import no.nordicsemi.android.scanner.R
-import no.nordicsemi.android.common.theme.NordicTheme
-import no.nordicsemi.android.common.theme.view.CircularIcon
 
 enum class Reason {
     USER, UNKNOWN, LINK_LOSS, MISSING_SERVICE
@@ -100,20 +105,18 @@ fun DeviceDisconnectedView(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DeviceDisconnectedView_Preview() {
-    NordicTheme {
-        DeviceDisconnectedView(
-            reason = Reason.MISSING_SERVICE,
-            content = { padding ->
-                Button(
-                    onClick = {},
-                    modifier = Modifier.padding(padding)
-                ) {
-                    Text(text = "Retry")
-                }
+    DeviceDisconnectedView(
+        reason = Reason.MISSING_SERVICE,
+        content = { padding ->
+            Button(
+                onClick = {},
+                modifier = Modifier.padding(padding)
+            ) {
+                Text(text = "Retry")
             }
-        )
-    }
+        }
+    )
 }

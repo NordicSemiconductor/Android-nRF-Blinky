@@ -1,11 +1,11 @@
 package no.nordicsemi.android.blinky.ui.control.repository
 
 import android.content.Context
-import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import no.nordicsemi.android.blinky.spec.Blinky
+import no.nordicsemi.android.log.ILogSession
 import no.nordicsemi.android.log.LogContract
 import no.nordicsemi.android.log.timber.nRFLoggerTree
 import timber.log.Timber
@@ -28,14 +28,14 @@ class BlinkyRepository @Inject constructor(
     /** Timber tree that logs to nRF Logger. */
     private val tree: Timber.Tree
 
-    /** If the nRF Logger is installed, this URI will allow to open the session. */
-    internal val sessionUri: Uri?
+    /** If the nRF Logger is installed, this will allow to open the session. */
+    internal val logSession: ILogSession?
 
     init {
         // Plant a new Tree that logs to nRF Logger.
         tree = nRFLoggerTree(context, null, deviceId, deviceName)
             .also { Timber.plant(it) }
-            .also { sessionUri = it.session?.sessionUri }
+            .also { logSession = it.session }
     }
 
     val loggedLedState: Flow<Boolean>

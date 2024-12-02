@@ -16,15 +16,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.ui.R
 import no.nordicsemi.android.blinky.ui.control.viewmodel.BlinkyViewModel
-import no.nordicsemi.android.blinky.spec.Blinky
+import no.nordicsemi.android.common.logger.view.LoggerAppBarIcon
+import no.nordicsemi.android.common.permissions.ble.RequireBluetooth
+import no.nordicsemi.android.common.ui.view.NordicAppBar
 import no.nordicsemi.android.scanner.view.DeviceConnectingView
 import no.nordicsemi.android.scanner.view.DeviceDisconnectedView
 import no.nordicsemi.android.scanner.view.Reason
-import no.nordicsemi.android.common.logger.view.LoggerAppBarIcon
-import no.nordicsemi.android.common.permissions.ble.RequireBluetooth
-import no.nordicsemi.android.common.theme.view.NordicAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +38,7 @@ internal fun BlinkyScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         NordicAppBar(
-            text = viewModel.deviceName,
+            title = { Text(text = viewModel.deviceName) },
             onNavigationButtonClick = onNavigateUp,
             actions = {
                 LoggerAppBarIcon(onClick = { viewModel.openLogger() })

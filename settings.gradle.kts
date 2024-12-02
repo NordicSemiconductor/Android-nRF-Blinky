@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from("no.nordicsemi.android.gradle:version-catalog:1.9.11")
+            from("no.nordicsemi.android.gradle:version-catalog:2.5-1")
         }
     }
 }
@@ -28,9 +28,14 @@ include(":blinky:spec")
 include(":blinky:ui")
 include(":blinky:ble")
 
-if (file("../Android-Common-Libraries").exists()) {
-    includeBuild("../Android-Common-Libraries")
-}
-if (file("../Android-BLE-Library").exists()) {
-    includeBuild("../Android-BLE-Library")
-}
+// Clone https://github.com/NordicPlayground/Android-Common-Libraries and
+// uncomment the following lines to modify source code of the Nordic Common library:
+//if (file("../Android-Common-Libraries").exists()) {
+//    includeBuild("../Android-Common-Libraries")
+//}
+
+// Clone https://github.com/NordicSemiconductor/Android-BLE-Library and
+// uncomment the following lines to modify source code of the BLE library:
+//if (file("../Android-BLE-Library").exists()) {
+//    includeBuild("../Android-BLE-Library")
+//}

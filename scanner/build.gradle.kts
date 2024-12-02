@@ -10,9 +10,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.nordic.ui)
     implementation(libs.nordic.core)
-    implementation(libs.nordic.theme)
-    implementation(libs.nordic.scanner)
+    implementation(libs.nordic.compat.scanner)
     implementation(libs.nordic.navigation)
     implementation(libs.nordic.permissions.ble)
 

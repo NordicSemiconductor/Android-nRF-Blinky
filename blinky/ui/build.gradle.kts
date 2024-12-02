@@ -13,9 +13,8 @@ dependencies {
     implementation(project(":blinky:spec"))
     implementation(project(":scanner"))
 
-    implementation(libs.nordic.theme)
+    implementation(libs.nordic.ui)
     implementation(libs.nordic.logger)
-    implementation(libs.nordic.uilogger)
     implementation(libs.nordic.navigation)
     implementation(libs.nordic.permissions.ble)
     implementation(libs.nordic.log.timber)

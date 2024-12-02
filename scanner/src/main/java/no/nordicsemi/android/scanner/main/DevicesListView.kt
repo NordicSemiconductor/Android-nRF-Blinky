@@ -41,7 +41,6 @@ import no.nordicsemi.android.scanner.model.DiscoveredBluetoothDevice
 import no.nordicsemi.android.scanner.repository.ScanningState
 import no.nordicsemi.android.scanner.view.internal.ScanEmptyView
 import no.nordicsemi.android.scanner.view.internal.ScanErrorView
-import no.nordicsemi.android.common.theme.NordicTheme
 import no.nordicsemi.android.support.v18.scanner.ScanCallback
 
 @Composable
@@ -72,50 +71,42 @@ internal fun DevicesListView(
     }
 }
 
-@Preview(name = "Location required")
+@Preview(name = "Location required", showBackground = true)
 @Composable
 private fun DeviceListView_Preview_LocationRequired() {
-    NordicTheme {
-        DevicesListView(
-            isLocationRequiredAndDisabled = true,
-            state = ScanningState.Loading,
-            onClick = {}
-        )
-    }
+    DevicesListView(
+        isLocationRequiredAndDisabled = true,
+        state = ScanningState.Loading,
+        onClick = {}
+    )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DeviceListView_Preview_LocationNotRequired() {
-    NordicTheme {
-        DevicesListView(
-            isLocationRequiredAndDisabled = false,
-            state = ScanningState.Loading,
-            onClick = {}
-        )
-    }
+    DevicesListView(
+        isLocationRequiredAndDisabled = false,
+        state = ScanningState.Loading,
+        onClick = {}
+    )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DeviceListView_Preview_Error() {
-    NordicTheme {
-        DevicesListView(
-            isLocationRequiredAndDisabled = true,
-            state = ScanningState.Error(ScanCallback.SCAN_FAILED_FEATURE_UNSUPPORTED),
-            onClick = {}
-        )
-    }
+    DevicesListView(
+        isLocationRequiredAndDisabled = true,
+        state = ScanningState.Error(ScanCallback.SCAN_FAILED_FEATURE_UNSUPPORTED),
+        onClick = {}
+    )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DeviceListView_Preview_Empty() {
-    NordicTheme {
-        DevicesListView(
-            isLocationRequiredAndDisabled = true,
-            state = ScanningState.DevicesDiscovered(emptyList()),
-            onClick = {}
-        )
-    }
+    DevicesListView(
+        isLocationRequiredAndDisabled = true,
+        state = ScanningState.DevicesDiscovered(emptyList()),
+        onClick = {}
+    )
 }

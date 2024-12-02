@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import no.nordicsemi.android.common.theme.NordicTheme
 
 @Composable
 internal fun BlinkyControlView(
@@ -34,12 +33,10 @@ internal fun BlinkyControlView(
 @Preview
 @Composable
 private fun BlinkyControlViewPreview() {
-    NordicTheme {
-        BlinkyControlView(
-            ledState = true,
-            buttonState = true,
-            onStateChanged = {},
-            modifier = Modifier.padding(16.dp),
-        )
-    }
+    BlinkyControlView(
+        ledState = true,
+        buttonState = true,
+        onStateChanged = {},
+        modifier = Modifier.padding(16.dp),
+    )
 }

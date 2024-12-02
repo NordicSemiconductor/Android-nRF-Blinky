@@ -37,7 +37,7 @@ import android.provider.Settings
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BluetoothSearching
+import androidx.compose.material.icons.automirrored.filled.BluetoothSearching
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,13 +45,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import no.nordicsemi.android.scanner.R
 import no.nordicsemi.android.common.core.parseBold
-import no.nordicsemi.android.common.theme.NordicTheme
-import no.nordicsemi.android.common.theme.view.WarningView
+import no.nordicsemi.android.common.ui.view.WarningView
+import no.nordicsemi.android.scanner.R
 
 @Composable
 internal fun ScanEmptyView(
@@ -61,7 +59,7 @@ internal fun ScanEmptyView(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
-        imageVector = Icons.Default.BluetoothSearching,
+        imageVector = Icons.AutoMirrored.Filled.BluetoothSearching,
         title = stringResource(id = R.string.no_device_guide_title),
         hint = stringResource(id = R.string.no_device_guide_info) + if (requireLocation) {
             "\n\n" + stringResource(id = R.string.no_device_guide_location_info)
@@ -85,22 +83,18 @@ private fun openLocationSettings(context: Context) {
     context.startActivity(intent)
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun ScanEmptyViewPreview_RequiredLocation() {
-    NordicTheme {
-        ScanEmptyView(
-            requireLocation = true,
-        )
-    }
+    ScanEmptyView(
+        requireLocation = true,
+    )
 }
 
-@Preview(device = Devices.TABLET)
+@Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,dpi=240")
 @Composable
 private fun ScanEmptyViewPreview() {
-    NordicTheme {
-        ScanEmptyView(
-            requireLocation = false,
-        )
-    }
+    ScanEmptyView(
+        requireLocation = false,
+    )
 }

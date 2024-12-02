@@ -32,6 +32,7 @@ package no.nordicsemi.android.scanner
 
 import android.os.ParcelUuid
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +45,7 @@ import no.nordicsemi.android.scanner.view.ScannerAppBar
 
 @Composable
 fun ScannerScreen(
-    title: String = stringResource(id = R.string.scanner_screen),
+    title: @Composable () -> Unit = { Text(stringResource(id = R.string.scanner_screen)) },
     uuid: ParcelUuid?,
     cancellable: Boolean = true,
     onResult: (ScannerScreenResult) -> Unit,

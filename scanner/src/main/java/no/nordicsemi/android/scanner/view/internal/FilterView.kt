@@ -31,13 +31,18 @@
 
 package no.nordicsemi.android.scanner.view.internal
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material.icons.filled.Wifi
-import androidx.compose.material3.*
+import androidx.compose.material3.ElevatedFilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,9 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import no.nordicsemi.android.scanner.R
 import no.nordicsemi.android.scanner.repository.DevicesScanFilter
-import no.nordicsemi.android.common.theme.NordicTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FilterView(
     config: DevicesScanFilter,
@@ -100,7 +103,7 @@ internal fun FilterView(
                     if (it) {
                         Icon(Icons.Default.Done, contentDescription = "")
                     } else {
-                        Icon(Icons.Default.Label, contentDescription = "")
+                        Icon(Icons.AutoMirrored.Filled.Label, contentDescription = "")
                     }
                 },
             )
@@ -108,18 +111,16 @@ internal fun FilterView(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun FilterViewPreview() {
-    NordicTheme {
-        FilterView(
-            config = DevicesScanFilter(
-                filterUuidRequired = true,
-                filterNearbyOnly = true,
-                filterWithNames = true,
-            ),
-            onChanged = {},
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
+    FilterView(
+        config = DevicesScanFilter(
+            filterUuidRequired = true,
+            filterNearbyOnly = true,
+            filterWithNames = true,
+        ),
+        onChanged = {},
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
