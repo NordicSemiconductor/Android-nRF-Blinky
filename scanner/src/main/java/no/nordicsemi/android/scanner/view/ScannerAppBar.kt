@@ -42,18 +42,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import no.nordicsemi.android.common.theme.view.NordicAppBar
+import no.nordicsemi.android.common.ui.view.NordicAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ScannerAppBar(
-    text: String,
+    title: @Composable () -> Unit,
     showProgress: Boolean = false,
     backButtonIcon: ImageVector = Icons.Default.ArrowBack,
     onNavigationButtonClick: (() -> Unit)? = null,
 ) {
     NordicAppBar(
-        text = text,
+        title = title,
         backButtonIcon = backButtonIcon,
         onNavigationButtonClick = onNavigationButtonClick,
         actions = {

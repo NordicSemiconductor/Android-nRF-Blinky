@@ -73,7 +73,7 @@ class BlinkyViewModel @Inject constructor(
      * Opens nRF Logger app with the log or Google Play if the app is not installed.
      */
     fun openLogger() {
-        LoggerLauncher.launch(getApplication(), repository.sessionUri)
+        LoggerLauncher.launch(getApplication(), repository.logSession)
     }
 
     override fun onCleared() {

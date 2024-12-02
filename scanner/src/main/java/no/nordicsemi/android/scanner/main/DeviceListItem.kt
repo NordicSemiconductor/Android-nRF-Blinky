@@ -47,10 +47,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import no.nordicsemi.android.common.ui.view.CircularIcon
+import no.nordicsemi.android.common.ui.view.RssiIcon
 import no.nordicsemi.android.scanner.R
-import no.nordicsemi.android.common.theme.NordicTheme
-import no.nordicsemi.android.common.theme.view.CircularIcon
-import no.nordicsemi.android.common.theme.view.RssiIcon
 
 @Composable
 internal fun DeviceListItem(
@@ -92,16 +91,14 @@ internal fun DeviceListItem(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun DeviceListItemPreview() {
-    NordicTheme {
-        DeviceListItem(
-            name = "Device name",
-            address = "AA:BB:CC:DD:EE:FF",
-            extras = {
-                RssiIcon(rssi = -45)
-            }
-        )
-    }
+    DeviceListItem(
+        name = "Device name",
+        address = "AA:BB:CC:DD:EE:FF",
+        extras = {
+            RssiIcon(rssi = -45)
+        }
+    )
 }
