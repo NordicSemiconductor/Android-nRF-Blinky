@@ -35,9 +35,16 @@ import android.os.ParcelUuid
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -99,12 +106,16 @@ fun ScannerView(
             }
 
             Column(modifier = Modifier.fillMaxSize()) {
+                val insets = WindowInsets.displayCutout
+                    .union(WindowInsets.navigationBars)
+                    .only(WindowInsetsSides.Horizontal)
                 FilterView(
                     config = config,
                     onChanged = { viewModel.setFilter(it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(colorResource(id = R.color.appBarColor))
+                        .windowInsetsPadding(insets)
                         .padding(horizontal = 16.dp),
                 )
 
@@ -113,7 +124,12 @@ fun ScannerView(
                     onRefresh = { refresh() },
                 )
 
-                Box(modifier = Modifier.pullRefresh(pullRefreshState).clipToBounds()) {
+                Box(
+                    modifier = Modifier
+                        .pullRefresh(pullRefreshState)
+                        .windowInsetsPadding(insets)
+                        .clipToBounds()
+                ) {
                     DevicesListView(
                         isLocationRequiredAndDisabled = isLocationRequiredAndDisabled,
                         state = state,
