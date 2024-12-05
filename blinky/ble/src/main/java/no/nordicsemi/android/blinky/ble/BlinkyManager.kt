@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
+import android.media.RingtoneManager
 import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -20,6 +21,7 @@ import no.nordicsemi.android.blinky.ble.data.LedData
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.BlinkySpec
 import timber.log.Timber
+
 
 class BlinkyManager(
     context: Context,
@@ -40,6 +42,8 @@ private class BlinkyManagerImpl(
 
     private val _buttonState = MutableStateFlow(false)
     override val buttonState = _buttonState.asStateFlow()
+    private val playRingtoneFlow = MutableSharedFlow<Unit>()
+    val playRingtone = playRingtoneFlow.asSharedFlow()
 
     override val state = stateAsFlow()
         .map {
@@ -58,6 +62,9 @@ private class BlinkyManagerImpl(
         object : ButtonCallback() {
             override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
                 _buttonState.tryEmit(state)
+                scope.launch {
+                    playRingtoneFlow.emit(Unit)
+                }
             }
         }
     }
@@ -144,7 +151,21 @@ private class BlinkyManagerImpl(
 
         // Forward the button state to the buttonState flow.
         scope.launch {
-            flow.map { it.state }.collect { _buttonState.tryEmit(it) }
+            flow.combine(playRingtone) { buttonState, _ ->
+                buttonState.state
+            }.collect { state ->
+                _buttonState.tryEmit(state)
+                try {
+                    if(state) {
+                        val notification =
+                            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                        val r = RingtoneManager.getRingtone(context, notification)
+                        r.play()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
 
         enableNotifications(buttonCharacteristic)
