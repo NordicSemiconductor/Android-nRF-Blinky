@@ -52,7 +52,7 @@ import no.nordicsemi.android.common.ui.view.RssiIcon
 import no.nordicsemi.android.scanner.R
 
 @Composable
-internal fun DeviceListItem(
+fun DeviceListItem(
     name: String?,
     address: String,
     modifier: Modifier = Modifier,
