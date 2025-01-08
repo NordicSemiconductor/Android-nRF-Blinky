@@ -31,7 +31,12 @@
 
 package no.nordicsemi.android.scanner.main
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -53,9 +58,11 @@ internal fun DevicesListView(
         DeviceListItem(it.displayName, it.address)
     },
 ) {
+    val insets = WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)
+        .union(WindowInsets(left = 8.dp, right = 8.dp, top = 16.dp, bottom = 16.dp))
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp)
+        contentPadding = insets.asPaddingValues()
     ) {
         when (state) {
             is ScanningState.Loading -> item { ScanEmptyView(isLocationRequiredAndDisabled) }
