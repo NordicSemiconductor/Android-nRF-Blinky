@@ -2,6 +2,7 @@ package no.nordicsemi.android.blinky.ui.control.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.media.RingtoneManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,10 +10,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
 import no.nordicsemi.android.common.logger.LoggerLauncher
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -36,6 +39,19 @@ class BlinkyViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
     /** The button state. */
     val buttonState = repository.loggedButtonState
+        .onEach { state ->
+            // Play a sound when the button is pressed.
+            try {
+                if (state) {
+                    val notification =
+                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                    val r = RingtoneManager.getRingtone(context, notification)
+                    r.play()
+                }
+            } catch (e: Exception) {
+                Timber.e("Failed to play notification sound")
+            }
+        }
         .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     init {
