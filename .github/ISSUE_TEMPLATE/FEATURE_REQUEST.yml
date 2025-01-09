@@ -1,0 +1,16 @@
+name: Feature request
+description: Propose a new feature.
+labels: ["improvement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this form!
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Describe the feature
+      description: What do you need? You may include screenshots if needed.
+      placeholder: Please add...
+    validations:
+      required: true
