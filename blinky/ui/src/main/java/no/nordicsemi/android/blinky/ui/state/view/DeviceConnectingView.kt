@@ -29,7 +29,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package no.nordicsemi.android.blinky.ui.scanner.view
+package no.nordicsemi.android.blinky.ui.state.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,7 +39,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HighlightOff
+import androidx.compose.material.icons.filled.HourglassTop
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -54,15 +54,10 @@ import androidx.compose.ui.unit.dp
 import no.nordicsemi.android.blinky.ui.R
 import no.nordicsemi.android.common.ui.view.CircularIcon
 
-enum class Reason {
-    USER, UNKNOWN, LINK_LOSS, MISSING_SERVICE
-}
-
 @Composable
-fun DeviceDisconnectedView(
-    reason: Reason,
+fun DeviceConnectingView(
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.(PaddingValues) -> Unit = {},
+    content: @Composable ColumnScope.(PaddingValues) -> Unit = {}
 ) {
     Column(
         modifier = modifier,
@@ -79,24 +74,23 @@ fun DeviceDisconnectedView(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                CircularIcon(imageVector = Icons.Default.HighlightOff)
+                CircularIcon(imageVector = Icons.Default.HourglassTop)
 
                 Text(
-                    text = stringResource(id = R.string.device_disconnected),
+                    text = stringResource(id = R.string.device_connecting),
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                val text = when (reason) {
-                    Reason.USER -> stringResource(id = R.string.device_reason_user)
-                    Reason.LINK_LOSS -> stringResource(id = R.string.device_reason_link_loss)
-                    Reason.MISSING_SERVICE -> stringResource(id = R.string.device_reason_missing_service)
-                    Reason.UNKNOWN -> stringResource(id = R.string.device_reason_unknown)
-                }
-
                 Text(
-                    text = text,
+                    text = stringResource(id = R.string.device_explanation),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = stringResource(id = R.string.device_please_wait),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
         }
@@ -107,16 +101,13 @@ fun DeviceDisconnectedView(
 
 @Preview(showBackground = true)
 @Composable
-private fun DeviceDisconnectedView_Preview() {
-    DeviceDisconnectedView(
-        reason = Reason.MISSING_SERVICE,
-        content = { padding ->
-            Button(
-                onClick = {},
-                modifier = Modifier.padding(padding)
-            ) {
-                Text(text = "Retry")
-            }
+private fun DeviceConnectingView_Preview() {
+    DeviceConnectingView { padding ->
+        Button(
+            onClick = {},
+            modifier = Modifier.padding(padding)
+        ) {
+            Text(text = "Cancel")
         }
-    )
+    }
 }
