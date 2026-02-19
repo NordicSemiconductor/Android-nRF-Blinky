@@ -18,8 +18,9 @@ dependencies {
     implementation(project(":blinky:ui"))
     implementation(project(":blinky:ble"))
 
-    implementation(libs.nordic.theme)
-    implementation(libs.nordic.navigation)
+    implementation(nordic.theme)
+    implementation(nordic.navigation)
+    implementation(nordic.blek.environment.android)
 
     implementation(libs.timber)
 

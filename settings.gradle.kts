@@ -15,8 +15,13 @@ dependencyResolutionManagement {
         mavenCentral()
     }
     versionCatalogs {
+        // Link: https://github.com/NordicSemiconductor/Nordic-Gradle-Plugins
         create("libs") {
-            from("no.nordicsemi.android.gradle:version-catalog:2.6.1")
+            from("no.nordicsemi.android.gradle:version-catalog:2.14-1")
+        }
+        // Link: https://github.com/NordicSemiconductor/Nordic-Version-Catalog
+        create("nordic") {
+            from("no.nordicsemi.android:version-catalog:2026.02.00")
         }
     }
 }

@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":blinky:spec"))
 
     // Import BLE Library
-    implementation(libs.nordic.ble.ktx)
+    implementation(nordic.ble.ktx)
     // BLE events are logged using Timber
     implementation(libs.timber)
     // Coroutines

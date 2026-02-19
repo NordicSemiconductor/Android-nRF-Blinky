@@ -10,12 +10,12 @@ android {
 }
 
 dependencies {
-    implementation(libs.nordic.ui)
-    implementation(libs.nordic.core)
-    implementation(libs.nordic.compat.scanner)
-    implementation(libs.nordic.navigation)
-    implementation(libs.nordic.permissions.ble)
+    implementation(nordic.ui)
+    implementation(nordic.core)
+    implementation(nordic.compat.scanner)
+    implementation(nordic.navigation)
+    implementation(nordic.permissions.ble)
 
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material.iconsExtended)
+    implementation(libs.androidx.compose.material.icons.extended)
 }
