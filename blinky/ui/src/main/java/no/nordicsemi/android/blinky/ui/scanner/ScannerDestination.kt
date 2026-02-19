@@ -1,6 +1,6 @@
 package no.nordicsemi.android.blinky.ui.scanner
 
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import no.nordicsemi.android.blinky.ui.control.Blinky
 import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.blinky.ui.scanner.view.BlinkyScanner
