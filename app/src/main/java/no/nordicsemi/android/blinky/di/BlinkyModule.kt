@@ -1,5 +1,6 @@
 package no.nordicsemi.android.blinky.di
 
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
@@ -11,9 +12,9 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import no.nordicsemi.android.blinky.ble.BlinkyManager
-import no.nordicsemi.android.blinky.ui.control.Blinky
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.R
+import no.nordicsemi.android.blinky.ui.control.Blinky
 import no.nordicsemi.android.common.navigation.get
 import javax.inject.Named
 
@@ -27,7 +28,8 @@ abstract class BlinkyModule {
         @Provides
         @ViewModelScoped
         fun provideBluetoothDevice(handle: SavedStateHandle): BluetoothDevice {
-            return handle.get(Blinky).device
+            val identifier = handle.get(Blinky).identifier
+            return BluetoothAdapter.getDefaultAdapter().getRemoteDevice(identifier)
         }
 
         @Provides

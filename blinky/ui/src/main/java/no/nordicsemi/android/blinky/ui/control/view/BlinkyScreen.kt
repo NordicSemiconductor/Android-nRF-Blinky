@@ -19,12 +19,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.ui.R
 import no.nordicsemi.android.blinky.ui.control.viewmodel.BlinkyViewModel
+import no.nordicsemi.android.blinky.ui.scanner.view.DeviceConnectingView
+import no.nordicsemi.android.blinky.ui.scanner.view.DeviceDisconnectedView
+import no.nordicsemi.android.blinky.ui.scanner.view.Reason
 import no.nordicsemi.android.common.logger.view.LoggerAppBarIcon
 import no.nordicsemi.android.common.permissions.ble.RequireBluetooth
 import no.nordicsemi.android.common.ui.view.NordicAppBar
-import no.nordicsemi.android.scanner.view.DeviceConnectingView
-import no.nordicsemi.android.scanner.view.DeviceDisconnectedView
-import no.nordicsemi.android.scanner.view.Reason
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

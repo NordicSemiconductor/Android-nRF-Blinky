@@ -20,7 +20,7 @@ dependencies {
 
     implementation(nordic.theme)
     implementation(nordic.navigation)
-    implementation(nordic.blek.environment.android)
+    implementation(nordic.blek.client.android)
 
     implementation(libs.timber)
 
