@@ -13,6 +13,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 /**
+ * This repository is responsible for sending and receiving commands to the Blinky device.
  *
  * @param context The application context.
  * @param deviceId The device ID.

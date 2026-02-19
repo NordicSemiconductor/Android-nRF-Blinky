@@ -48,7 +48,7 @@ class BlinkyViewModel @Inject constructor(
                     val r = RingtoneManager.getRingtone(context, notification)
                     r.play()
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 Timber.e("Failed to play notification sound")
             }
         }
