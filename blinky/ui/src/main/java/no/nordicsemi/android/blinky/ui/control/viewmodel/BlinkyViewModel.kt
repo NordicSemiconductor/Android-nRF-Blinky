@@ -30,7 +30,7 @@ import javax.inject.Named
 class BlinkyViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val repository: BlinkyRepository,
-    @Named("deviceName") val deviceName: String,
+    @param:Named("deviceName") val deviceName: String,
 ) : AndroidViewModel(context as Application) {
     /** The connection state of the device. */
     val state = repository.state
