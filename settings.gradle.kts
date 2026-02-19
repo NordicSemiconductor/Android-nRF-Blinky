@@ -28,7 +28,6 @@ dependencyResolutionManagement {
 rootProject.name = "nRF Blinky"
 
 include(":app")
-include(":scanner")
 include(":blinky:spec")
 include(":blinky:ui")
 include(":blinky:ble")
