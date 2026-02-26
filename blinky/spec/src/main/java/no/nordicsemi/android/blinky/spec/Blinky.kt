@@ -1,44 +1,45 @@
 package no.nordicsemi.android.blinky.spec
 
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface Blinky {
 
-    enum class State {
-        LOADING,
-        READY,
-        NOT_AVAILABLE
-    }
-
     /**
      * Connects to the device.
-     */
-    suspend fun connect()
-
-    /**
-     * Disconnects from the device.
-     */
-    fun release()
-
-    /**
-     * The current state of the blinky.
-     */
-    val state: StateFlow<State>
-
-    /**
-     * The current state of the LED.
-     */
-    val ledState: StateFlow<Boolean>
-
-    /**
-     * The current state of the button.
-     */
-    val buttonState: StateFlow<Boolean>
-
-    /**
-     * Controls the LED state.
      *
-     * @param state the new state of the LED.
+     * The method suspends for the duration of the connection. When the block is completed, the
+     * connection will be closed. If the device disconnects before the block is completed, the
+     * connection will be canceled throwing [CancellationException].
+     *
+     * @param block the block to execute when the connection is established.
+     * @throws BlinkyError in case the connection fails.
      */
-    suspend fun turnLed(state: Boolean)
+    suspend fun connect(block: suspend CoroutineScope.(State) -> Unit)
+
+    /**
+     * State of the Blinky device.
+     *
+     * This interface represents the state of the Blinky device. An implementation of this
+     * interface can be obtained from [Blinky.connect] method.
+     */
+    interface State {
+
+        /**
+         * The current state of the LED.
+         *
+         * Set the [value][MutableStateFlow.value] to change the LED state.
+         */
+        val led: MutableStateFlow<Boolean>
+
+        /**
+         * The current state of the button.
+         *
+         * This flow emits `true` when the button is pressed and `false` when it is released.
+         */
+        val button: StateFlow<Boolean>
+    }
+
 }

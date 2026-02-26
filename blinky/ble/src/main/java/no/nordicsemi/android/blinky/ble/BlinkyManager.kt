@@ -1,168 +1,149 @@
 package no.nordicsemi.android.blinky.ble
 
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCharacteristic
-import android.content.Context
-import android.util.Log
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import no.nordicsemi.android.ble.BleManager
-import no.nordicsemi.android.ble.ktx.asValidResponseFlow
-import no.nordicsemi.android.ble.ktx.getCharacteristic
-import no.nordicsemi.android.ble.ktx.state.ConnectionState
-import no.nordicsemi.android.ble.ktx.stateAsFlow
-import no.nordicsemi.android.ble.ktx.suspend
-import no.nordicsemi.android.blinky.ble.data.ButtonCallback
-import no.nordicsemi.android.blinky.ble.data.ButtonState
-import no.nordicsemi.android.blinky.ble.data.LedCallback
-import no.nordicsemi.android.blinky.ble.data.LedData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.BlinkySpec
-import timber.log.Timber
+import no.nordicsemi.android.blinky.spec.ConnectionFailed
+import no.nordicsemi.android.blinky.spec.LinkLoss
+import no.nordicsemi.android.blinky.spec.NotSupported
+import no.nordicsemi.android.blinky.spec.Timeout
+import no.nordicsemi.kotlin.ble.client.RemoteServices
+import no.nordicsemi.kotlin.ble.client.android.CentralManager
+import no.nordicsemi.kotlin.ble.client.android.Peripheral
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.uuid.ExperimentalUuidApi
 
+@OptIn(ExperimentalUuidApi::class)
 class BlinkyManager(
-    context: Context,
-    device: BluetoothDevice
-): Blinky by BlinkyManagerImpl(context, device)
+    private val centralManager: CentralManager,
+    private val peripheral: Peripheral,
+): Blinky {
 
-private class BlinkyManagerImpl(
-    context: Context,
-    private val device: BluetoothDevice,
-): BleManager(context), Blinky {
-    private val scope = CoroutineScope(Dispatchers.IO)
+    override suspend fun connect(
+        block: suspend CoroutineScope.(Blinky.State) -> Unit,
+    ): Unit = withContext(Dispatchers.IO) {
+        var userJob: Job? = null
 
-    private var ledCharacteristic: BluetoothGattCharacteristic? = null
-    private var buttonCharacteristic: BluetoothGattCharacteristic? = null
+        // First, subscribe for services with the filter set to LBS Service.
+        //
+        // Note, that this will not initiate connection to the device. This is done below using
+        // the connect() method.
+        //
+        // The services flow will initially emit "Unknown" (as the services are not discovered yet).
+        // Upon successful connection the flow will emit "Discovering" followed by:
+        // 1. Discovered - when service discovery was successful.
+        // 2. Unknown - when the device disconnected before service discovery finished.
+        // 3. Failed - when service discovery failed, giving the reason as a parameter.
+        //
+        // Note, that disconnection will transition the state to Unknown, not to Failed.
+        // This is to ensure, that whenever the device is disconnected, the services state is the same.
+        peripheral.services(listOf(BlinkySpec.BLINKY_SERVICE_UUID))
+            .onEach { state ->
+                when (state) {
+                    is RemoteServices.Unknown -> {
+                        // A running user job means that the device has disconnected while user was
+                        // interacting with it.
+                        userJob?.let {  userJob ->
+                            println("AAA BM Services invalidated, cancelling")
+                            cancel(CancellationException(LinkLoss()))
+                            return@onEach
+                        }
+                    }
+                    is RemoteServices.Discovered -> {
+                        // When service discovery finished, we should get a list with 0 or more services.
+                        // 0 services means that the device does not have LBS service, in which case
+                        // an exception will be thrown.
+                        // The LBS sample (https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/samples/bluetooth/peripheral_lbs/README.html)
+                        // has 1 instance of the LED Button service.
+                        // In case the sample was modified to support multiple instances, this
+                        // implementation will only use the first one.
+                        try {
+                            val remoteService = requireNotNull(state.services.firstOrNull()) {
+                                throw NotSupported()
+                            }
 
-    private val _ledState = MutableStateFlow(false)
-    override val ledState = _ledState.asStateFlow()
+                            // Start a coroutine to handle user block.
+                            userJob = launch {
+                                // This will throw if the service does not have the required characteristics
+                                // or the characteristics have unexpected properties.
+                                val ledButtonService = LedButtonServiceImpl(remoteService, this)
 
-    private val _buttonState = MutableStateFlow(false)
-    override val buttonState = _buttonState.asStateFlow()
+                                // Give user the control over the Blinky.
+                                try {
+                                    println("AAA BM user block started")
+                                    block(ledButtonService)
+                                } catch (e: CancellationException) {
+                                    println("AAA BM user block canceled with ${e.message}")
+                                    throw e
+                                } catch (e: Exception) {
+                                    println("AAA BM user block failed with ${e.message}")
+                                    throw e
+                                } finally {
+                                    println("AAA BM user block complete")
+                                    userJob = null
 
-    override val state = stateAsFlow()
-        .map {
-            when (it) {
-                is ConnectionState.Connecting,
-                is ConnectionState.Initializing -> Blinky.State.LOADING
-                is ConnectionState.Ready -> Blinky.State.READY
-                is ConnectionState.Disconnecting,
-                is ConnectionState.Disconnected -> Blinky.State.NOT_AVAILABLE
+                                    // We can cancel the connection at that point.
+                                    this@withContext.cancel("Connection finally canceled")
+                                }
+                            }
+                        } catch (e: Exception) {
+                            println("AAA BM catch ${e.message}")
+                            cancel(CancellationException(e))
+                        }
+                    }
+                    is RemoteServices.Failed -> {
+                        println("AAA BM Service discovery failed with ${state.reason}")
+                        cancel(CancellationException(ConnectionFailed()))
+                    }
+                    else -> { /* Ignore */ }
+                }
+            }
+            .onStart {
+                println("AAA BM 1. services flow started")
+            }
+            .onCompletion {
+                println("AAA BM 1. services flow completed")
+            }
+            .launchIn(this)
+
+        // Initiate connection, if not connected already.
+        try {
+            centralManager.connect(peripheral)
+        } catch (e: TimeoutCancellationException) {
+            throw Timeout()
+        } catch (e: Exception) {
+            throw ConnectionFailed()
+        }
+
+        // Wait until user job is complete, the device has disconnected or the device has no LBS service.
+        try {
+            println("AAA BM awaiting cancellation")
+            awaitCancellation()
+        } catch (e: CancellationException) {
+            println("AAA BM cancelled with ${e.message}, cause: ${e.cause?.message}")
+            throw e.cause ?: e
+        } catch (e: Exception) {
+            println("AAA BM failed with ${e.message}")
+            throw e
+        } finally {
+            println("AAA BM disconnecting")
+            withContext(NonCancellable) {
+                // Disconnect when done.
+                peripheral.disconnect()
+                println("AAA BM disconnected")
             }
         }
-        .stateIn(scope, SharingStarted.Lazily, Blinky.State.NOT_AVAILABLE)
-
-
-    private val buttonCallback by lazy {
-        object : ButtonCallback() {
-            override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
-                _buttonState.tryEmit(state)
-            }
-        }
-    }
-
-    private val ledCallback by lazy {
-        object : LedCallback() {
-            override fun onLedStateChanged(device: BluetoothDevice, state: Boolean) {
-                _ledState.tryEmit(state)
-            }
-        }
-    }
-
-    override suspend fun connect() = connect(device)
-        .retry(3, 300)
-        .useAutoConnect(false)
-        .timeout(3000)
-        .suspend()
-
-    override fun release() {
-        // Cancel all coroutines.
-        scope.cancel()
-
-        val wasConnected = isReady
-        // If the device wasn't connected, it means that ConnectRequest was still pending.
-        // Cancelling queue will initiate disconnecting automatically.
-        cancelQueue()
-
-        // If the device was connected, we have to disconnect manually.
-        if (wasConnected) {
-            disconnect().enqueue()
-        }
-    }
-
-    override suspend fun turnLed(state: Boolean) {
-        // Write the value to the characteristic.
-        writeCharacteristic(
-            ledCharacteristic,
-            LedData.from(state),
-            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-        ).suspend()
-
-        // Update the state flow with the new value.
-        _ledState.value = state
-    }
-
-    override fun log(priority: Int, message: String) {
-        Timber.log(priority, message)
-    }
-
-    override fun getMinLogPriority(): Int {
-        // By default, the library logs only INFO or
-        // higher priority messages. You may change it here.
-        return Log.VERBOSE
-    }
-
-    override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
-        // Get the LBS Service from the gatt object.
-        gatt.getService(BlinkySpec.BLINKY_SERVICE_UUID)?.apply {
-            // Get the LED characteristic.
-            ledCharacteristic = getCharacteristic(
-                BlinkySpec.BLINKY_LED_CHARACTERISTIC_UUID,
-                // Mind, that below we pass required properties.
-                // If your implementation supports only WRITE_NO_RESPONSE,
-                // change the property to BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE.
-                BluetoothGattCharacteristic.PROPERTY_WRITE
-            )
-            // Get the Button characteristic.
-            buttonCharacteristic = getCharacteristic(
-                BlinkySpec.BLINKY_BUTTON_CHARACTERISTIC_UUID,
-                BluetoothGattCharacteristic.PROPERTY_NOTIFY
-            )
-
-            // Return true if all required characteristics are supported.
-            return ledCharacteristic != null && buttonCharacteristic != null
-        }
-        return false
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun initialize() {
-        // Enable notifications for the button characteristic.
-        val flow: Flow<ButtonState> = setNotificationCallback(buttonCharacteristic)
-            .asValidResponseFlow()
-
-        // Forward the button state to the buttonState flow.
-        scope.launch {
-            flow.map { it.state }.collect { _buttonState.tryEmit(it) }
-        }
-
-        enableNotifications(buttonCharacteristic)
-            .enqueue()
-
-        // Read the initial value of the button characteristic.
-        readCharacteristic(buttonCharacteristic)
-            .with(buttonCallback)
-            .enqueue()
-
-        // Read the initial value of the LED characteristic.
-        readCharacteristic(ledCharacteristic)
-            .with(ledCallback)
-            .enqueue()
-    }
-
-    override fun onServicesInvalidated() {
-        ledCharacteristic = null
-        buttonCharacteristic = null
     }
 }

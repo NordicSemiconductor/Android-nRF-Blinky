@@ -39,7 +39,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HourglassTop
+import androidx.compose.material.icons.filled.BluetoothAudio
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -74,7 +74,7 @@ fun DeviceConnectingView(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                CircularIcon(imageVector = Icons.Default.HourglassTop)
+                CircularIcon(imageVector = Icons.Default.BluetoothAudio)
 
                 Text(
                     text = stringResource(id = R.string.device_connecting),
@@ -85,12 +85,6 @@ fun DeviceConnectingView(
                     text = stringResource(id = R.string.device_explanation),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium
-                )
-
-                Text(
-                    text = stringResource(id = R.string.device_please_wait),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge
                 )
             }
         }

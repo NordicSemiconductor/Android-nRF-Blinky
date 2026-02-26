@@ -16,8 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.ui.R
+import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
 import no.nordicsemi.android.blinky.ui.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.blinky.ui.state.view.DeviceConnectingView
 import no.nordicsemi.android.blinky.ui.state.view.DeviceDisconnectedView
@@ -38,7 +38,7 @@ internal fun BlinkyScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         NordicAppBar(
-            title = { Text(text = viewModel.deviceName) },
+            title = { Text(text = viewModel.deviceName ?: stringResource(R.string.unnamed_device)) },
             onNavigationButtonClick = onNavigateUp,
             actions = {
                 LoggerAppBarIcon(onClick = { viewModel.openLogger() })
@@ -46,7 +46,7 @@ internal fun BlinkyScreen(
         )
         RequireBluetooth {
             when (state) {
-                Blinky.State.LOADING -> {
+                BlinkyRepository.State.CONNECTING -> {
                     DeviceConnectingView(
                         modifier = Modifier.padding(16.dp),
                     ) { padding ->
@@ -58,7 +58,39 @@ internal fun BlinkyScreen(
                         }
                     }
                 }
-                Blinky.State.READY -> {
+                BlinkyRepository.State.TIMEOUT -> {
+                    DeviceDisconnectedView(
+                        reason = Reason.TIMEOUT,
+                        modifier = Modifier.padding(16.dp),
+                    ) { padding ->
+                        Button(
+                            onClick = { viewModel.connect() },
+                            modifier = Modifier.padding(padding),
+                        ) {
+                            Text(text = stringResource(id = R.string.action_retry))
+                        }
+                    }
+                }
+                BlinkyRepository.State.DISCONNECTED -> {
+                    DeviceDisconnectedView(
+                        reason = Reason.LINK_LOSS,
+                        modifier = Modifier.padding(16.dp),
+                    ) { padding ->
+                        Button(
+                            onClick = { viewModel.connect() },
+                            modifier = Modifier.padding(padding),
+                        ) {
+                            Text(text = stringResource(id = R.string.action_retry))
+                        }
+                    }
+                }
+                BlinkyRepository.State.NOT_SUPPORTED -> {
+                    DeviceDisconnectedView(
+                        reason = Reason.MISSING_SERVICE,
+                        modifier = Modifier.padding(16.dp),
+                    )
+                }
+                BlinkyRepository.State.READY -> {
                     val ledState by viewModel.ledState.collectAsStateWithLifecycle()
                     val buttonState by viewModel.buttonState.collectAsStateWithLifecycle()
 
@@ -71,19 +103,6 @@ internal fun BlinkyScreen(
                             .verticalScroll(rememberScrollState())
                             .padding(16.dp)
                     )
-                }
-                Blinky.State.NOT_AVAILABLE -> {
-                    DeviceDisconnectedView(
-                        reason = Reason.LINK_LOSS,
-                        modifier = Modifier.padding(16.dp),
-                    ) { padding ->
-                        Button(
-                            onClick = { viewModel.connect() },
-                            modifier = Modifier.padding(padding),
-                        ) {
-                            Text(text = stringResource(id = R.string.action_retry))
-                        }
-                    }
                 }
             }
         }

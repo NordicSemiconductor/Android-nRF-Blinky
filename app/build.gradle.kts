@@ -20,9 +20,11 @@ dependencies {
 
     implementation(nordic.theme)
     implementation(nordic.navigation)
+    // Choose the client implementation, depending on the flavor
     implementation(nordic.blek.client.android)
 
     implementation(libs.timber)
+    implementation(libs.slf4j.timber)
 
     implementation(libs.androidx.activity.compose)
 }

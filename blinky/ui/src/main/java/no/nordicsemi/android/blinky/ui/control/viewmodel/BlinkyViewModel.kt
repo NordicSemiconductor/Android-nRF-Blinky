@@ -2,57 +2,37 @@ package no.nordicsemi.android.blinky.ui.control.viewmodel
 
 import android.app.Application
 import android.content.Context
-import android.media.RingtoneManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
 import no.nordicsemi.android.common.logger.LoggerLauncher
-import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * The view model for the Blinky screen.
  *
  * @param context The application context.
  * @property repository The repository that will be used to interact with the device.
- * @property deviceName The name of the Blinky device, as advertised.
  */
 @HiltViewModel
 class BlinkyViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val repository: BlinkyRepository,
-    @param:Named("deviceName") val deviceName: String,
 ) : AndroidViewModel(context as Application) {
     /** The connection state of the device. */
     val state = repository.state
+    /** The device name. */
+    val deviceName = repository.deviceName
     /** The LED state. */
-    val ledState = repository.loggedLedState
-        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+    val ledState = repository.ledState
     /** The button state. */
-    val buttonState = repository.loggedButtonState
-        .onEach { state ->
-            // Play a sound when the button is pressed.
-            try {
-                if (state) {
-                    val notification =
-                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                    val r = RingtoneManager.getRingtone(context, notification)
-                    r.play()
-                }
-            } catch (_: Exception) {
-                Timber.e("Failed to play notification sound")
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+    val buttonState = repository.buttonState
 
     init {
         // In this sample we want to connect to the device as soon as the view model is created.
@@ -63,26 +43,34 @@ class BlinkyViewModel @Inject constructor(
      * Connects to the device.
      */
     fun connect() {
-        val exceptionHandler = CoroutineExceptionHandler { _, _ -> }
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+        val exceptionHandler = CoroutineExceptionHandler { _, t ->
+            println("AAA VM Exception handler: ${t.message}")
+        }
+        viewModelScope.launch(exceptionHandler) {
             // This method may throw an exception if the connection fails,
             // Bluetooth is disabled, etc.
             // The exception will be caught by the exception handler and will be ignored.
-            repository.connect()
+            try {
+                println("AAA VM Connect start")
+                repository.connect()
+                println("AAA VM Connect complete")
+            } catch (e: CancellationException) {
+                println("AAA VM Connect cancelled with ${e.message}")
+                throw e
+            } catch (e: Exception) {
+                println("AAA VM Connect failed with ${e.message}")
+                throw e
+            }
         }
     }
 
     /**
      * Sends a command to the device to toggle the LED state.
+     *
      * @param on The new state of the LED.
      */
     fun turnLed(on: Boolean) {
-        val exceptionHandler = CoroutineExceptionHandler { _, _ -> }
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            // Just like above, when this method throws an exception, it will be caught by the
-            // exception handler and ignored.
-            repository.turnLed(on)
-        }
+        ledState.update { on }
     }
 
     /**
@@ -90,10 +78,5 @@ class BlinkyViewModel @Inject constructor(
      */
     fun openLogger() {
         LoggerLauncher.launch(getApplication(), repository.logSession)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        repository.release()
     }
 }
