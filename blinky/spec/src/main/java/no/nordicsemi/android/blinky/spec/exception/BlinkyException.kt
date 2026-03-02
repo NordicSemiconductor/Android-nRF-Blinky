@@ -5,13 +5,13 @@ import no.nordicsemi.android.blinky.spec.Blinky
 /**
  * Set of possible errors that can be thrown by a [Blinky] implementation.
  */
-sealed class BlinkyException: IllegalStateException() {
+sealed class BlinkyException(message: String): IllegalStateException(message) {
     /** Connection to the peripheral failed. */
-    class ConnectionFailed : BlinkyException()
+    class ConnectionFailed : BlinkyException("Connection failed")
     /** The connection to the peripheral timed out. */
-    class Timeout : BlinkyException()
+    class Timeout : BlinkyException("Connection timed out")
     /** The peripheral does not support the required LED Button Service (LBS). */
-    class NotSupported : BlinkyException()
+    class NotSupported : BlinkyException("Device is not supported")
     /** The connection to the peripheral was lost. */
-    class LinkLoss : BlinkyException()
+    class LinkLoss : BlinkyException("Connection lost")
 }
