@@ -38,8 +38,8 @@ include(":blinky:ble")
 //    includeBuild("../Android-Common-Libraries")
 //}
 
-// Clone https://github.com/NordicSemiconductor/Android-BLE-Library and
+// Clone https://github.com/NordicSemiconductor/Kotlin-BLE-Library and
 // uncomment the following lines to modify source code of the BLE library:
-//if (file("../Android-BLE-Library").exists()) {
-//    includeBuild("../Android-BLE-Library")
+//if (file("../Kotlin-BLE-Library").exists()) {
+//    includeBuild("../Kotlin-BLE-Library")
 //}
