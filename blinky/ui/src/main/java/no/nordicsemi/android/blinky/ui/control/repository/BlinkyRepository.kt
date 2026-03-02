@@ -8,10 +8,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.exception.BlinkyException
@@ -19,9 +18,11 @@ import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.log.ILogSession
 import no.nordicsemi.android.log.LogContract
 import no.nordicsemi.android.log.timber.nRFLoggerTree
+import no.nordicsemi.kotlin.ble.client.exception.OperationFailedException
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * This repository is responsible for sending and receiving commands to the Blinky device.
@@ -84,24 +85,12 @@ class BlinkyRepository @Inject constructor(
                         // Update the local LED state with the value read from the remote device.
                         ledState.update { blinky.led.value }
                     }
-                    .onStart {
-                        println("AAA Repository 1.1 --- --- Led flow started")
-                    }
-                    .onCompletion {
-                        println("AAA Repository 1.1 --- --- Led flow completed with ${it?.message}")
-                    }
                     .launchIn(this)
 
                 // Whenever user changes the LED state, update the remote device.
                 ledState
                     .onEach { state ->
                         blinky.led.update { state }
-                    }
-                    .onStart {
-                        println("AAA Repository 1.2 --- --- Led state flow started")
-                    }
-                    .onCompletion {
-                        println("AAA Repository 1.2 --- --- Led state flow completed with ${it?.message}")
                     }
                     .launchIn(this)
 
@@ -113,14 +102,16 @@ class BlinkyRepository @Inject constructor(
                             false -> Timber.log(LogContract.Log.Level.APPLICATION, "Button released")
                         }
                         _buttonState.update { state }
-                        if (state)
-                            throw NullPointerException("Kaczka!")
                     }
-                    .onStart {
-                        println("AAA Repository 1.3 --- --- Button state flow started")
-                    }
-                    .onCompletion {
-                        println("AAA Repository 1.3 --- --- Button state flow completed with ${it?.message}")
+                    // This is a feature, not a bug :)
+                    // Long tap the Button 1 to trigger an exception and see how it is caught
+                    // below as "Blinky implementation error".
+                    .debounce(2.seconds)
+                    .onEach { state ->
+                        if (state) {
+                            Timber.log(LogContract.Log.Level.APPLICATION, "Button long pressed")
+                            throw IllegalStateException("Button long pressed")
+                        }
                     }
                     .launchIn(this)
 
@@ -150,6 +141,9 @@ class BlinkyRepository @Inject constructor(
             _state.update { State.NOT_SUPPORTED }
         } catch (_: CancellationException) {
             Timber.i("Blinky scope cancelled")
+            _state.update { State.DISCONNECTED }
+        } catch (_: OperationFailedException) {
+            Timber.w("GATT operation failed")
             _state.update { State.DISCONNECTED }
         } catch (t: Throwable) {
             Timber.wtf(t, "Blinky implementation error")

@@ -6,12 +6,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
 import no.nordicsemi.android.common.logger.LoggerLauncher
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -44,23 +44,12 @@ class BlinkyViewModel @Inject constructor(
      */
     fun connect() {
         val exceptionHandler = CoroutineExceptionHandler { _, t ->
-            println("AAA VM Exception handler: ${t.message}")
+            Timber.w(t, "Connection failed with exception")
         }
         viewModelScope.launch(exceptionHandler) {
-            // This method may throw an exception if the connection fails,
-            // Bluetooth is disabled, etc.
+            // This method may throw an exception if the connection fails, Bluetooth is disabled, etc.
             // The exception will be caught by the exception handler and will be ignored.
-            try {
-                println("AAA VM Connect start")
-                repository.connect()
-                println("AAA VM Connect complete")
-            } catch (e: CancellationException) {
-                println("AAA VM Connect cancelled with ${e.message}")
-                throw e
-            } catch (e: Exception) {
-                println("AAA VM Connect failed with ${e.message}")
-                throw e
-            }
+            repository.connect()
         }
     }
 
