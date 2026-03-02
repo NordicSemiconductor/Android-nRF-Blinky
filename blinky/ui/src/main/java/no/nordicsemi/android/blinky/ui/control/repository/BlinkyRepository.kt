@@ -14,10 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import no.nordicsemi.android.blinky.spec.Blinky
-import no.nordicsemi.android.blinky.spec.ConnectionFailed
-import no.nordicsemi.android.blinky.spec.LinkLoss
-import no.nordicsemi.android.blinky.spec.NotSupported
-import no.nordicsemi.android.blinky.spec.Timeout
+import no.nordicsemi.android.blinky.spec.exception.BlinkyException
 import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.log.ILogSession
 import no.nordicsemi.android.log.LogContract
@@ -38,6 +35,10 @@ class BlinkyRepository @Inject constructor(
     private val device: BlinkyDevice,
     private val blinky: Blinky,
 ): Blinky by blinky {
+    companion object {
+        private const val BLINK_COUNT = 5
+    }
+
     /** If the nRF Logger is installed, this will allow to open the session. */
     internal var logSession: ILogSession? = null
 
@@ -84,10 +85,10 @@ class BlinkyRepository @Inject constructor(
                         ledState.update { blinky.led.value }
                     }
                     .onStart {
-                        println("AAA BR 1.1. Led flow started")
+                        println("AAA Repository 1.1 --- --- Led flow started")
                     }
                     .onCompletion {
-                        println("AAA BR 1.1. Led flow completed with ${it?.message}")
+                        println("AAA Repository 1.1 --- --- Led flow completed with ${it?.message}")
                     }
                     .launchIn(this)
 
@@ -97,10 +98,10 @@ class BlinkyRepository @Inject constructor(
                         blinky.led.update { state }
                     }
                     .onStart {
-                        println("AAA BR 1.2. Led state flow started")
+                        println("AAA Repository 1.2 --- --- Led state flow started")
                     }
                     .onCompletion {
-                        println("AAA BR 1.2. Led state flow completed with ${it?.message}")
+                        println("AAA Repository 1.2 --- --- Led state flow completed with ${it?.message}")
                     }
                     .launchIn(this)
 
@@ -112,54 +113,46 @@ class BlinkyRepository @Inject constructor(
                             false -> Timber.log(LogContract.Log.Level.APPLICATION, "Button released")
                         }
                         _buttonState.update { state }
+                        if (state)
+                            throw NullPointerException("Kaczka!")
                     }
                     .onStart {
-                        println("AAA BR 1.3. Button state flow started")
+                        println("AAA Repository 1.3 --- --- Button state flow started")
                     }
                     .onCompletion {
-                        println("AAA BR 1.3. Button state flow completed with ${it?.message}")
+                        println("AAA Repository 1.3 --- --- Button state flow completed with ${it?.message}")
                     }
                     .launchIn(this)
 
-                // Blink 3 times
-                repeat(3) {
-                    delay(200.milliseconds)
+                // Blink few times.
+                repeat(BLINK_COUNT) {
+                    if (it > 0) {
+                        delay(100.milliseconds)
+                    }
                     blinky.led.update { true }
-                    delay(200.milliseconds)
+                    delay(100.milliseconds)
                     blinky.led.update { false }
                 }
 
-                // Now, with the states collected, let's await scope cancellation.
-                try {
-                    awaitCancellation()
-                } catch (e: CancellationException) {
-                    println("AAA BR User block was canceled with ${e.message}")
-                    throw e
-                } catch (e: Exception) {
-                    println("AAA BR User block failed with ${e.message}")
-                    throw e
-                } finally {
-                    println("AAA BR User block canceled")
-                    _state.update { State.DISCONNECTED }
-                }
+                // Now, with the states collected, await scope cancellation.
+                awaitCancellation()
             }
-        } catch (_: Timeout) {
-            println("AAA BR connect timed out")
+        } catch (_: BlinkyException.Timeout) {
+            Timber.w("Connection to ${device.identifier} timed out")
             _state.update { State.TIMEOUT }
-        } catch (_: ConnectionFailed) {
-            println("AAA BR connection failed")
+        } catch (_: BlinkyException.ConnectionFailed) {
+            Timber.w("Connection to ${device.identifier} failed")
             _state.update { State.DISCONNECTED }
-        } catch (_: LinkLoss) {
-            println("AAA BR link loss")
+        } catch (_: BlinkyException.LinkLoss) {
             _state.update { State.DISCONNECTED }
-        } catch (_: NotSupported) {
-            println("AAA BR not supported")
+        } catch (_: BlinkyException.NotSupported) {
+            Timber.w("${device.identifier} does not support LED Button Service (LBS)")
             _state.update { State.NOT_SUPPORTED }
-        } catch (e: CancellationException) {
-            println("AAA BR connect was canceled with ${e.message}")
+        } catch (_: CancellationException) {
+            Timber.i("Blinky scope cancelled")
             _state.update { State.DISCONNECTED }
-        } catch (e: Exception) {
-            println("AAA BR connect failed with ${e.message}")
+        } catch (t: Throwable) {
+            Timber.wtf(t, "Blinky implementation error")
             _state.update { State.DISCONNECTED }
         }
 

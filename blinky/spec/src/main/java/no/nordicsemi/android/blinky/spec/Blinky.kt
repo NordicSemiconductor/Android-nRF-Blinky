@@ -1,26 +1,29 @@
 package no.nordicsemi.android.blinky.spec
 
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import no.nordicsemi.android.blinky.spec.exception.BlinkyException
 
 interface Blinky {
 
     /**
-     * Connects to the device.
+     * Connects to the Blinky device and passes over the control to the given [block].
      *
-     * The method suspends for the duration of the connection. When the block is completed, the
-     * connection will be closed. If the device disconnects before the block is completed, the
-     * connection will be canceled throwing [CancellationException].
+     * This method completes when the device gets disconnected.
      *
-     * @param block the block to execute when the connection is established.
-     * @throws BlinkyError in case the connection fails.
+     * If the scope, in which this method is called, is canceled, the connection will be closed.
+     *
+     * @param block The profile implementation.
+     * @throws BlinkyException.ConnectionFailed When connection to the peripheral fails.
+     * @throws BlinkyException.Timeout When connection to the peripheral times out.
+     * @throws BlinkyException.NotSupported When the peripheral does not support the required LED Button Service (LBS).
+     * @throws BlinkyException.LinkLoss When the connection to the peripheral is lost.
      */
     suspend fun connect(block: suspend CoroutineScope.(State) -> Unit)
 
     /**
-     * State of the Blinky device.
+     * The state of the Blinky device.
      *
      * This interface represents the state of the Blinky device. An implementation of this
      * interface can be obtained from [Blinky.connect] method.

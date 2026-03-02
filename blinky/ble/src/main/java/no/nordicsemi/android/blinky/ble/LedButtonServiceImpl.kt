@@ -5,8 +5,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,6 +14,14 @@ import no.nordicsemi.kotlin.ble.client.RemoteCharacteristic
 import no.nordicsemi.kotlin.ble.client.RemoteService
 import kotlin.uuid.ExperimentalUuidApi
 
+/**
+ * Implementation of the [Blinky.State] interface for the LED Button Service (LBS).
+ *
+ * @param ledButtonService The service to use.
+ * @param scope The connection scope. This scope gets canceled when the connection is closed.
+ * @throws IllegalArgumentException If the service UUID is not [BlinkySpec.BLINKY_SERVICE_UUID],
+ * or does not have required characteristics.
+ */
 @OptIn(ExperimentalUuidApi::class)
 internal class LedButtonServiceImpl(
     ledButtonService: RemoteService,
@@ -27,8 +33,27 @@ internal class LedButtonServiceImpl(
         }
     }
 
+    /**
+     * The GATT characteristics of the LED Button Service (LBS) for controlling the LED state on
+     * the remote peripheral.
+     *
+     * Possible values are:
+     * * 0x00 - LED is off.
+     * * 0x01 - LED is on.
+     * @see BlinkySpec.BLINKY_LED_CHARACTERISTIC_UUID
+     */
     private var ledCharacteristic: RemoteCharacteristic = ledButtonService.characteristics
         .first { it.uuid == BlinkySpec.BLINKY_LED_CHARACTERISTIC_UUID }
+
+    /**
+     * The GATT characteristics of the LED Button Service (LBS) notified when the Button state on
+     * the remote peripheral changes.
+     *
+     * Possible values are:
+     * * 0x00 - Button is released.
+     * * 0x01 - Button is pressed.
+     * @see BlinkySpec.BLINKY_BUTTON_CHARACTERISTIC_UUID
+     */
     private var buttonCharacteristic: RemoteCharacteristic = ledButtonService.characteristics
         .first { it.uuid == BlinkySpec.BLINKY_BUTTON_CHARACTERISTIC_UUID }
 
@@ -46,31 +71,28 @@ internal class LedButtonServiceImpl(
             scope.launch(Dispatchers.IO) {
                 // Read initial state from the characteristic.
                 val rawLedValue = ledCharacteristic.read()
-                val ledValue = rawLedValue.size == 1 && rawLedValue.first() == 0x01.toByte()
+                val ledValue = rawLedValue.state
+
+                // Update the local state.
                 it.update { ledValue }
 
                 // Whenever the value changes, write the value to the characteristic.
-                try {
-                    println("AAA 2.1. LED collection started")
-                    it.collect { value ->
-                        val command = byteArrayOf(if (value) 1 else 0)
-                        ledCharacteristic.write(command)
-                    }
-                } catch (e: Exception) {
-                    println("AAA 2.1. LED collection completed with catch ${e.message}")
-                    throw e
+                it.collect { value ->
+                    val command = byteArrayOf(if (value) 1 else 0)
+                    ledCharacteristic.write(command)
                 }
             }
         }
 
-    override val button = buttonCharacteristic
-        .subscribe()
-        .map { bytes -> bytes.size == 1 && bytes[0] == 0x01.toByte() }
-        .onStart {
-            println("AAA 2.2. Subscription started")
-        }
-        .onCompletion {
-            println("AAA 2.2. Subscription cancelled with: $it")
-        }
+    override val button = buttonCharacteristic.subscribe()
+        .map { rawButtonValue -> rawButtonValue.state }
         .stateIn(scope, SharingStarted.Lazily, false)
+
+    /**
+     * Parses the raw value of LED and Button (0x00 or 0x01) to [Boolean].
+     *
+     * Note: In LED Button Service both LED and Button use the same state encoding.
+     */
+    private val ByteArray.state: Boolean
+        get() = size == 1 && this[0] == 0x01.toByte()
 }
