@@ -36,7 +36,7 @@ class BlinkyManager(
         // Note, that in this implementation the profile is installed before creating the connection,
         // but these can be swapped.
         peripheral.profile(
-            serviceUuid = BlinkySpec.BLINKY_SERVICE_UUID,
+            serviceUuid = BlinkySpec.SERVICE_UUID,
             required = true,
         ) { remoteService ->
             val ledButtonService = LedButtonServiceImpl(remoteService, this)

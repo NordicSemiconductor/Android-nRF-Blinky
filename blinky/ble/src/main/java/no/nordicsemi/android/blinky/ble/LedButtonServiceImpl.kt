@@ -19,7 +19,7 @@ import kotlin.uuid.ExperimentalUuidApi
  *
  * @param ledButtonService The service to use.
  * @param scope The connection scope. This scope gets canceled when the connection is closed.
- * @throws IllegalArgumentException If the service UUID is not [BlinkySpec.BLINKY_SERVICE_UUID],
+ * @throws IllegalArgumentException If the service UUID is not [BlinkySpec.SERVICE_UUID],
  * or does not have required characteristics.
  */
 @OptIn(ExperimentalUuidApi::class)
@@ -28,7 +28,7 @@ internal class LedButtonServiceImpl(
     scope: CoroutineScope,
 ): Blinky.State {
     init {
-        require(ledButtonService.uuid == BlinkySpec.BLINKY_SERVICE_UUID) {
+        require(ledButtonService.uuid == BlinkySpec.SERVICE_UUID) {
             "Unrecognized service UUID: ${ledButtonService.uuid}"
         }
     }
@@ -40,10 +40,10 @@ internal class LedButtonServiceImpl(
      * Possible values are:
      * * 0x00 - LED is off.
      * * 0x01 - LED is on.
-     * @see BlinkySpec.BLINKY_LED_CHARACTERISTIC_UUID
+     * @see BlinkySpec.LED_CHARACTERISTIC_UUID
      */
     private var ledCharacteristic: RemoteCharacteristic = ledButtonService.characteristics
-        .first { it.uuid == BlinkySpec.BLINKY_LED_CHARACTERISTIC_UUID }
+        .first { it.uuid == BlinkySpec.LED_CHARACTERISTIC_UUID }
 
     /**
      * The GATT characteristics of the LED Button Service (LBS) notified when the Button state on
@@ -52,10 +52,10 @@ internal class LedButtonServiceImpl(
      * Possible values are:
      * * 0x00 - Button is released.
      * * 0x01 - Button is pressed.
-     * @see BlinkySpec.BLINKY_BUTTON_CHARACTERISTIC_UUID
+     * @see BlinkySpec.BUTTON_CHARACTERISTIC_UUID
      */
     private var buttonCharacteristic: RemoteCharacteristic = ledButtonService.characteristics
-        .first { it.uuid == BlinkySpec.BLINKY_BUTTON_CHARACTERISTIC_UUID }
+        .first { it.uuid == BlinkySpec.BUTTON_CHARACTERISTIC_UUID }
 
     init {
         require(ledCharacteristic.isWritable()) {
