@@ -1,5 +1,6 @@
 package no.nordicsemi.android.blinky.spec
 
+import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -7,6 +8,8 @@ import kotlin.uuid.Uuid
 class BlinkySpec {
 
     companion object {
+        /** If a button is pressed for more than this value it is reported as long press. */
+        val LONG_PRESS_TIMEOUT = 2.seconds
         /** The LED Button Service UUID. */
         val SERVICE_UUID: Uuid = Uuid.parse("00001523-1212-efde-1523-785feabcd123")
         /** The UUID of the Button characteristic. */

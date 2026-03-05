@@ -1,6 +1,7 @@
 package no.nordicsemi.android.blinky.spec
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import no.nordicsemi.android.blinky.spec.exception.BlinkyException
@@ -43,6 +44,20 @@ interface Blinky {
          * This flow emits `true` when the button is pressed and `false` when it is released.
          */
         val button: StateFlow<Boolean>
+
+        /**
+         * The flow of button click events.
+         *
+         * This flow emits an event when the button is clicked.
+         */
+        val buttonPressed: Flow<Unit>
+
+        /**
+         * The flow of long button clicks events.
+         *
+         * This flow emits an event when the button is pressed for 2 seconds.
+         */
+        val buttonLongPressed: Flow<Unit>
     }
 
 }
