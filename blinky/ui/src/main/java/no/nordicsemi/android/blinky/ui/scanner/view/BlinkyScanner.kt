@@ -1,30 +1,43 @@
 package no.nordicsemi.android.blinky.ui.scanner.view
 
-import android.bluetooth.BluetoothDevice
-import android.os.ParcelUuid
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import no.nordicsemi.android.blinky.spec.BlinkySpec
 import no.nordicsemi.android.blinky.ui.R
-import no.nordicsemi.android.scanner.DeviceSelected
-import no.nordicsemi.android.scanner.ScannerScreen
+import no.nordicsemi.android.common.scanner.DeviceSelected
+import no.nordicsemi.android.common.scanner.ScannerScreen
+import no.nordicsemi.android.common.scanner.data.OnlyNearby
+import no.nordicsemi.android.common.scanner.data.OnlyWithNames
+import no.nordicsemi.android.common.scanner.data.WithServiceUuid
+import no.nordicsemi.android.common.scanner.rememberFilterState
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun BlinkyScanner(
-    onDeviceSelected: (BluetoothDevice, String?) -> Unit,
+    onDeviceSelected: (String, String?) -> Unit,
 ) {
     ScannerScreen(
         title = { Text(stringResource(id = R.string.scanner_title)) },
-        uuid = ParcelUuid(BlinkySpec.BLINKY_SERVICE_UUID),
+        state = rememberFilterState(
+            dynamicFilters = listOf(
+                OnlyNearby(),
+                OnlyWithNames(isInitiallySelected = true),
+                WithServiceUuid(
+                    uuid = Uuid.parse("00001523-1212-efde-1523-785feabcd123"),
+                    isInitiallySelected = true
+                )
+            )
+        ),
         cancellable = false,
-        onResult = { result ->
+        onResultSelected = { result ->
             when (result) {
-                is DeviceSelected -> with(result.device) {
-                    onDeviceSelected(device, name)
+                is DeviceSelected -> with(result.scanResult) {
+                    onDeviceSelected(peripheral.identifier, advertisingData.name ?: peripheral.name)
                 }
                 else -> {}
             }
-        }
+        },
     )
 }

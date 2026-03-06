@@ -29,7 +29,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package no.nordicsemi.android.scanner.view
+package no.nordicsemi.android.blinky.ui.state.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,7 +39,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HighlightOff
+import androidx.compose.material.icons.filled.BluetoothDisabled
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -51,11 +51,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import no.nordicsemi.android.blinky.ui.R
 import no.nordicsemi.android.common.ui.view.CircularIcon
-import no.nordicsemi.android.scanner.R
 
 enum class Reason {
-    USER, UNKNOWN, LINK_LOSS, MISSING_SERVICE
+    USER, TIMEOUT, LINK_LOSS, MISSING_SERVICE
 }
 
 @Composable
@@ -79,7 +79,7 @@ fun DeviceDisconnectedView(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                CircularIcon(imageVector = Icons.Default.HighlightOff)
+                CircularIcon(imageVector = Icons.Default.BluetoothDisabled)
 
                 Text(
                     text = stringResource(id = R.string.device_disconnected),
@@ -90,7 +90,7 @@ fun DeviceDisconnectedView(
                     Reason.USER -> stringResource(id = R.string.device_reason_user)
                     Reason.LINK_LOSS -> stringResource(id = R.string.device_reason_link_loss)
                     Reason.MISSING_SERVICE -> stringResource(id = R.string.device_reason_missing_service)
-                    Reason.UNKNOWN -> stringResource(id = R.string.device_reason_unknown)
+                    Reason.TIMEOUT -> stringResource(id = R.string.device_reason_timeout)
                 }
 
                 Text(

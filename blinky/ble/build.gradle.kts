@@ -12,8 +12,8 @@ android {
 dependencies {
     implementation(project(":blinky:spec"))
 
-    // Import BLE Library
-    implementation(libs.nordic.ble.ktx)
+    // Import Kotlin BLE Library - core client Android module
+    implementation(nordic.blek.client.core.android)
     // BLE events are logged using Timber
     implementation(libs.timber)
     // Coroutines

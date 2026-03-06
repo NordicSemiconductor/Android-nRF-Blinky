@@ -1,8 +1,7 @@
 package no.nordicsemi.android.blinky.ui.control
 
-import android.bluetooth.BluetoothDevice
 import android.os.Parcelable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.parcelize.Parcelize
 import no.nordicsemi.android.blinky.ui.control.view.BlinkyScreen
 import no.nordicsemi.android.common.navigation.createDestination
@@ -13,7 +12,7 @@ val Blinky = createDestination<BlinkyDevice, Unit>("blinky")
 
 @Parcelize
 data class BlinkyDevice(
-    val device: BluetoothDevice,
+    val identifier: String,
     val name: String?,
 ): Parcelable
 

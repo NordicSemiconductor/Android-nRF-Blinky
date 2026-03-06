@@ -1,168 +1,70 @@
 package no.nordicsemi.android.blinky.ble
 
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCharacteristic
-import android.content.Context
-import android.util.Log
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import no.nordicsemi.android.ble.BleManager
-import no.nordicsemi.android.ble.ktx.asValidResponseFlow
-import no.nordicsemi.android.ble.ktx.getCharacteristic
-import no.nordicsemi.android.ble.ktx.state.ConnectionState
-import no.nordicsemi.android.ble.ktx.stateAsFlow
-import no.nordicsemi.android.ble.ktx.suspend
-import no.nordicsemi.android.blinky.ble.data.ButtonCallback
-import no.nordicsemi.android.blinky.ble.data.ButtonState
-import no.nordicsemi.android.blinky.ble.data.LedCallback
-import no.nordicsemi.android.blinky.ble.data.LedData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withContext
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.BlinkySpec
-import timber.log.Timber
+import no.nordicsemi.android.blinky.spec.exception.BlinkyException
+import no.nordicsemi.kotlin.ble.client.android.CentralManager
+import no.nordicsemi.kotlin.ble.client.android.Peripheral
+import no.nordicsemi.kotlin.ble.core.ConnectionState.Disconnected.Reason
+import kotlin.uuid.ExperimentalUuidApi
 
+/**
+ * A Bluetooth LE implementation of the [Blinky] interface.
+ *
+ * The manager is responsible for setting up the Bluetooth LE connection to the peripheral
+ * with the LED Button Service (LBS), which becomes available once the connection is established.
+ *
+ * Use [connect] to initiate the connection to the peripheral.
+ * @param centralManager The central manager to use to connect to the peripheral.
+ * @param peripheral The peripheral.
+ */
+@OptIn(ExperimentalUuidApi::class)
 class BlinkyManager(
-    context: Context,
-    device: BluetoothDevice
-): Blinky by BlinkyManagerImpl(context, device)
+    private val centralManager: CentralManager,
+    private val peripheral: Peripheral,
+): Blinky {
 
-private class BlinkyManagerImpl(
-    context: Context,
-    private val device: BluetoothDevice,
-): BleManager(context), Blinky {
-    private val scope = CoroutineScope(Dispatchers.IO)
+    override suspend fun connect(
+        block: suspend CoroutineScope.(Blinky.State) -> Unit,
+    ): Unit = withContext(Dispatchers.IO) {
+        // First, install the LBS profile.
+        //
+        // Note, that in this implementation the profile is installed before creating the connection,
+        // but these can be swapped.
+        peripheral.profile(
+            serviceUuid = BlinkySpec.SERVICE_UUID,
+            required = true,
+        ) { remoteService ->
+            val ledButtonService = LedButtonServiceImpl(remoteService, this)
 
-    private var ledCharacteristic: BluetoothGattCharacteristic? = null
-    private var buttonCharacteristic: BluetoothGattCharacteristic? = null
+            // Give the user control over the Blinky.
+            block(ledButtonService)
 
-    private val _ledState = MutableStateFlow(false)
-    override val ledState = _ledState.asStateFlow()
-
-    private val _buttonState = MutableStateFlow(false)
-    override val buttonState = _buttonState.asStateFlow()
-
-    override val state = stateAsFlow()
-        .map {
-            when (it) {
-                is ConnectionState.Connecting,
-                is ConnectionState.Initializing -> Blinky.State.LOADING
-                is ConnectionState.Ready -> Blinky.State.READY
-                is ConnectionState.Disconnecting,
-                is ConnectionState.Disconnected -> Blinky.State.NOT_AVAILABLE
-            }
-        }
-        .stateIn(scope, SharingStarted.Lazily, Blinky.State.NOT_AVAILABLE)
-
-
-    private val buttonCallback by lazy {
-        object : ButtonCallback() {
-            override fun onButtonStateChanged(device: BluetoothDevice, state: Boolean) {
-                _buttonState.tryEmit(state)
-            }
-        }
-    }
-
-    private val ledCallback by lazy {
-        object : LedCallback() {
-            override fun onLedStateChanged(device: BluetoothDevice, state: Boolean) {
-                _ledState.tryEmit(state)
-            }
-        }
-    }
-
-    override suspend fun connect() = connect(device)
-        .retry(3, 300)
-        .useAutoConnect(false)
-        .timeout(3000)
-        .suspend()
-
-    override fun release() {
-        // Cancel all coroutines.
-        scope.cancel()
-
-        val wasConnected = isReady
-        // If the device wasn't connected, it means that ConnectRequest was still pending.
-        // Cancelling queue will initiate disconnecting automatically.
-        cancelQueue()
-
-        // If the device was connected, we have to disconnect manually.
-        if (wasConnected) {
-            disconnect().enqueue()
-        }
-    }
-
-    override suspend fun turnLed(state: Boolean) {
-        // Write the value to the characteristic.
-        writeCharacteristic(
-            ledCharacteristic,
-            LedData.from(state),
-            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-        ).suspend()
-
-        // Update the state flow with the new value.
-        _ledState.value = state
-    }
-
-    override fun log(priority: Int, message: String) {
-        Timber.log(priority, message)
-    }
-
-    override fun getMinLogPriority(): Int {
-        // By default, the library logs only INFO or
-        // higher priority messages. You may change it here.
-        return Log.VERBOSE
-    }
-
-    override fun isRequiredServiceSupported(gatt: BluetoothGatt): Boolean {
-        // Get the LBS Service from the gatt object.
-        gatt.getService(BlinkySpec.BLINKY_SERVICE_UUID)?.apply {
-            // Get the LED characteristic.
-            ledCharacteristic = getCharacteristic(
-                BlinkySpec.BLINKY_LED_CHARACTERISTIC_UUID,
-                // Mind, that below we pass required properties.
-                // If your implementation supports only WRITE_NO_RESPONSE,
-                // change the property to BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE.
-                BluetoothGattCharacteristic.PROPERTY_WRITE
-            )
-            // Get the Button characteristic.
-            buttonCharacteristic = getCharacteristic(
-                BlinkySpec.BLINKY_BUTTON_CHARACTERISTIC_UUID,
-                BluetoothGattCharacteristic.PROPERTY_NOTIFY
-            )
-
-            // Return true if all required characteristics are supported.
-            return ledCharacteristic != null && buttonCharacteristic != null
-        }
-        return false
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun initialize() {
-        // Enable notifications for the button characteristic.
-        val flow: Flow<ButtonState> = setNotificationCallback(buttonCharacteristic)
-            .asValidResponseFlow()
-
-        // Forward the button state to the buttonState flow.
-        scope.launch {
-            flow.map { it.state }.collect { _buttonState.tryEmit(it) }
+            // The peripheral will automatically get disconnected when the profile block is complete.
+            // In this sample the block never returns, as it awaits scope cancellation.
         }
 
-        enableNotifications(buttonCharacteristic)
-            .enqueue()
+        // Initiate connection, if not connected already.
+        try {
+            centralManager.connect(peripheral)
+        } catch (_: TimeoutCancellationException) {
+            throw BlinkyException.Timeout()
+        } catch (_: Exception) {
+            throw BlinkyException.ConnectionFailed()
+        }
 
-        // Read the initial value of the button characteristic.
-        readCharacteristic(buttonCharacteristic)
-            .with(buttonCallback)
-            .enqueue()
-
-        // Read the initial value of the LED characteristic.
-        readCharacteristic(ledCharacteristic)
-            .with(ledCallback)
-            .enqueue()
-    }
-
-    override fun onServicesInvalidated() {
-        ledCharacteristic = null
-        buttonCharacteristic = null
+        // Keep the coroutine alive until the peripheral disconnects.
+        // This method returns the disconnection reason.
+        val reason = peripheral.awaitDisconnection()
+        if (reason == Reason.RequiredServiceNotFound) {
+            throw BlinkyException.NotSupported()
+        }
+        if (reason != Reason.Success) {
+            throw BlinkyException.LinkLoss()
+        }
     }
 }

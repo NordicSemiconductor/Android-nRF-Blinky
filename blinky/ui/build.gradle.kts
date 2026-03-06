@@ -11,13 +11,13 @@ android {
 
 dependencies {
     implementation(project(":blinky:spec"))
-    implementation(project(":scanner"))
 
-    implementation(libs.nordic.ui)
-    implementation(libs.nordic.logger)
-    implementation(libs.nordic.navigation)
-    implementation(libs.nordic.permissions.ble)
-    implementation(libs.nordic.log.timber)
+    implementation(nordic.ui)
+    implementation(nordic.logger)
+    implementation(nordic.navigation)
+    implementation(nordic.scanner.ble)
+    implementation(nordic.permissions.ble)
+    implementation(nordic.log.timber)
 
-    implementation(libs.androidx.compose.material.iconsExtended)
+    implementation(libs.androidx.compose.material.icons.extended)
 }

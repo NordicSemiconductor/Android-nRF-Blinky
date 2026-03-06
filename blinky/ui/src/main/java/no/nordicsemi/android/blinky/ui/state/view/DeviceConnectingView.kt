@@ -29,76 +29,79 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package no.nordicsemi.android.scanner.main
+package no.nordicsemi.android.blinky.ui.state.view
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bluetooth
+import androidx.compose.material.icons.filled.BluetoothAudio
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import no.nordicsemi.android.blinky.ui.R
 import no.nordicsemi.android.common.ui.view.CircularIcon
-import no.nordicsemi.android.common.ui.view.RssiIcon
-import no.nordicsemi.android.scanner.R
 
 @Composable
-fun DeviceListItem(
-    name: String?,
-    address: String,
+fun DeviceConnectingView(
     modifier: Modifier = Modifier,
-    extras: @Composable () -> Unit = {},
+    content: @Composable ColumnScope.(PaddingValues) -> Unit = {}
 ) {
-    Row(
+    Column(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically)
-    {
-        CircularIcon(Icons.Default.Bluetooth)
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedCard(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+                .widthIn(max = 460.dp),
         ) {
-            name?.let { name ->
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                CircularIcon(imageVector = Icons.Default.BluetoothAudio)
+
                 Text(
-                    text = name,
+                    text = stringResource(id = R.string.device_connecting),
                     style = MaterialTheme.typography.titleMedium
                 )
-            } ?: Text(
-                    text = stringResource(id = R.string.device_no_name),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.alpha(0.7f)
+
+                Text(
+                    text = stringResource(id = R.string.device_explanation),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
                 )
-            Text(
-                text = address,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            }
         }
 
-        extras()
+        content(PaddingValues(top = 16.dp))
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun DeviceListItemPreview() {
-    DeviceListItem(
-        name = "Device name",
-        address = "AA:BB:CC:DD:EE:FF",
-        extras = {
-            RssiIcon(rssi = -45)
+private fun DeviceConnectingView_Preview() {
+    DeviceConnectingView { padding ->
+        Button(
+            onClick = {},
+            modifier = Modifier.padding(padding)
+        ) {
+            Text(text = "Cancel")
         }
-    )
+    }
 }

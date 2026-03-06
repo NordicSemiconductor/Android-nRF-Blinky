@@ -6,6 +6,7 @@ pluginManagement {
         mavenCentral()
     }
 }
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -14,15 +15,19 @@ dependencyResolutionManagement {
         mavenCentral()
     }
     versionCatalogs {
+        // Link: https://github.com/NordicSemiconductor/Nordic-Gradle-Plugins
         create("libs") {
-            from("no.nordicsemi.android.gradle:version-catalog:2.6.1")
+            from("no.nordicsemi.android.gradle:version-catalog:2.14-1")
+        }
+        // Link: https://github.com/NordicSemiconductor/Nordic-Version-Catalog
+        create("nordic") {
+            from("no.nordicsemi.android:version-catalog:2026.03.00")
         }
     }
 }
 rootProject.name = "nRF Blinky"
 
 include(":app")
-include(":scanner")
 include(":blinky:spec")
 include(":blinky:ui")
 include(":blinky:ble")
@@ -33,8 +38,8 @@ include(":blinky:ble")
 //    includeBuild("../Android-Common-Libraries")
 //}
 
-// Clone https://github.com/NordicSemiconductor/Android-BLE-Library and
+// Clone https://github.com/NordicSemiconductor/Kotlin-BLE-Library and
 // uncomment the following lines to modify source code of the BLE library:
-//if (file("../Android-BLE-Library").exists()) {
-//    includeBuild("../Android-BLE-Library")
+//if (file("../Kotlin-BLE-Library").exists()) {
+//    includeBuild("../Kotlin-BLE-Library")
 //}

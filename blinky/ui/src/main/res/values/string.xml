@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="unnamed_device">No name</string>
+
     <string name="action_cancel">Cancel</string>
     <string name="action_retry">Retry</string>
 
@@ -8,8 +10,17 @@
 
     <string name="blinky_button">Button</string>
     <string name="blinky_button_descr">The button state</string>
-    <string name="blinky_on">ON</string>
-    <string name="blinky_off">OFF</string>
+    <string name="blinky_on">PRESSED</string>
+    <string name="blinky_off">RELEASED</string>
 
     <string name="scanner_title">nRF Blinky</string>
+
+    <string name="device_disconnected">Disconnected</string>
+    <string name="device_reason_user">Device disconnected successfully.</string>
+    <string name="device_reason_timeout">The device is not available.\nPlease check if it is turned on and try again.</string>
+    <string name="device_reason_link_loss">The device got out of range, or has been turned off.</string>
+    <string name="device_reason_missing_service">The device is not supported.\nLED Button service was not found.</string>
+
+    <string name="device_connecting">Connecting…</string>
+    <string name="device_explanation">It should just take a moment…</string>
 </resources>
