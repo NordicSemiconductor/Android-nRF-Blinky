@@ -34,6 +34,22 @@ class BlinkyViewModel @Inject constructor(
     /** The button state. */
     val buttonState = repository.buttonState
 
+    /**
+     * Flow of button clicks.
+     *
+     * A click is a sequence of button press and release events, separated by less than
+     * [LONG_PRESS_TIMEOUT][no.nordicsemi.android.blinky.spec.BlinkySpec.LONG_PRESS_TIMEOUT].
+     */
+    val buttonPressed = repository.buttonPressed
+
+    /**
+     * Flow of long button clicks.
+     *
+     * A click is a sequence of button press and release events, separated by more than
+     * [LONG_PRESS_TIMEOUT][no.nordicsemi.android.blinky.spec.BlinkySpec.LONG_PRESS_TIMEOUT].
+     */
+    val buttonLongPressed = repository.buttonLongPressed
+
     init {
         // In this sample we want to connect to the device as soon as the view model is created.
         connect()
