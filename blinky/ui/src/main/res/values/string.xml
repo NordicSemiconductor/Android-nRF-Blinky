@@ -12,6 +12,10 @@
     <string name="blinky_button_descr">The button state</string>
     <string name="blinky_on">PRESSED</string>
     <string name="blinky_off">RELEASED</string>
+    <string name="blinky_button_press_descr">Click</string>
+    <string name="blinky_button_long_press_descr">Long click</string>
+    <string name="blinky_button_long_press_legend">%d second</string>
+    <string name="blinky_detected">DETECTED</string>
 
     <string name="scanner_title">nRF Blinky</string>
 

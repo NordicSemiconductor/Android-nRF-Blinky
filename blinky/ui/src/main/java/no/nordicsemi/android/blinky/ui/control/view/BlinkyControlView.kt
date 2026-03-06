@@ -7,11 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 internal fun BlinkyControlView(
     ledState: Boolean,
     buttonState: Boolean,
+    buttonPressed: Flow<Unit>,
+    buttonLongPressed: Flow<Unit>,
     onStateChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -25,7 +29,9 @@ internal fun BlinkyControlView(
         )
 
         ButtonControlView(
-            state = buttonState
+            state = buttonState,
+            buttonPressed = buttonPressed,
+            buttonLongPressed = buttonLongPressed,
         )
     }
 }
@@ -36,6 +42,8 @@ private fun BlinkyControlViewPreview() {
     BlinkyControlView(
         ledState = true,
         buttonState = true,
+        buttonPressed = emptyFlow(),
+        buttonLongPressed = emptyFlow(),
         onStateChanged = {},
         modifier = Modifier.padding(16.dp),
     )

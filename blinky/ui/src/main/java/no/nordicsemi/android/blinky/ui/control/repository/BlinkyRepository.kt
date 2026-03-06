@@ -5,10 +5,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -22,7 +24,6 @@ import no.nordicsemi.kotlin.ble.client.exception.OperationFailedException
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 /**
  * This repository is responsible for sending and receiving commands to the Blinky device.
@@ -61,6 +62,14 @@ class BlinkyRepository @Inject constructor(
     private val _buttonState = MutableStateFlow(false)
     val buttonState: StateFlow<Boolean>
         get() = _buttonState.asStateFlow()
+
+    private val _buttonPressed = MutableSharedFlow<Unit>()
+    val buttonPressed: SharedFlow<Unit>
+        get() = _buttonPressed.asSharedFlow()
+
+    private val _buttonLongPressed = MutableSharedFlow<Unit>()
+    val buttonLongPressed: SharedFlow<Unit>
+        get() = _buttonLongPressed.asSharedFlow()
 
     suspend fun connect() {
         // Plant a new Tree that logs to nRF Logger.
@@ -103,16 +112,14 @@ class BlinkyRepository @Inject constructor(
                         }
                         _buttonState.update { state }
                     }
-                    // This is a feature, not a bug :)
-                    // Long tap the Button 1 to trigger an exception and see how it is caught
-                    // below as "Blinky implementation error".
-                    .debounce(2.seconds)
-                    .onEach { state ->
-                        if (state) {
-                            Timber.log(LogContract.Log.Level.APPLICATION, "Button long pressed")
-                            throw IllegalStateException("Button long pressed")
-                        }
-                    }
+                    .launchIn(this)
+
+                blinky.buttonPressed
+                    .onEach { _buttonPressed.emit(Unit) }
+                    .launchIn(this)
+
+                blinky.buttonLongPressed
+                    .onEach { _buttonLongPressed.emit(Unit) }
                     .launchIn(this)
 
                 // Blink few times.

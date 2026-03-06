@@ -97,6 +97,8 @@ internal fun BlinkyScreen(
                     BlinkyControlView(
                         ledState = ledState,
                         buttonState = buttonState,
+                        buttonPressed = viewModel.buttonPressed,
+                        buttonLongPressed = viewModel.buttonLongPressed,
                         onStateChanged = { viewModel.turnLed(it) },
                         modifier = Modifier
                             .widthIn(max = 460.dp)
