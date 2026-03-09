@@ -14,10 +14,10 @@ dependencies {
 
     implementation(nordic.ui)
     implementation(nordic.logger)
-    implementation(nordic.navigation)
     implementation(nordic.scanner.ble)
     implementation(nordic.permissions.ble)
     implementation(nordic.log.timber)
 
+    implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.compose.material.icons.extended)
 }

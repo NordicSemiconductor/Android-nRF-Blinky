@@ -1,7 +1,6 @@
 package no.nordicsemi.android.blinky.ui.control.repository
 
 import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.delay
@@ -22,7 +21,6 @@ import no.nordicsemi.android.log.LogContract
 import no.nordicsemi.android.log.timber.nRFLoggerTree
 import no.nordicsemi.kotlin.ble.client.exception.OperationFailedException
 import timber.log.Timber
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -32,8 +30,8 @@ import kotlin.time.Duration.Companion.milliseconds
  * @param device The Blinky device.
  * @param blinky The Blinky implementation.
  */
-class BlinkyRepository @Inject constructor(
-    @param:ApplicationContext private val context: Context,
+class BlinkyRepository(
+    private val context: Context,
     private val device: BlinkyDevice,
     private val blinky: Blinky,
 ): Blinky by blinky {

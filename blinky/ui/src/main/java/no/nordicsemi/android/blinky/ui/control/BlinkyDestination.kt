@@ -1,25 +1,24 @@
 package no.nordicsemi.android.blinky.ui.control
 
-import android.os.Parcelable
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import kotlinx.parcelize.Parcelize
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 import no.nordicsemi.android.blinky.ui.control.view.BlinkyScreen
-import no.nordicsemi.android.common.navigation.createDestination
-import no.nordicsemi.android.common.navigation.defineDestination
-import no.nordicsemi.android.common.navigation.viewmodel.SimpleNavigationViewModel
 
-val Blinky = createDestination<BlinkyDevice, Unit>("blinky")
-
-@Parcelize
+@Serializable
 data class BlinkyDevice(
     val identifier: String,
     val name: String?,
-): Parcelable
+)
 
-val BlinkyDestination = defineDestination(Blinky) {
-    val viewModel: SimpleNavigationViewModel = hiltViewModel()
+@Serializable
+data class BlinkyKey(val device: BlinkyDevice): NavKey
 
+fun EntryProviderScope<NavKey>.blinkyEntry(
+    onNavigateUp: () -> Unit
+) = entry<BlinkyKey> { key ->
     BlinkyScreen(
-        onNavigateUp = { viewModel.navigateUp() }
+        key = key,
+        onNavigateUp = onNavigateUp,
     )
 }

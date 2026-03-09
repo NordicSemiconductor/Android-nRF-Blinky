@@ -1,21 +1,20 @@
 package no.nordicsemi.android.blinky.ui.scanner
 
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import no.nordicsemi.android.blinky.ui.control.Blinky
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.blinky.ui.scanner.view.BlinkyScanner
-import no.nordicsemi.android.common.navigation.createSimpleDestination
-import no.nordicsemi.android.common.navigation.defineDestination
-import no.nordicsemi.android.common.navigation.viewmodel.SimpleNavigationViewModel
 
-val Scanner = createSimpleDestination("scanner")
+@Serializable
+data object ScannerKey: NavKey
 
-val ScannerDestination = defineDestination(Scanner) {
-    val viewModel: SimpleNavigationViewModel = hiltViewModel()
-
+fun EntryProviderScope<NavKey>.scannerEntry(
+    onDeviceSelected: (BlinkyDevice) -> Unit
+) = entry<ScannerKey> {
     BlinkyScanner(
         onDeviceSelected = { device, name ->
-            viewModel.navigateTo(Blinky, BlinkyDevice(device, name))
+            onDeviceSelected(BlinkyDevice(device, name))
         }
     )
 }
