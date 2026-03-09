@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import no.nordicsemi.android.blinky.ui.R
+import no.nordicsemi.android.blinky.ui.control.BlinkyKey
 import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
 import no.nordicsemi.android.blinky.ui.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.blinky.ui.state.view.DeviceConnectingView
@@ -29,9 +30,12 @@ import no.nordicsemi.android.common.ui.view.NordicAppBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun BlinkyScreen(
+    key: BlinkyKey,
     onNavigateUp: () -> Unit,
 ) {
-    val viewModel: BlinkyViewModel = hiltViewModel()
+    val viewModel = hiltViewModel<BlinkyViewModel, BlinkyViewModel.Factory> { factory ->
+        factory.create(key.device)
+    }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Column(

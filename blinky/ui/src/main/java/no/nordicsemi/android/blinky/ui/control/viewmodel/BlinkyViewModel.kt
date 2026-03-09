@@ -4,15 +4,19 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
+import no.nordicsemi.android.blinky.ui.di.BlinkyFactory
 import no.nordicsemi.android.common.logger.LoggerLauncher
 import timber.log.Timber
-import javax.inject.Inject
 
 /**
  * The view model for the Blinky screen.
@@ -20,11 +24,23 @@ import javax.inject.Inject
  * @param context The application context.
  * @property repository The repository that will be used to interact with the device.
  */
-@HiltViewModel
-class BlinkyViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = BlinkyViewModel.Factory::class)
+class BlinkyViewModel @AssistedInject constructor(
     @ApplicationContext context: Context,
-    private val repository: BlinkyRepository,
+    blinkyFactory: BlinkyFactory,
+    @Assisted target: BlinkyDevice,
 ) : AndroidViewModel(context as Application) {
+    private val repository: BlinkyRepository = BlinkyRepository(
+        context = context,
+        device = target,
+        blinky = blinkyFactory.create(target)
+    )
+
+    @AssistedFactory
+    interface Factory {
+        fun create(target: BlinkyDevice): BlinkyViewModel
+    }
+
     /** The connection state of the device. */
     val state = repository.state
     /** The device name. */

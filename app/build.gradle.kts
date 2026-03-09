@@ -19,12 +19,13 @@ dependencies {
     implementation(project(":blinky:ble"))
 
     implementation(nordic.theme)
-    implementation(nordic.navigation)
     // Choose the client implementation, depending on the flavor
     implementation(nordic.blek.client.android)
 
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewModel.navigation3)
+
     implementation(libs.timber)
     implementation(libs.slf4j.timber)
-
-    implementation(libs.androidx.activity.compose)
 }
