@@ -8,11 +8,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":blinky:spec"))
-
-    implementation(nordic.ui)
     implementation(nordic.scanner.ble)
-    implementation(nordic.permissions.ble)
 
     implementation(libs.androidx.navigation3.runtime)
 }
