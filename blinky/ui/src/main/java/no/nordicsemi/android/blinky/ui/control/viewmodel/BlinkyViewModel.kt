@@ -25,7 +25,7 @@ import timber.log.Timber
  * @property repository The repository that will be used to interact with the device.
  */
 @HiltViewModel(assistedFactory = BlinkyViewModel.Factory::class)
-class BlinkyViewModel @AssistedInject constructor(
+internal class BlinkyViewModel @AssistedInject constructor(
     @ApplicationContext context: Context,
     blinkyFactory: BlinkyFactory,
     @Assisted target: BlinkyDevice,

@@ -54,12 +54,12 @@ import androidx.compose.ui.unit.dp
 import no.nordicsemi.android.blinky.ui.R
 import no.nordicsemi.android.common.ui.view.CircularIcon
 
-enum class Reason {
+internal enum class Reason {
     USER, TIMEOUT, LINK_LOSS, MISSING_SERVICE
 }
 
 @Composable
-fun DeviceDisconnectedView(
+internal fun DeviceDisconnectedView(
     reason: Reason,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.(PaddingValues) -> Unit = {},

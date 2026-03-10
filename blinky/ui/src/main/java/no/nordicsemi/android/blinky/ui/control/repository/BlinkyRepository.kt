@@ -19,7 +19,6 @@ import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.log.ILogSession
 import no.nordicsemi.android.log.LogContract
 import no.nordicsemi.android.log.timber.nRFLoggerTree
-import no.nordicsemi.kotlin.ble.client.exception.OperationFailedException
 import timber.log.Timber
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -30,7 +29,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * @param device The Blinky device.
  * @param blinky The Blinky implementation.
  */
-class BlinkyRepository(
+internal class BlinkyRepository(
     private val context: Context,
     private val device: BlinkyDevice,
     private val blinky: Blinky,
@@ -147,11 +146,8 @@ class BlinkyRepository(
         } catch (_: CancellationException) {
             Timber.i("Blinky scope cancelled")
             _state.update { State.DISCONNECTED }
-        } catch (_: OperationFailedException) {
-            Timber.w("GATT operation failed")
-            _state.update { State.DISCONNECTED }
         } catch (t: Throwable) {
-            Timber.wtf(t, "Blinky implementation error")
+            Timber.e(t, "Connection error")
             _state.update { State.DISCONNECTED }
         }
 

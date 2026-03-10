@@ -17,8 +17,6 @@
     <string name="blinky_button_long_press_legend">%d second</string>
     <string name="blinky_detected">DETECTED</string>
 
-    <string name="scanner_title">nRF Blinky</string>
-
     <string name="device_disconnected">Disconnected</string>
     <string name="device_reason_user">Device disconnected successfully.</string>
     <string name="device_reason_timeout">The device is not available.\nPlease check if it is turned on and try again.</string>
