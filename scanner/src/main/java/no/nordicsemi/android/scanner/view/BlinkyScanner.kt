@@ -13,13 +13,23 @@ import no.nordicsemi.android.scanner.R
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/**
+ * The scanner screen.
+ *
+ * @param onDeviceSelected The callback that is called when a device is selected.
+ * The parameters are the device identifier (MAC) and the device name (if available).
+ */
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 internal fun BlinkyScanner(
     onDeviceSelected: (String, String?) -> Unit,
 ) {
+    // The scanner uses a Nordic common component (scanner-ble) from
+    // https://github.com/NordicSemiconductor/Android-Common-Libraries
     ScannerScreen(
-        title = { Text(stringResource(id = R.string.scanner_title)) },
+        title = {
+            Text(stringResource(id = R.string.scanner_title))
+        },
         state = rememberFilterState(
             dynamicFilters = listOf(
                 OnlyNearby(),
