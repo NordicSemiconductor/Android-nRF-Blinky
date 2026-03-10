@@ -1,21 +1,21 @@
-package no.nordicsemi.android.blinky.ui.scanner.view
+package no.nordicsemi.android.scanner.view
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import no.nordicsemi.android.blinky.ui.R
 import no.nordicsemi.android.common.scanner.DeviceSelected
 import no.nordicsemi.android.common.scanner.ScannerScreen
 import no.nordicsemi.android.common.scanner.data.OnlyNearby
 import no.nordicsemi.android.common.scanner.data.OnlyWithNames
 import no.nordicsemi.android.common.scanner.data.WithServiceUuid
 import no.nordicsemi.android.common.scanner.rememberFilterState
+import no.nordicsemi.android.scanner.R
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-fun BlinkyScanner(
+internal fun BlinkyScanner(
     onDeviceSelected: (String, String?) -> Unit,
 ) {
     ScannerScreen(

@@ -55,7 +55,7 @@ import no.nordicsemi.android.blinky.ui.R
 import no.nordicsemi.android.common.ui.view.CircularIcon
 
 @Composable
-fun DeviceConnectingView(
+internal fun DeviceConnectingView(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.(PaddingValues) -> Unit = {}
 ) {

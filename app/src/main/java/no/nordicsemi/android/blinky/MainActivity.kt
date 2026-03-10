@@ -11,12 +11,13 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import dagger.hilt.android.AndroidEntryPoint
+import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.blinky.ui.control.BlinkyKey
 import no.nordicsemi.android.blinky.ui.control.blinkyEntry
-import no.nordicsemi.android.blinky.ui.scanner.ScannerKey
-import no.nordicsemi.android.blinky.ui.scanner.scannerEntry
 import no.nordicsemi.android.common.theme.NordicActivity
 import no.nordicsemi.android.common.theme.NordicTheme
+import no.nordicsemi.android.scanner.ScannerKey
+import no.nordicsemi.android.scanner.scannerEntry
 
 @AndroidEntryPoint
 class MainActivity: NordicActivity() {
@@ -44,8 +45,8 @@ private fun App() {
         ),
         entryProvider = entryProvider {
             scannerEntry(
-                onDeviceSelected = { device ->
-                    backStack.add(BlinkyKey(device))
+                onDeviceSelected = { identifier, name ->
+                    backStack.add(BlinkyKey(BlinkyDevice(identifier, name)))
                 }
             )
             blinkyEntry(

@@ -4,17 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "no.nordicsemi.android.blinky.ui"
+    namespace = "no.nordicsemi.android.scanner"
 }
 
 dependencies {
     implementation(project(":blinky:spec"))
 
     implementation(nordic.ui)
-    implementation(nordic.logger)
+    implementation(nordic.scanner.ble)
     implementation(nordic.permissions.ble)
-    implementation(nordic.log.timber)
 
     implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.compose.material.icons.extended)
 }
