@@ -17,6 +17,7 @@ internal fun BlinkyControlView(
     buttonPressed: Flow<Unit>,
     buttonLongPressed: Flow<Unit>,
     onStateChanged: (Boolean) -> Unit,
+    onBlink: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -26,6 +27,7 @@ internal fun BlinkyControlView(
         LedControlView(
             state = ledState,
             onStateChanged = onStateChanged,
+            onBlink = onBlink,
         )
 
         ButtonControlView(
@@ -45,6 +47,7 @@ private fun BlinkyControlViewPreview() {
         buttonPressed = emptyFlow(),
         buttonLongPressed = emptyFlow(),
         onStateChanged = {},
+        onBlink = {},
         modifier = Modifier.padding(16.dp),
     )
 }

@@ -95,6 +95,14 @@ internal class BlinkyViewModel @AssistedInject constructor(
     }
 
     /**
+     * Sends an event to the repository to start blinking LED [BlinkyRepository.BLINK_COUNT] times.
+     */
+    fun blinkLed() {
+        repository.blink.tryEmit(Unit)
+    }
+
+
+    /**
      * Opens nRF Logger app with the log or Google Play if the app is not installed.
      */
     fun openLogger() {

@@ -3,6 +3,7 @@ package no.nordicsemi.android.blinky.ui.control.repository
 import android.content.Context
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.exception.BlinkyException
+import no.nordicsemi.android.blinky.spec.toggle
 import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.log.ILogSession
 import no.nordicsemi.android.log.LogContract
@@ -35,7 +37,7 @@ internal class BlinkyRepository(
     private val blinky: Blinky,
 ): Blinky by blinky {
     companion object {
-        private const val BLINK_COUNT = 5
+        const val BLINK_COUNT = 3
     }
 
     /** If the nRF Logger is installed, this will allow to open the session. */
@@ -55,6 +57,11 @@ internal class BlinkyRepository(
     val deviceName = device.name
 
     val ledState = MutableStateFlow(false)
+
+    val blink = MutableSharedFlow<Unit>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
     private val _buttonState = MutableStateFlow(false)
     val buttonState: StateFlow<Boolean>
@@ -119,15 +126,15 @@ internal class BlinkyRepository(
                     .onEach { _buttonLongPressed.emit(Unit) }
                     .launchIn(this)
 
-                // Blink few times.
-                repeat(BLINK_COUNT) {
-                    if (it > 0) {
-                        delay(100.milliseconds)
+                // Blink a few times when asked.
+                blink
+                    .onEach {
+                        repeat(BLINK_COUNT * 2) {
+                            blinky.led.toggle()
+                            delay(500.milliseconds)
+                        }
                     }
-                    blinky.led.update { true }
-                    delay(100.milliseconds)
-                    blinky.led.update { false }
-                }
+                    .launchIn(this)
 
                 // Now, with the states collected, await scope cancellation.
                 awaitCancellation()

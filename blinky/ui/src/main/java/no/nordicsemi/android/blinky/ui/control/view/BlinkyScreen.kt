@@ -104,6 +104,7 @@ internal fun BlinkyScreen(
                         buttonPressed = viewModel.buttonPressed,
                         buttonLongPressed = viewModel.buttonLongPressed,
                         onStateChanged = { viewModel.turnLed(it) },
+                        onBlink = { viewModel.blinkLed() },
                         modifier = Modifier
                             .widthIn(max = 460.dp)
                             .verticalScroll(rememberScrollState())
