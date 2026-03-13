@@ -61,3 +61,10 @@ interface Blinky {
     }
 
 }
+
+/**
+ * Toggles the LED state.
+ */
+fun MutableStateFlow<Boolean>.toggle() {
+    value = !value
+}

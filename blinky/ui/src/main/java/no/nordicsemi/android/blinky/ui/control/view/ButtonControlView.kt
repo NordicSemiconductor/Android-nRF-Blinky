@@ -9,8 +9,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RadioButtonChecked
@@ -97,10 +99,11 @@ internal fun ButtonControlView(
                     style = MaterialTheme.typography.headlineMedium,
                 )
             }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .heightIn(min = 48.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -116,7 +119,7 @@ internal fun ButtonControlView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .heightIn(min = 48.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -130,9 +133,11 @@ internal fun ButtonControlView(
                                 MaterialTheme.colorScheme.primary
                             else
                                 MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(24.dp)
                         )
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                        .widthIn(min = 56.dp)
+                        .heightIn(min = 40.dp)
+                        .padding(horizontal = 24.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
@@ -141,7 +146,7 @@ internal fun ButtonControlView(
                         modifier = Modifier.padding(end = 4.dp).size(16.dp)
                     )
                     Text(
-                        text = stringResource(R.string.blinky_button_press_descr).uppercase(),
+                        text = stringResource(R.string.blinky_button_press).uppercase(),
                         style = MaterialTheme.typography.labelLarge,
                     )
                 }
@@ -151,7 +156,7 @@ internal fun ButtonControlView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .heightIn(min = 48.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -165,9 +170,11 @@ internal fun ButtonControlView(
                                 MaterialTheme.colorScheme.primary
                             else
                                 MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(24.dp)
                         )
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                        .widthIn(min = 56.dp)
+                        .heightIn(min = 40.dp)
+                        .padding(horizontal = 24.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
@@ -176,7 +183,7 @@ internal fun ButtonControlView(
                         modifier = Modifier.padding(end = 4.dp).size(16.dp)
                     )
                     Text(
-                        text = stringResource(R.string.blinky_button_long_press_descr).uppercase(),
+                        text = stringResource(R.string.blinky_button_long_press).uppercase(),
                         style = MaterialTheme.typography.labelLarge,
                     )
                 }

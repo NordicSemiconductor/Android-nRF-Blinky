@@ -3,6 +3,7 @@ package no.nordicsemi.android.blinky.ui.control.repository
 import android.content.Context
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import no.nordicsemi.android.blinky.spec.Blinky
 import no.nordicsemi.android.blinky.spec.exception.BlinkyException
+import no.nordicsemi.android.blinky.spec.toggle
 import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
+import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository.Companion.BLINK_COUNT
 import no.nordicsemi.android.log.ILogSession
 import no.nordicsemi.android.log.LogContract
 import no.nordicsemi.android.log.timber.nRFLoggerTree
@@ -35,12 +38,17 @@ internal class BlinkyRepository(
     private val blinky: Blinky,
 ): Blinky by blinky {
     companion object {
-        private const val BLINK_COUNT = 5
+        /**
+         * The number of times the LED will blink.
+         * @see BlinkyRepository.blink
+         */
+        const val BLINK_COUNT = 3
     }
 
     /** If the nRF Logger is installed, this will allow to open the session. */
     internal var logSession: ILogSession? = null
 
+    /** The connection state. */
     enum class State {
         CONNECTING,
         TIMEOUT,
@@ -49,25 +57,61 @@ internal class BlinkyRepository(
         NOT_SUPPORTED,
     }
     private val _state = MutableStateFlow(State.CONNECTING)
+    /** The current connection state. */
     val state: StateFlow<State>
         get() = _state.asStateFlow()
-
+    /** The device name as advertised, or read from Device Name characteristic. */
     val deviceName = device.name
 
+    /**
+     * The state of the LED on the Blinky, where `true` is turned on and `false` is turned off.
+     *
+     * This flow is mutable. User can set its value to turn the LED on or off.
+     *
+     * Note, that the change needs some time to propagate to the device. The time depends on the
+     * connection interval.
+     */
     val ledState = MutableStateFlow(false)
 
+    /**
+     * A flow of blink events.
+     *
+     * When an event is emitted on this flow, the Blinky will blink its LED [BLINK_COUNT] times.
+     */
+    val blink = MutableSharedFlow<Unit>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+
+    /**
+     * The state of a binding between the Button and the LED.
+     *
+     * When enabled (`true`), the LED will be turned on when the button is pressed,
+     * and turned off when the button is released.
+     */
+    var bindingState = MutableStateFlow(false)
+
     private val _buttonState = MutableStateFlow(false)
+    /** The state of the button on the Blinky, where `true` is pressed and `false` is released. */
     val buttonState: StateFlow<Boolean>
         get() = _buttonState.asStateFlow()
 
     private val _buttonPressed = MutableSharedFlow<Unit>()
+    /** A flow of button click events. */
     val buttonPressed: SharedFlow<Unit>
         get() = _buttonPressed.asSharedFlow()
 
     private val _buttonLongPressed = MutableSharedFlow<Unit>()
+    /** A flow of long clicks of the button. */
     val buttonLongPressed: SharedFlow<Unit>
         get() = _buttonLongPressed.asSharedFlow()
 
+    /**
+     * Establishes and maintains a connection to the [device] using [blinky] interface.
+     *
+     * This method terminates on disconnection. To disconnect, cancel the job in which this
+     * method is called.
+     */
     suspend fun connect() {
         // Plant a new Tree that logs to nRF Logger.
         val tree = nRFLoggerTree(context, null, device.identifier, device.name)
@@ -108,6 +152,11 @@ internal class BlinkyRepository(
                             false -> Timber.log(LogContract.Log.Level.APPLICATION, "Button released")
                         }
                         _buttonState.update { state }
+
+                        // If binding is enabled, update the LED state.
+                        if (bindingState.value) {
+                            blinky.led.update { state }
+                        }
                     }
                     .launchIn(this)
 
@@ -119,15 +168,25 @@ internal class BlinkyRepository(
                     .onEach { _buttonLongPressed.emit(Unit) }
                     .launchIn(this)
 
-                // Blink few times.
-                repeat(BLINK_COUNT) {
-                    if (it > 0) {
-                        delay(100.milliseconds)
+                // Blink a few times when asked.
+                blink
+                    .onEach {
+                        repeat(BLINK_COUNT * 2) {
+                            blinky.led.toggle()
+                            delay(500.milliseconds)
+                        }
                     }
-                    blinky.led.update { true }
-                    delay(100.milliseconds)
-                    blinky.led.update { false }
-                }
+                    .launchIn(this)
+
+                // When Button -> LED binding gets enabled, set the initial LED state
+                // to the current state of the button.
+                bindingState
+                    .onEach { enabled ->
+                        if (enabled) {
+                            ledState.update { blinky.button.value }
+                        }
+                    }
+                    .launchIn(this)
 
                 // Now, with the states collected, await scope cancellation.
                 awaitCancellation()

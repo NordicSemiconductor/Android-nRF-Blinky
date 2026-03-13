@@ -49,6 +49,13 @@ internal class BlinkyViewModel @AssistedInject constructor(
     val ledState = repository.ledState
     /** The button state. */
     val buttonState = repository.buttonState
+    /**
+     * The state of a binding between the Button and the LED.
+     *
+     * When enabled (`true`), the LED will be turned on when the button is pressed,
+     * and turned off when the button is released.
+     */
+    val bindingState = repository.bindingState
 
     /**
      * Flow of button clicks.
@@ -93,6 +100,14 @@ internal class BlinkyViewModel @AssistedInject constructor(
     fun turnLed(on: Boolean) {
         ledState.update { on }
     }
+
+    /**
+     * Sends an event to the repository to start blinking LED [BlinkyRepository.BLINK_COUNT] times.
+     */
+    fun blinkLed() {
+        repository.blink.tryEmit(Unit)
+    }
+
 
     /**
      * Opens nRF Logger app with the log or Google Play if the app is not installed.

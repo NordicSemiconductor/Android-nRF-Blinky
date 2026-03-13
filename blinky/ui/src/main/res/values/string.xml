@@ -7,13 +7,17 @@
 
     <string name="blinky_led">LED</string>
     <string name="blinky_led_descr">Switch to toggle the LED</string>
+    <string name="blinky_led_blink_descr">Blink %d times</string>
+    <string name="blinky_led_blink">Blink</string>
 
     <string name="blinky_button">Button</string>
-    <string name="blinky_button_descr">The button state</string>
+    <string name="blinky_button_descr">Current button state</string>
     <string name="blinky_on">PRESSED</string>
     <string name="blinky_off">RELEASED</string>
-    <string name="blinky_button_press_descr">Click</string>
-    <string name="blinky_button_long_press_descr">Long click</string>
+    <string name="blinky_button_press_descr">Click events</string>
+    <string name="blinky_button_press">Click</string>
+    <string name="blinky_button_long_press_descr">Long click events</string>
+    <string name="blinky_button_long_press">Long click</string>
     <string name="blinky_button_long_press_legend">%d second</string>
     <string name="blinky_detected">DETECTED</string>
 
