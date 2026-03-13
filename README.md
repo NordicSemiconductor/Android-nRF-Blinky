@@ -3,58 +3,66 @@
 nRF Blinky is an application targeting an audience of developers who are new to 
 Bluetooth Low Energy. 
 
-The app can be easily converted to work with other devices and may act as a template app.
+The app can be easily modified to work with other devices and may act as a template app.
 
 This very simple application contains two basic features:
 * turning on a LED on a connected Bluetooth LE device,
 * receiving a Button press and release events from the device.
 
+Based on these 2 states, the derived flows allow to detect:
+* button click events (press and release),
+* long button click events (pressed for longer than 1 second).
+
+nRF Blinky demonstrates also how to implement a basic flow of operations (blinking)
+or bind states (set the LED state based on the button state).
+
 ![Scanner](images/scanner.png) ![Blinky](images/blinky.png)
 
-It demonstrates how the `BleManager` class from 
-[Android BLE Library](https://github.com/NordicSemiconductor/Android-BLE-Library/) 
-library can be used from a View Model 
-(see [Architecture Components](https://developer.android.com/topic/libraries/architecture/index.html)).
+## Kotlin BLE Library
+
+This app is designed to work as a sample app for the 
+[Kotlin BLE Library](https://github.com/NordicSemiconductor/Kotlin-BLE-Library/) in a 
+[View Model](https://developer.android.com/topic/libraries/architecture/viewmodel) with a clear
+separation of the Bluetooth LE logic from the App using a 
+[Blinky](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/blinky/spec/src/main/java/no/nordicsemi/android/blinky/spec/Blinky.kt)
+interface.
+
+The Bluetooth LE logic is implemented in the 
+[LedButtonServiceImpl](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/blinky/ble/src/main/java/no/nordicsemi/android/blinky/ble/LedButtonServiceImpl.kt)
+class, which is injected as a ["profile"](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/blinky/ble/src/main/java/no/nordicsemi/android/blinky/ble/BlinkyManager.kt#L34-L49). 
 
 ## Structure
 
-The new version of nRF Blinky application has been created in Jetpack Compose.
+The nRF Blinky application has been created in Jetpack Compose.
 
 ### Dependencies
 
 It is using the following libraries:
-* [Android BLE Library](https://github.com/NordicSemiconductor/Android-BLE-Library/) - handles Bluetooth LE connectivity
-* [Nordic Common Library for Android](https://github.com/NordicPlayground/Android-Common-Libraries) - theme and common UI components, e.g. scanner screen
+* [Kotlin BLE Library](https://github.com/NordicSemiconductor/Kotlin-BLE-Library/) - handles Bluetooth LE connectivity
+* [Nordic Common Library for Android](https://github.com/NordicSemiconductor/Android-Common-Libraries) - theme and common UI components, e.g. scanner screen
 * [nRF Logger tree for Timber](https://github.com/NordicSemiconductor/nRF-Logger-API) - logs to nRF Logger app using [Timber](https://github.com/JakeWharton/timber)
-* [Android Gradle Plugins](https://github.com/NordicSemiconductor/Android-Gradle-Plugins) - set of Gradle plugins
+* [Nordic Gradle Plugins](https://github.com/NordicSemiconductor/Nordic-Gradle-Plugins) - set of Gradle plugins for building and deployment
 
-The gradle script was written in Kotlin Script (*gradle.kts*) and is using version catalog for 
-dependency management.
+The Gradle script is using version catalog for dependency management.
 
 ### Modules
 
 The application consists of the following modules:
 
 * **:app** - the main module, contains the application code
-* **:scanner** - contains the scanner screen destination
-* **:blinky:spec** - contains the Blinky device specification, e.g. [`Blinky`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/b23b0252fe14bd0961c1edafa973f7da2768feb9/blinky/spec/src/main/java/no/nordicsemi/android/blinky/spec/Blinky.kt) API or the Service UUID
-* **:blinky:ble** - contains the BLE related code, e.g. [`BlinkyManager`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/b23b0252fe14bd0961c1edafa973f7da2768feb9/blinky/ble/src/main/java/no/nordicsemi/android/blinky/ble/BlinkyManager.kt) implementation
-* **:blinky:ui** - contains the UI related code, e.g. [`BlinkyScreen`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/b23b0252fe14bd0961c1edafa973f7da2768feb9/blinky/ui/src/main/java/no/nordicsemi/android/blinky/control/view/BlinkyScreen.kt)
-  or [`BlinkyViewModel`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/b23b0252fe14bd0961c1edafa973f7da2768feb9/blinky/ui/src/main/java/no/nordicsemi/android/blinky/control/viewmodel/BlinkyViewModel.kt) implementation
+* **:scanner** - contains the scanner screen navigation entry
+* **:blinky:spec** - contains the Blinky device specification, e.g. [`Blinky`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/blinky/spec/src/main/java/no/nordicsemi/android/blinky/spec/Blinky.kt) API or the Service UUID
+* **:blinky:ble** - contains the BLE related code, e.g. [`BlinkyManager`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/blinky/ble/src/main/java/no/nordicsemi/android/blinky/ble/BlinkyManager.kt) implementation
+* **:blinky:ui** - contains the UI related code, e.g. [`BlinkyScreen`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/blinky/ui/src/main/java/no/nordicsemi/android/blinky/control/view/BlinkyScreen.kt)
+  or [`BlinkyViewModel`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/blinky/ui/src/main/java/no/nordicsemi/android/blinky/control/viewmodel/BlinkyViewModel.kt) implementation
 
-The **:blinky:ui** and **:blinky:spec** modules are transport agnostic. The Bluetooth LE transport
-is set using Hilt `@Binds` dependency injection [here](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/b23b0252fe14bd0961c1edafa973f7da2768feb9/app/src/main/java/no/nordicsemi/android/blinky/di/BlinkyModule.kt#L59).
+The **:blinky:ui** and **:blinky:spec** modules are transport agnostic. 
+The Bluetooth LE transport is specified in the **:app** module using Hilt [here](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/app/src/main/java/no/nordicsemi/android/blinky/di/BlinkyModule.kt). 
 
-The app is based on **:navigation** module from the Nordic Common Library, which is using 
-[`NavHost`](https://developer.android.com/jetpack/compose/navigation) under the hood, and adds 
-type-safety to the navigation graph.
-
-Each screen defines a `DestinationId` (with input and output types) and `NavigationDestination`, 
-which declares the composable, inner navigation or a dialog target. See [`BlinkyDestination`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/b23b0252fe14bd0961c1edafa973f7da2768feb9/blinky/ui/src/main/java/no/nordicsemi/android/blinky/control/BlinkyDestination.kt) for an example.
-
-Navigation between destinations is done using [`Navigator`](https://github.com/NordicPlayground/Android-Common-Libraries/blob/d8e60628a877eccf8592da4889cf12afdbc08e44/navigation/src/main/java/no/nordicsemi/android/common/navigation/Navigator.kt) object, 
-available using Hilt form a `ViewModel`. When a new destination is selected, the input parameters 
-are available from `SavedStateHandle` (see [`BlinkyModule`](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/b23b0252fe14bd0961c1edafa973f7da2768feb9/app/src/main/java/no/nordicsemi/android/blinky/di/BlinkyModule.kt) class).
+The app is using [Navigation 3](https://developer.android.com/guide/navigation/navigation-3).
+The **:app** module defines navigation in [App](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/app/src/main/java/no/nordicsemi/android/blinky/MainActivity.kt#L36-L59) composable.
+The entries are defined in the [**:scanner**](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/scanner/src/main/java/no/nordicsemi/android/scanner/ScannerDestination.kt#L11-L19) 
+and [**:blinky:ui**](https://github.com/NordicSemiconductor/Android-nRF-Blinky/blob/main/blinky/ui/src/main/java/no/nordicsemi/android/blinky/ui/control/BlinkyDestination.kt#L17-L24) modules.
 
 ## Nordic LED and Button Service (LBS)
 
@@ -81,14 +89,14 @@ and for one based on nRF Connect SDK
 
 ## Requirements
 
-* This application depends on [Android BLE Library](https://github.com/NordicSemiconductor/Android-BLE-Library/).
-* Android 4.3 or newer is required.
+* This application depends on [Kotlin BLE Library](https://github.com/NordicSemiconductor/Kotlin-BLE-Library/).
+* Android 6 or newer is required.
 * Any nRF5 DK or another device is required in order to test the BLE Blinky service. The service 
   can also be emulated using nRF Connect for Android, iOS or Desktop.
 
 ## Installation and usage
 
-Program your device with LED Button sample from nRF5 SDK (blinky sample) or nRF Connect SDK (LBS sample).
+Program your device with LED Button sample from nRF Connect SDK ([Peripheral LBS sample]((https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/samples/bluetooth/peripheral_lbs/README.html))).
 
 The device should appear on the scanner screen after granting required permissions.
 
