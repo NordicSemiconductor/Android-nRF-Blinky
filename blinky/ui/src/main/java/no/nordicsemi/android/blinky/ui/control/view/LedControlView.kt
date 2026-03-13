@@ -30,6 +30,7 @@ import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
 @Composable
 internal fun LedControlView(
     state: Boolean,
+    enabled: Boolean,
     onStateChanged: (Boolean) -> Unit,
     onBlink: () -> Unit,
     modifier: Modifier = Modifier,
@@ -39,7 +40,7 @@ internal fun LedControlView(
     ) {
         Column(
             modifier = Modifier
-                .clickable { onStateChanged(!state) }
+                .clickable(enabled = enabled) { onStateChanged(!state) }
                 .padding(16.dp)
         ) {
             Row(
@@ -69,7 +70,11 @@ internal fun LedControlView(
                     text = stringResource(R.string.blinky_led_descr),
                     modifier = Modifier.weight(1f)
                 )
-                Switch(checked = state, onCheckedChange = onStateChanged)
+                Switch(
+                    checked = state,
+                    onCheckedChange = onStateChanged,
+                    enabled = enabled,
+                )
             }
 
             // Blink action.
@@ -85,6 +90,7 @@ internal fun LedControlView(
                 )
                 Button(
                     onClick = onBlink,
+                    enabled = enabled,
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.LightMode,
@@ -106,6 +112,7 @@ internal fun LedControlView(
 private fun LecControlViewPreview() {
     LedControlView(
         state = true,
+        enabled = true,
         onStateChanged = {},
         onBlink = {},
         modifier = Modifier.padding(16.dp),

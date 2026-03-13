@@ -63,6 +63,8 @@ internal class BlinkyRepository(
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
 
+    var bindingState = MutableStateFlow(false)
+
     private val _buttonState = MutableStateFlow(false)
     val buttonState: StateFlow<Boolean>
         get() = _buttonState.asStateFlow()
@@ -115,6 +117,11 @@ internal class BlinkyRepository(
                             false -> Timber.log(LogContract.Log.Level.APPLICATION, "Button released")
                         }
                         _buttonState.update { state }
+
+                        // If binding is enabled, update the LED state.
+                        if (bindingState.value) {
+                            blinky.led.update { state }
+                        }
                     }
                     .launchIn(this)
 
@@ -132,6 +139,16 @@ internal class BlinkyRepository(
                         repeat(BLINK_COUNT * 2) {
                             blinky.led.toggle()
                             delay(500.milliseconds)
+                        }
+                    }
+                    .launchIn(this)
+
+                // When Button -> LED binding gets enabled, set the initial LED state
+                // to the current state of the button.
+                bindingState
+                    .onEach { enabled ->
+                        if (enabled) {
+                            ledState.update { blinky.button.value }
                         }
                     }
                     .launchIn(this)
