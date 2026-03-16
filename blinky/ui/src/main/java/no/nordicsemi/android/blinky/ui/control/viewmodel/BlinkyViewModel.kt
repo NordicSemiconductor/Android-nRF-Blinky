@@ -2,6 +2,14 @@ package no.nordicsemi.android.blinky.ui.control.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.media.AudioAttributes
+import android.os.Build
+import android.os.CombinedVibration
+import android.os.VibrationAttributes
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
@@ -10,6 +18,8 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
@@ -74,6 +84,28 @@ internal class BlinkyViewModel @AssistedInject constructor(
     val buttonLongPressed = repository.buttonLongPressed
 
     init {
+        // Vibrate shortly on button press and release events.
+        buttonState
+            .onEach { 
+                try {
+                    vibrate(context, false)
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to vibrate")
+                }
+            }
+            .launchIn(viewModelScope)
+
+        // Vibrate long on button long press events.
+        buttonLongPressed
+            .onEach { 
+                try {
+                    vibrate(context, true)
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to vibrate")
+                }
+            }
+            .launchIn(viewModelScope)
+
         // In this sample we want to connect to the device as soon as the view model is created.
         connect()
     }
@@ -114,5 +146,58 @@ internal class BlinkyViewModel @AssistedInject constructor(
      */
     fun openLogger() {
         LoggerLauncher.launch(getApplication(), repository.logSession)
+    }
+
+    // Private helper API
+
+    private fun vibrate(context: Context, longClick: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            vibrateApi31(context, longClick)
+        } else {
+            vibrateLegacy(context, longClick)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun vibrateApi31(context: Context, longClick: Boolean) {
+        val vm = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+
+        val attributes = VibrationAttributes.Builder()
+            .setUsage(VibrationAttributes.USAGE_NOTIFICATION)
+            .build()
+
+        val effect = if (longClick) {
+            VibrationEffect.createOneShot(400L, VibrationEffect.DEFAULT_AMPLITUDE)
+        } else {
+            VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+        }
+
+        // On API 31+, use VibratorManager with CombinedVibration and VibrationAttributes
+        vm.vibrate(CombinedVibration.createParallel(effect), attributes)
+    }
+
+    private fun vibrateLegacy(context: Context, longClick: Boolean) {
+        val durationMs = if (longClick) 400L else 50L
+
+        @Suppress("DEPRECATION")
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val effect = if (longClick) {
+                VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE)
+            } else {
+                VibrationEffect.createOneShot(durationMs, 50)
+            }
+
+            // On API 26-32, use AudioAttributes for haptic hints
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build()
+
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(effect, audioAttributes)
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(durationMs)
+        }
     }
 }
