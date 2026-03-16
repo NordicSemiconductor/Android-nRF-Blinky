@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -35,7 +35,7 @@ class MainActivity: NordicActivity() {
 
 @Composable
 private fun App() {
-    val backStack = remember { mutableStateListOf<NavKey>(ScannerKey) }
+    val backStack = rememberSaveable { mutableStateListOf<NavKey>(ScannerKey) }
 
     NavDisplay(
         backStack = backStack,
