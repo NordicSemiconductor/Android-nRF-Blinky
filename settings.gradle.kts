@@ -33,7 +33,7 @@ include(":blinky:spec")
 include(":blinky:ui")
 include(":blinky:ble")
 
-// Clone https://github.com/NordicPlayground/Android-Common-Libraries and
+// Clone https://github.com/NordicSemiconductor/Android-Common-Libraries and
 // uncomment the following lines to modify source code of the Nordic Common library:
 //if (file("../Android-Common-Libraries").exists()) {
 //    includeBuild("../Android-Common-Libraries")
