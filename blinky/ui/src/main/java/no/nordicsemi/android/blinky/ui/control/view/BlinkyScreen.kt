@@ -1,5 +1,6 @@
 package no.nordicsemi.android.blinky.ui.control.view
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -12,13 +13,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import no.nordicsemi.android.blinky.ui.R
-import no.nordicsemi.android.blinky.ui.control.BlinkyKey
-import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
+import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
+import no.nordicsemi.android.blinky.ui.control.service.BlinkyConnectionManager
+import no.nordicsemi.android.blinky.ui.control.service.BlinkyService
 import no.nordicsemi.android.blinky.ui.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.blinky.ui.view.DeviceConnectingView
 import no.nordicsemi.android.blinky.ui.view.DeviceDisconnectedView
@@ -30,27 +33,40 @@ import no.nordicsemi.android.common.ui.view.NordicAppBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun BlinkyScreen(
-    key: BlinkyKey,
+    device: BlinkyDevice,
     onNavigateUp: () -> Unit,
 ) {
     val viewModel = hiltViewModel<BlinkyViewModel, BlinkyViewModel.Factory> { factory ->
-        factory.create(key.device)
+        factory.create(device)
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    BackHandler {
+        // Stopping the service will disconnect the devices.
+        BlinkyService.stop(context)
+
+        onNavigateUp()
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         NordicAppBar(
             title = { Text(text = viewModel.deviceName ?: stringResource(R.string.unnamed_device)) },
-            onNavigationButtonClick = onNavigateUp,
+            onNavigationButtonClick = {
+                // Stopping the service will disconnect the devices.
+                BlinkyService.stop(context)
+                
+                onNavigateUp()
+            },
             actions = {
-                LoggerAppBarIcon(onClick = { viewModel.openLogger() })
+                LoggerAppBarIcon(onClick = viewModel::openLogger)
             }
         )
         RequireBluetooth {
-            when (state) {
-                BlinkyRepository.State.CONNECTING -> {
+            when (val s = state) {
+                BlinkyConnectionManager.State.Connecting -> {
                     DeviceConnectingView(
                         modifier = Modifier.padding(16.dp),
                     ) { padding ->
@@ -62,52 +78,52 @@ internal fun BlinkyScreen(
                         }
                     }
                 }
-                BlinkyRepository.State.TIMEOUT -> {
+                BlinkyConnectionManager.State.Timeout -> {
                     DeviceDisconnectedView(
                         reason = Reason.TIMEOUT,
                         modifier = Modifier.padding(16.dp),
                     ) { padding ->
                         Button(
-                            onClick = { viewModel.connect() },
+                            onClick = viewModel::connect,
                             modifier = Modifier.padding(padding),
                         ) {
                             Text(text = stringResource(id = R.string.action_retry))
                         }
                     }
                 }
-                BlinkyRepository.State.DISCONNECTED -> {
+                BlinkyConnectionManager.State.Disconnected -> {
                     DeviceDisconnectedView(
                         reason = Reason.LINK_LOSS,
                         modifier = Modifier.padding(16.dp),
                     ) { padding ->
                         Button(
-                            onClick = { viewModel.connect() },
+                            onClick = viewModel::connect,
                             modifier = Modifier.padding(padding),
                         ) {
                             Text(text = stringResource(id = R.string.action_retry))
                         }
                     }
                 }
-                BlinkyRepository.State.NOT_SUPPORTED -> {
+                BlinkyConnectionManager.State.NotSupported -> {
                     DeviceDisconnectedView(
                         reason = Reason.MISSING_SERVICE,
                         modifier = Modifier.padding(16.dp),
                     )
                 }
-                BlinkyRepository.State.READY -> {
-                    val ledState by viewModel.ledState.collectAsStateWithLifecycle()
-                    val buttonState by viewModel.buttonState.collectAsStateWithLifecycle()
+                is BlinkyConnectionManager.State.Ready -> {
+                    val ledState by s.state.led.collectAsStateWithLifecycle()
+                    val buttonState by s.state.button.collectAsStateWithLifecycle()
                     val bindingState by viewModel.bindingState.collectAsStateWithLifecycle()
 
                     BlinkyControlView(
                         ledState = ledState,
-                        onStateChanged = { viewModel.turnLed(it) },
-                        onBlink = { viewModel.blinkLed() },
+                        onStateChanged = viewModel::turnLed,
+                        onBlink = viewModel::blinkLed,
                         bindingState = bindingState,
                         onBindingChanged = { viewModel.bindingState.value = it },
                         buttonState = buttonState,
-                        buttonPressed = viewModel.buttonPressed,
-                        buttonLongPressed = viewModel.buttonLongPressed,
+                        buttonPressed = s.state.buttonPressed,
+                        buttonLongPressed = s.state.buttonLongPressed,
                         modifier = Modifier
                             .widthIn(max = 460.dp)
                             .verticalScroll(rememberScrollState())

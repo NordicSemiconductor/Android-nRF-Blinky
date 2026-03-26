@@ -3,4 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Vibrations permission required for haptic feedback on button presses. -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Notification permission required for foreground service on Android 13+. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Foreground service permission. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+
+    <application>
+        <service
+            android:name=".control.service.BlinkyService"
+            android:foregroundServiceType="connectedDevice"
+            android:exported="false" />
+    </application>
 </manifest>

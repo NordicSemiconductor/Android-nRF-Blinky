@@ -23,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.control.service.ReopenActivity"
+            android:parentActivityName=".MainActivity"
+            android:noHistory="true" />
     </application>
 
 </manifest>

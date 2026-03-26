@@ -17,7 +17,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         // Link: https://github.com/NordicSemiconductor/Nordic-Gradle-Plugins
         create("libs") {
-            from("no.nordicsemi.android.gradle:version-catalog:2.14-2")
+            from("no.nordicsemi.android.gradle:version-catalog:2.14.1")
         }
         // Link: https://github.com/NordicSemiconductor/Nordic-Version-Catalog
         create("nordic") {

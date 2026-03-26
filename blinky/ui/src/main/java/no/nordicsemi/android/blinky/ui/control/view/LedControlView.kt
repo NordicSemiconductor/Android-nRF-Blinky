@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import no.nordicsemi.android.blinky.ui.R
-import no.nordicsemi.android.blinky.ui.control.repository.BlinkyRepository
+import no.nordicsemi.android.blinky.ui.control.viewmodel.BlinkyViewModel
 
 @Composable
 internal fun LedControlView(
@@ -85,7 +85,7 @@ internal fun LedControlView(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = stringResource(R.string.blinky_led_blink_descr, BlinkyRepository.BLINK_COUNT),
+                    text = stringResource(R.string.blinky_led_blink_descr, BlinkyViewModel.BLINK_COUNT),
                     modifier = Modifier.weight(1f)
                 )
                 Button(
