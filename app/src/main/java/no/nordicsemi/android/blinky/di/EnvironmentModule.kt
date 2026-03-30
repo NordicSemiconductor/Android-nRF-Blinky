@@ -1,7 +1,6 @@
 package no.nordicsemi.android.blinky.di
 
 import android.content.Context
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,22 +11,24 @@ import no.nordicsemi.kotlin.ble.environment.android.NativeAndroidEnvironment
 import javax.inject.Singleton
 
 /**
- * This module provides the Environment in which the app is running,
- * and makes sure it gets closed when no longer needed.
+ * This module provides the Environment in which the app is running.
  */
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class EnvironmentModule {
+internal class EnvironmentModule {
 
-    companion object {
-
-        @Provides
-        @Singleton
-        fun provideEnvironment(
-            @ApplicationContext context: Context,
-        ): NativeAndroidEnvironment = NativeAndroidEnvironment.getInstance(context, isNeverForLocationFlagSet = true)
+    @Provides
+    @Singleton
+    internal fun provideEnvironmentBuilder(
+        @ApplicationContext context: Context,
+    ): EnvironmentBuilder = object : EnvironmentBuilder {
+        override fun create(): AndroidEnvironment = NativeAndroidEnvironment.getInstance(context, isNeverForLocationFlagSet = true)
     }
 
-    @Binds
-    abstract fun bindEnvironment(environment: NativeAndroidEnvironment): AndroidEnvironment
+    @Provides
+    // Not a Singleton!
+    internal fun provideEnvironment(
+        manager: BluetoothLifecycleManager,
+    ) = manager.environment
+
 }

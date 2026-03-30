@@ -1,5 +1,9 @@
 package no.nordicsemi.android.blinky.di
 
+import android.app.Service
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,11 +17,32 @@ import no.nordicsemi.kotlin.ble.client.android.CentralManager
 
 @Module
 @InstallIn(ServiceComponent::class)
-abstract class BlinkyModule {
+internal abstract class BlinkyModule {
 
-    class BlinkyFactoryImpl @Inject constructor(
+    internal class BlinkyFactoryImpl @Inject constructor(
         private val centralManager: CentralManager,
+        service: Service,
+        manager: BluetoothLifecycleManager,
     ): BlinkyFactory {
+
+        // This initiator registers a Service lifecycle observer to notify the BluetoothLifecycleManager
+        // when the Service is created and destroyed.
+        //
+        // This is possible, because the service is injecting the BlinkyFactory. Otherwise, the
+        // manager should be informed manually in onCreate and onDestroy methods.
+        init {
+            val lifecycle = (service as? LifecycleOwner)?.lifecycle
+            lifecycle?.addObserver(object : LifecycleEventObserver {
+                override fun onStateChanged(
+                    source: LifecycleOwner,
+                    event: Lifecycle.Event
+                ) = when (event) {
+                    Lifecycle.Event.ON_CREATE -> manager.onComponentCreated()
+                    Lifecycle.Event.ON_DESTROY -> manager.onComponentDestroyed()
+                    else -> {}
+                }
+            })
+        }
 
         override fun create(identifier: String): Blinky {
             val peripheral = centralManager.getPeripheralById(identifier)!!
@@ -27,7 +52,7 @@ abstract class BlinkyModule {
 
     @Binds
     @ServiceScoped
-    abstract fun bind(
+    internal abstract fun bind(
         impl: BlinkyFactoryImpl
     ): BlinkyFactory
 }
