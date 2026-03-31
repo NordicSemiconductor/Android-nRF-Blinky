@@ -20,20 +20,35 @@ import no.nordicsemi.android.scanner.scannerEntry
 @AndroidEntryPoint
 class MainActivity: NordicActivity() {
 
+    companion object {
+        private const val EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE"
+        private const val EXTRA_NAME = "no.nordicsemi.android.blinky.EXTRA_NAME"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // If the Activity was opened with an EXTRA_DEVICE in the Intent,
+        // it should immediately launch the Blinky entry.
+        val identifier = intent.getStringExtra(EXTRA_DEVICE)
+        val name = intent.getStringExtra(EXTRA_NAME)
+        intent.removeExtra(EXTRA_DEVICE)
+        intent.removeExtra(EXTRA_NAME)
+
         setContent {
             NordicTheme {
-                App()
+                App(identifier, name)
             }
         }
     }
 }
 
 @Composable
-private fun App() {
+private fun App(identifier: String?, name: String?) {
     val backStack = rememberNavBackStack(ScannerKey)
+    if (identifier != null) {
+        backStack.add(BlinkyKey(BlinkyDevice(identifier, name)))
+    }
 
     NavDisplay(
         backStack = backStack,

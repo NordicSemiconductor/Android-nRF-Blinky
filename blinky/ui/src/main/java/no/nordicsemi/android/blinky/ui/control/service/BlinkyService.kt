@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -33,6 +34,7 @@ import no.nordicsemi.android.log.ILogSession
 import no.nordicsemi.android.log.timber.nRFLoggerTree
 import timber.log.Timber
 import javax.inject.Inject
+import androidx.core.net.toUri
 
 @AndroidEntryPoint
 internal class BlinkyService : LifecycleService() {
@@ -103,7 +105,7 @@ internal class BlinkyService : LifecycleService() {
         val identifier = intent?.getStringExtra(EXTRA_DEVICE)
         val name = intent?.getStringExtra(EXTRA_NAME)
         if (identifier != null) {
-            startForeground(NOTIFICATION_ID, createNotification(name, state.value))
+            startForeground(NOTIFICATION_ID, createNotification(identifier, name, state.value))
 
             if (connectionManager == null) {
                 // Plant a new Tree that logs to nRF Logger.
@@ -119,7 +121,7 @@ internal class BlinkyService : LifecycleService() {
                             blinky.connect()
                                 .onEach { newState ->
                                     state.update { newState }
-                                    updateNotification(name, newState)
+                                    updateNotification(identifier, name, newState)
 
                                     when (newState) {
                                         BlinkyConnectionManager.State.Connecting -> {
@@ -133,13 +135,13 @@ internal class BlinkyService : LifecycleService() {
                                                         // Initialize the LED state with the current state of the button.
                                                         newState.state.led.update { newState.state.button.value }
                                                     }
-                                                    updateNotification(name, newState)
+                                                    updateNotification(identifier, name, newState)
                                                 }
                                                 .launchIn(this)
 
                                             newState.state.button
                                                 .onEach { pressed ->
-                                                    updateNotification(name, newState)
+                                                    updateNotification(identifier, name, newState)
 
                                                     // If Button -> LED binding is enabled, update the LED state.
                                                     if (bindingState.value) {
@@ -150,7 +152,7 @@ internal class BlinkyService : LifecycleService() {
 
                                             newState.state.led
                                                 .onEach {
-                                                    updateNotification(name, newState)
+                                                    updateNotification(identifier, name, newState)
                                                 }
                                                 .launchIn(this)
                                         }
@@ -174,21 +176,23 @@ internal class BlinkyService : LifecycleService() {
     /**
      * Update the notification with the current state.
      *
+     * @param identifier The device identifier.
      * @param name An optional device name. If `null`, it will be replaced with "Blinky".
      * @param state The current connection state.
      */
-    private fun updateNotification(name: String?, state: BlinkyConnectionManager.State) {
+    private fun updateNotification(identifier: String, name: String?, state: BlinkyConnectionManager.State) {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(NOTIFICATION_ID, createNotification(name, state))
+        notificationManager.notify(NOTIFICATION_ID, createNotification(identifier, name, state))
     }
 
     /**
      * Create a notification for the current state.
      *
+     * @param identifier The device identifier.
      * @param name An optional device name. If `null`, it will be replaced with "Blinky".
      * @param state The current connection state.
      */
-    private fun createNotification(name: String?, state: BlinkyConnectionManager.State): Notification {
+    private fun createNotification(identifier: String, name: String?, state: BlinkyConnectionManager.State): Notification {
         createNotificationChannel()
 
         // Action: Toggle LED.
@@ -213,7 +217,10 @@ internal class BlinkyService : LifecycleService() {
 
         // When the Notification is clicked, bring up the app.
         // The ReopenActivity will finish immediately, so the next activity will be brought to foreground.
-        val reopenIntent = Intent(this, ReopenActivity::class.java)
+        val reopenIntent = Intent(ACTION_CONTROL).apply {
+            `package` = packageName
+            putExtra(EXTRA_DEVICE, identifier)
+        }
         val reopenPendingIntent = PendingIntent.getActivity(
             this,
             2,
@@ -283,6 +290,7 @@ internal class BlinkyService : LifecycleService() {
     companion object {
         private const val NOTIFICATION_ID = 101
         private const val NOTIFICATION_CHANNEL_ID = "blinky_channel"
+        private const val ACTION_CONTROL = "no.nordicsemi.android.blinky.action.CONTROL"
         private const val EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE"
         private const val EXTRA_NAME = "no.nordicsemi.android.blinky.EXTRA_NAME"
         private const val ACTION_TOGGLE_LED = "no.nordicsemi.android.blinky.ACTION_TOGGLE_LED"
