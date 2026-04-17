@@ -1,42 +1,34 @@
 package no.nordicsemi.android.blinky.di
 
 import android.content.Context
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.ActivityRetainedLifecycle
-import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ActivityRetainedScoped
+import dagger.hilt.components.SingletonComponent
 import no.nordicsemi.kotlin.ble.core.android.AndroidEnvironment
 import no.nordicsemi.kotlin.ble.environment.android.NativeAndroidEnvironment
+import javax.inject.Singleton
 
 /**
- * This module provides the Environment in which the app is running,
- * and makes sure it gets closed when no longer needed.
+ * This module provides the Environment in which the app is running.
  */
 @Module
-@InstallIn(ActivityRetainedComponent::class)
-abstract class EnvironmentModule {
+@InstallIn(SingletonComponent::class)
+internal class EnvironmentModule {
 
-    companion object {
-
-        @Provides
-        @ActivityRetainedScoped
-        fun provideEnvironment(
-            @ApplicationContext context: Context,
-            lifecycle: ActivityRetainedLifecycle,
-        ): NativeAndroidEnvironment {
-            // Make sure the environment is closed when the lifecycle is cleared.
-            // This will unregister the broadcast receiver.
-            return NativeAndroidEnvironment.getInstance(context, isNeverForLocationFlagSet = true)
-                .also {
-                    lifecycle.addOnClearedListener { it.close() }
-                }
-        }
+    @Provides
+    @Singleton
+    internal fun provideEnvironmentBuilder(
+        @ApplicationContext context: Context,
+    ): EnvironmentBuilder = object : EnvironmentBuilder {
+        override fun create(): AndroidEnvironment = NativeAndroidEnvironment.getInstance(context, isNeverForLocationFlagSet = true)
     }
 
-    @Binds
-    abstract fun bindEnvironment(environment: NativeAndroidEnvironment): AndroidEnvironment
+    @Provides
+    // Not a Singleton!
+    internal fun provideEnvironment(
+        manager: BluetoothLifecycleManager,
+    ) = manager.environment
+
 }

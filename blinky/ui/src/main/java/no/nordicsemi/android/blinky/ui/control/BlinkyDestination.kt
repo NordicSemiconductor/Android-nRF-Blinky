@@ -18,7 +18,7 @@ fun EntryProviderScope<NavKey>.blinkyEntry(
     onNavigateUp: () -> Unit
 ) = entry<BlinkyKey> { key ->
     BlinkyScreen(
-        key = key,
+        device = key.device,
         onNavigateUp = onNavigateUp,
     )
 }

@@ -16,6 +16,7 @@ dependencies {
     implementation(nordic.permissions.ble)
     implementation(nordic.log.timber)
 
+    implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.compose.material.icons.extended)
 }
