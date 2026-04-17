@@ -15,11 +15,11 @@ dependencyResolutionManagement {
         mavenCentral()
     }
     versionCatalogs {
-        // Link: https://github.com/NordicSemiconductor/Nordic-Gradle-Plugins
+        // Link: https://github.com/nordicsemi/Nordic-Gradle-Plugins
         create("libs") {
             from("no.nordicsemi.android.gradle:version-catalog:2.15")
         }
-        // Link: https://github.com/NordicSemiconductor/Nordic-Version-Catalog
+        // Link: https://github.com/nordicsemi/Nordic-Version-Catalog
         create("nordic") {
             from("no.nordicsemi.android:version-catalog:2026.03.00")
         }
@@ -33,13 +33,13 @@ include(":blinky:spec")
 include(":blinky:ui")
 include(":blinky:ble")
 
-// Clone https://github.com/NordicSemiconductor/Android-Common-Libraries and
+// Clone https://github.com/nordicsemi/Android-Common-Libraries and
 // uncomment the following lines to modify source code of the Nordic Common library:
 //if (file("../Android-Common-Libraries").exists()) {
 //    includeBuild("../Android-Common-Libraries")
 //}
 
-// Clone https://github.com/NordicSemiconductor/Kotlin-BLE-Library and
+// Clone https://github.com/nordicsemi/Kotlin-BLE-Library and
 // uncomment the following lines to modify source code of the BLE library:
 //if (file("../Kotlin-BLE-Library").exists()) {
 //    includeBuild("../Kotlin-BLE-Library")

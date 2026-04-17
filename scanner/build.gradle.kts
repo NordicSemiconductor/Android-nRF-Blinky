@@ -1,5 +1,5 @@
 plugins {
-    // https://github.com/NordicSemiconductor/Android-Gradle-Plugins/blob/main/plugins/src/main/kotlin/AndroidFeatureConventionPlugin.kt
+    // https://github.com/nordicsemi/Android-Gradle-Plugins/blob/main/plugins/src/main/kotlin/AndroidFeatureConventionPlugin.kt
     alias(libs.plugins.nordic.feature)
     alias(libs.plugins.kotlin.serialization)
 }

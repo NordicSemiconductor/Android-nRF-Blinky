@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.compose.compiler) apply false
 
-    // Nordic plugins are defined in https://github.com/NordicSemiconductor/Android-Gradle-Plugins
+    // Nordic plugins are defined in https://github.com/nordicsemi/Nordic-Gradle-Plugins
     alias(libs.plugins.nordic.application.compose) apply false
     alias(libs.plugins.nordic.library) apply false
     alias(libs.plugins.nordic.feature) apply false
