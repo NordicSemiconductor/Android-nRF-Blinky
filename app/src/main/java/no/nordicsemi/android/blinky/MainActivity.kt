@@ -3,6 +3,7 @@ package no.nordicsemi.android.blinky
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -16,9 +17,14 @@ import no.nordicsemi.android.common.theme.NordicActivity
 import no.nordicsemi.android.common.theme.NordicTheme
 import no.nordicsemi.android.scanner.ScannerKey
 import no.nordicsemi.android.scanner.scannerEntry
+import no.nordicsemi.kotlin.ble.core.android.AndroidEnvironment
+import no.nordicsemi.kotlin.ble.environment.android.compose.LocalEnvironmentOwner
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity: NordicActivity() {
+    @Inject
+    lateinit var environment: AndroidEnvironment
 
     companion object {
         private const val EXTRA_DEVICE = "no.nordicsemi.android.blinky.EXTRA_DEVICE"
@@ -36,8 +42,14 @@ class MainActivity: NordicActivity() {
         intent.removeExtra(EXTRA_NAME)
 
         setContent {
-            NordicTheme {
-                App(identifier, name)
+            // Providing the LocalEnvironmentOwner to the App allows to mock permission
+            // requests in the mock environment.
+            // Note the plural in "valueS = " below. The Environment owner provides an array of values.
+            CompositionLocalProvider(values = LocalEnvironmentOwner provides environment) {
+                // Apply the Nordic theme. Swtch to MaterialTheme for default look & feel.
+                NordicTheme {
+                    App(identifier, name)
+                }
             }
         }
     }

@@ -32,6 +32,18 @@ The Bluetooth LE logic is implemented in the
 [LedButtonServiceImpl](https://github.com/nordicsemi/Android-nRF-Blinky/blob/main/blinky/ble/src/main/java/no/nordicsemi/android/blinky/ble/LedButtonServiceImpl.kt)
 class, which is injected as a ["profile"](https://github.com/nordicsemi/Android-nRF-Blinky/blob/main/blinky/ble/src/main/java/no/nordicsemi/android/blinky/ble/BlinkyManager.kt#L34-L49). 
 
+### Flavors
+
+The `:app` module comes in 2 flavors: *native* and *mock*. 
+
+The *native* flavor uses the
+[native implementation](https://github.com/nordicsemi/Android-nRF-Blinky/blob/main/blinky/ble/src/native/java/no/nordicsemi/android/blinky/di)
+of Kotlin BLE Library (`NativeAndroidEnvironment` and `CentralManager`), while
+the mock one uses [mock implementation](https://github.com/nordicsemi/Android-nRF-Blinky/blob/main/blinky/ble/src/mock/java/no/nordicsemi/android/blinky/di) 
+(`MockAndroidEnvironment` and `CentralManager` with 
+[mock peripherals](https://github.com/nordicsemi/Android-nRF-Blinky/blob/main/blinky/ble/src/mock/java/no/nordicsemi/android/blinky/di/PeripheralSpecs.kt) 
+set up).
+
 ## Structure
 
 The nRF Blinky application has been created in Jetpack Compose.
