@@ -25,7 +25,7 @@ internal fun BlinkyScanner(
     onDeviceSelected: (String, String?) -> Unit,
 ) {
     // The scanner uses a Nordic common component (scanner-ble) from
-    // https://github.com/NordicSemiconductor/Android-Common-Libraries
+    // https://github.com/nordicsemi/Android-Common-Libraries
     ScannerScreen(
         title = {
             Text(stringResource(id = R.string.scanner_title))
