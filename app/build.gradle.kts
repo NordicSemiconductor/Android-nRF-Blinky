@@ -9,7 +9,11 @@ android {
     namespace = "no.nordicsemi.android.blinky"
     defaultConfig {
         applicationId = "no.nordicsemi.android.nrfblinky"
-        resourceConfigurations.add("en")
+
+        @Suppress("UnstableApiUsage")
+        androidResources {
+            localeFilters += listOf("en")
+        }
     }
 }
 
@@ -19,14 +23,18 @@ dependencies {
     implementation(project(":blinky:ui"))
     implementation(project(":blinky:ble"))
 
-    implementation(nordic.theme)
-    // Choose the client implementation, depending on the flavor
+    // Choose the client implementation, depending on the flavor.
     implementation(nordic.blek.client.android)
-
+    // Applies the Nordic theme and the splash screen.
+    implementation(nordic.theme)
+    // AndroidX dependencies required by the :app module.
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewModel.navigation3)
-
+    // Logging framework.
     implementation(libs.timber)
+    // Adds a bridge SLF4J -> Timber.
     implementation(libs.slf4j.timber)
+    // Leak Canary lib allows to easily find memory leaks in the app.
+    debugImplementation(libs.leakcanary)
 }
