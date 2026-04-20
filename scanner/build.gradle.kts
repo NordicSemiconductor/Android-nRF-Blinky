@@ -9,7 +9,9 @@ android {
 }
 
 dependencies {
+    // The Bluetooth LE scanner is using Nordic common scanner from
+    // github.com/nordicsemi/Android-Common-Libraries -> :scanner-ble
     implementation(nordic.scanner.ble)
-
+    // This module contains a Nav3 entry point.
     implementation(libs.androidx.navigation3.runtime)
 }
