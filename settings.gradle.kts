@@ -21,7 +21,7 @@ dependencyResolutionManagement {
         }
         // Link: https://github.com/nordicsemi/Nordic-Version-Catalog
         create("nordic") {
-            from("no.nordicsemi.android:version-catalog:2026.04.00")
+            from("no.nordicsemi.android:version-catalog:2026.04.01")
         }
     }
 }

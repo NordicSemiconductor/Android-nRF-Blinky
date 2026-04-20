@@ -11,7 +11,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import no.nordicsemi.kotlin.ble.client.android.CentralManager
 import no.nordicsemi.kotlin.ble.core.android.AndroidEnvironment
-import no.nordicsemi.kotlin.ble.environment.android.NativeAndroidEnvironment
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,7 +46,7 @@ internal interface CentralManagerBuilder {
  * A class that manages the lifecycle of the Bluetooth environment.
  *
  * It monitors the number of active activities and services in the app and
- * initializes the [NativeAndroidEnvironment] and [CentralManager] when the
+ * initializes the [AndroidEnvironment] and [CentralManager] when the
  * first one is created, and closes them when the last one is destroyed.
  */
 @Singleton
@@ -124,18 +123,24 @@ internal class BluetoothLifecycleObserver @Inject constructor(
     private val manager: BluetoothLifecycleManager
 ) : Application.ActivityLifecycleCallbacks {
     
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        manager.onComponentCreated()
+    override fun onActivityPreCreated(activity: Activity, savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            manager.onComponentCreated()
+        }
     }
 
-    override fun onActivityDestroyed(activity: Activity) {
-        manager.onComponentDestroyed()
+    override fun onActivityPostDestroyed(activity: Activity) {
+        if (activity.isFinishing) {
+            manager.onComponentDestroyed()
+        }
     }
 
     // Unused callbacks
+    override fun onActivityCreated(p0: Activity, p1: Bundle?) {}
     override fun onActivityStarted(activity: Activity) {}
     override fun onActivityResumed(activity: Activity) {}
     override fun onActivityPaused(activity: Activity) {}
     override fun onActivityStopped(activity: Activity) {}
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+    override fun onActivityDestroyed(p0: Activity) {}
 }

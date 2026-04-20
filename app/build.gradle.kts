@@ -9,10 +9,19 @@ android {
     namespace = "no.nordicsemi.android.blinky"
     defaultConfig {
         applicationId = "no.nordicsemi.android.nrfblinky"
-
-        @Suppress("UnstableApiUsage")
-        androidResources {
-            localeFilters += listOf("en")
+    }
+    @Suppress("UnstableApiUsage")
+    androidResources {
+        localeFilters += listOf("en")
+    }
+    flavorDimensions += listOf("mode")
+    productFlavors {
+        create("native") {
+            isDefault = true
+            dimension = "mode"
+        }
+        create("mock") {
+            dimension = "mode"
         }
     }
 }
@@ -23,10 +32,17 @@ dependencies {
     implementation(project(":blinky:ui"))
     implementation(project(":blinky:ble"))
 
-    // Choose the client implementation, depending on the flavor.
-    implementation(nordic.blek.client.android)
     // Applies the Nordic theme and the splash screen.
     implementation(nordic.theme)
+
+    // Choose the Bluetooth LE client implementation, depending on the flavor.
+    // See: https://github.com/nordicsemi/Kotlin-BLE-Library
+    "nativeImplementation"(nordic.blek.client.android)
+    "mockImplementation"(nordic.blek.client.android.mock)
+    // Provide the LocalEnvironmentOwner for Composables.
+    // This allows to mock permission requests in mock environment.
+    implementation(nordic.blek.environment.android.compose)
+
     // AndroidX dependencies required by the :app module.
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation3.ui)

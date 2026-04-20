@@ -33,7 +33,9 @@ internal fun BlinkyScanner(
         state = rememberFilterState(
             dynamicFilters = listOf(
                 OnlyNearby(),
-                OnlyWithNames(isInitiallySelected = true),
+                OnlyWithNames(
+                    isInitiallySelected = true
+                ),
                 WithServiceUuid(
                     uuid = Uuid.parse("00001523-1212-efde-1523-785feabcd123"),
                     isInitiallySelected = true
