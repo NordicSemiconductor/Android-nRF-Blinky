@@ -15,6 +15,12 @@ jobs:
         with:
           distribution: 'jetbrains'
           java-version: '21'
+      
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
 
       - name: Decode Keystore
         env:
@@ -38,4 +44,4 @@ jobs:
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
           KEYSTORE_KEY_PSWD: ${{ secrets.KEYSTORE_KEY_PSWD }}
           KEYSTORE_PSWD: ${{ secrets.KEYSTORE_PSWD }}
-        run: fastlane deployInternal
+        run: bundle exec fastlane deployInternal
