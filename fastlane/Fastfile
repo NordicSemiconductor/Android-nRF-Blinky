@@ -22,7 +22,6 @@ platform :android do
       gradle(task: "clean bundleRelease")
       upload_to_play_store(
         track: 'internal',
-        aab: 'app/build/outputs/bundle/release/app-native-release.aab'
       )
   end
 
