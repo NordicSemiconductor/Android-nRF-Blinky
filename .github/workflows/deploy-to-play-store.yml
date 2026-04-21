@@ -15,17 +15,27 @@ jobs:
         with:
           distribution: 'jetbrains'
           java-version: '21'
-      - shell: bash
+
+      - name: Decode Keystore
+        env:
+          KEYSTORE_FILE_DATA: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_FILE_PSWD: ${{ secrets.KEYSTORE_FILE_PSWD }}
+        run: |
+          echo "$KEYSTORE_FILE_DATA" > keystore.asc
+          gpg -d --passphrase "$KEYSTORE_FILE_PSWD" --batch keystore.asc > keystore
+
+      - name: Decode Fastlane API Key
+        env:
+          API_KEY_FILE_DATA: ${{ secrets.API_KEY_FILE }}
+          API_KEY_FILE_PSWD: ${{ secrets.API_KEY_FILE_PSWD }}
+        run: |
+          echo "$API_KEY_FILE_DATA" > fastlane-api.json.asc
+          gpg -d --passphrase "$API_KEY_FILE_PSWD" --batch fastlane-api.json.asc > fastlane-api.json
+
+      - name: Deploy to Play Store via Fastlane
         env:
           # The following env variables are used by signing configuration
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
           KEYSTORE_KEY_PSWD: ${{ secrets.KEYSTORE_KEY_PSWD }}
           KEYSTORE_PSWD: ${{ secrets.KEYSTORE_PSWD }}
-        # The script decodes keystore (required by the app signing conf) and fastlane-api.json
-        # needed by fastlane (see fastlane/Appfile).
-        run: |
-          echo "${{ secrets.KEYSTORE_FILE }}" > keystore.asc
-          gpg -d --passphrase "${{ secrets.KEYSTORE_FILE_PSWD }}" --batch keystore.asc > keystore
-          echo "${{ secrets.API_KEY_FILE }}" > fastlane-api.json.asc
-          gpg -d --passphrase "${{ secrets.API_KEY_FILE_PSWD }}" --batch fastlane-api.json.asc > fastlane-api.json
-          fastlane deployInternal
+        run: fastlane deployInternal
