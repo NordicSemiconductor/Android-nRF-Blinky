@@ -19,3 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# The rules are no longer needed since BLEK 2.0.0-alpha20:
+# https://github.com/nordicsemi/Kotlin-BLE-Library/pull/296
+-dontwarn no.nordicsemi.kotlin.ble.environment.android.NativeAndroidEnvironment
+-dontwarn no.nordicsemi.kotlin.ble.environment.android.mock.MockAndroidEnvironment
