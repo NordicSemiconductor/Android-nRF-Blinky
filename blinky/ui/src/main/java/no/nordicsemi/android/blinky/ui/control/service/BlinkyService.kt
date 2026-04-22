@@ -1,5 +1,6 @@
 package no.nordicsemi.android.blinky.ui.control.service
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,7 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.net.Uri
+import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -34,7 +35,6 @@ import no.nordicsemi.android.log.ILogSession
 import no.nordicsemi.android.log.timber.nRFLoggerTree
 import timber.log.Timber
 import javax.inject.Inject
-import androidx.core.net.toUri
 
 @AndroidEntryPoint
 internal class BlinkyService : LifecycleService() {
@@ -105,7 +105,13 @@ internal class BlinkyService : LifecycleService() {
         val identifier = intent?.getStringExtra(EXTRA_DEVICE)
         val name = intent?.getStringExtra(EXTRA_NAME)
         if (identifier != null) {
-            startForeground(NOTIFICATION_ID, createNotification(identifier, name, state.value))
+            // In the Mock flavor, the actual BLUETOOTH_CONNECT permission may not be granted.
+            // In that case, start the service in background.
+            if (checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                startForeground(NOTIFICATION_ID, createNotification(identifier, name, state.value))
+            } else {
+                updateNotification(identifier, name, state.value)
+            }
 
             if (connectionManager == null) {
                 // Plant a new Tree that logs to nRF Logger.
@@ -303,7 +309,8 @@ internal class BlinkyService : LifecycleService() {
                     putExtra(EXTRA_NAME, device.name)
                 }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
                 context.startForegroundService(intent)
             } else {
                 context.startService(intent)
@@ -322,6 +329,14 @@ internal class BlinkyService : LifecycleService() {
         fun stop(context: Context) {
             val intent = Intent(context, BlinkyService::class.java)
             context.stopService(intent)
+
+            // For mock flavor, when the native BLUETOOTH_CONNECT permissions isn't granted,
+            // make sure the notification gets canceled. With the permissions granted, the
+            // notification will be canceled automatically as the foreground service is stopped.
+            if (context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                manager.cancel(NOTIFICATION_ID)
+            }
         }
     }
 }
