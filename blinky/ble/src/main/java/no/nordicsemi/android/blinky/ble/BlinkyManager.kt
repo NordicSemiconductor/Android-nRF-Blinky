@@ -1,5 +1,6 @@
 package no.nordicsemi.android.blinky.ble
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
@@ -9,6 +10,7 @@ import no.nordicsemi.android.blinky.spec.BlinkySpec
 import no.nordicsemi.android.blinky.spec.exception.BlinkyException
 import no.nordicsemi.kotlin.ble.client.android.CentralManager
 import no.nordicsemi.kotlin.ble.client.android.Peripheral
+import no.nordicsemi.kotlin.ble.client.exception.InvalidAttributeException
 import no.nordicsemi.kotlin.ble.core.ConnectionState.Disconnected.Reason
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -42,10 +44,15 @@ class BlinkyManager(
             val ledButtonService = LedButtonServiceImpl(remoteService, this)
 
             // Give the user control over the Blinky.
-            block(ledButtonService)
-
-            // The peripheral will automatically get disconnected when the profile block is complete.
-            // In this sample the block never returns, as it awaits scope cancellation.
+            try {
+                block(ledButtonService)
+            } catch (e: CancellationException) {
+                // Don't disconnect when services were invalidated.
+                if (e.cause !is InvalidAttributeException) {
+                    peripheral.disconnect()
+                }
+                throw e
+            }
         }
 
         // Initiate connection, if not connected already.
