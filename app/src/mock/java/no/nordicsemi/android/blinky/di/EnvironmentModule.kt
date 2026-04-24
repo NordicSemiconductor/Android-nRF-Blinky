@@ -20,9 +20,9 @@ internal class EnvironmentModule {
     internal fun provideEnvironmentBuilder(
     ): EnvironmentBuilder = object : EnvironmentBuilder {
         override fun create(): AndroidEnvironment = MockAndroidEnvironment.Api31(
-            isBluetoothEnabled = false,
-            isBluetoothConnectPermissionGranted = false,
-            isBluetoothScanPermissionGranted = false,
+            isBluetoothEnabled = true,
+            isBluetoothConnectPermissionGranted = true,
+            isBluetoothScanPermissionGranted = true,
             isNeverForLocationFlagSet = true,
         )
     }
