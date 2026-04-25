@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -22,7 +21,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import no.nordicsemi.android.blinky.ui.R
 import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.blinky.ui.control.service.BlinkyConnectionManager
-import no.nordicsemi.android.blinky.ui.control.service.BlinkyService
 import no.nordicsemi.android.blinky.ui.control.viewmodel.BlinkyViewModel
 import no.nordicsemi.android.blinky.ui.view.DeviceConnectingView
 import no.nordicsemi.android.blinky.ui.view.DeviceDisconnectedView
@@ -41,14 +39,8 @@ internal fun BlinkyScreen(
         factory.create(device)
     }
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
-    BackHandler {
-        // Stopping the service will disconnect the devices.
-        BlinkyService.stop(context)
-
-        onNavigateUp()
-    }
+    BackHandler { onNavigateUp() }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -56,12 +48,7 @@ internal fun BlinkyScreen(
     ) {
         NordicAppBar(
             title = { Text(text = viewModel.deviceName ?: stringResource(R.string.unnamed_device)) },
-            onNavigationButtonClick = {
-                // Stopping the service will disconnect the devices.
-                BlinkyService.stop(context)
-                
-                onNavigateUp()
-            },
+            onNavigationButtonClick = onNavigateUp,
             actions = {
                 LoggerAppBarIcon(onClick = viewModel::openLogger)
             }
