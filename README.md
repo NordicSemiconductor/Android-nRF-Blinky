@@ -18,6 +18,10 @@ or binding flows and states (control the LED state based on the button state).
 
 ![Scanner](images/scanner.png) ![Blinky](images/blinky.png)
 
+In *mock* flavor an additional UI allows to control the mock environment and the virtual device:
+
+![Mock controls](images/mock.png)
+
 ## Kotlin BLE Library
 
 This app is designed to work as a sample app for the 
