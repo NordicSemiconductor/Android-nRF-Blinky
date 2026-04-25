@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mock_overlay_title">Mock Environment</string>
+    <string name="mock_unknown_device">Unknown Device</string>
+    <string name="mock_controls_bluetooth">Bluetooth</string>
+    <string name="mock_controls_power">Power</string>
+    <string name="mock_controls_power_reset">Reset</string>
+    <string name="mock_controls_control">Control</string>
+    <string name="mock_controls_control_button">Button</string>
+</resources>

@@ -2,6 +2,10 @@
 
 package no.nordicsemi.android.blinky.di
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import no.nordicsemi.android.blinky.spec.BlinkySpec
 import no.nordicsemi.kotlin.ble.client.mock.ConnectionResult
 import no.nordicsemi.kotlin.ble.client.mock.DisconnectionReason
@@ -19,6 +23,7 @@ import no.nordicsemi.kotlin.ble.core.OperationStatus
 import no.nordicsemi.kotlin.ble.core.Permission
 import no.nordicsemi.kotlin.ble.core.Phy
 import no.nordicsemi.kotlin.ble.core.and
+import no.nordicsemi.kotlin.ble.environment.android.mock.MockAndroidEnvironment
 import timber.log.Timber
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -27,11 +32,16 @@ import kotlin.uuid.Uuid
 
 // Handles for characteristics allow to distinguish them when handling events.
 
-/** Handle of the Button characteristic. */
-private var buttonHandle: Int? = null
+/** State of the Blinky device. */
+interface BlinkyState {
+    /** Current state of the LED. */
+    val led: StateFlow<Boolean>
+    /** The current state of the Button. */
+    var buttonState: Boolean
+}
 
-/** Handle of the LED characteristic. */
-private var ledHandle: Int? = null
+/** State of the Blinky device. */
+val blinkyState: BlinkyState = BlinkyImpl
 
 /**
  * Implementation of a peripheral with LED Button Service (LBS), called Blinky.
@@ -41,19 +51,30 @@ private var ledHandle: Int? = null
  *
  * The device has one characteristic for the Button (read/notify) and one for the LED (read/write).
  */
-private val blinkyImpl: PeripheralSpecEventHandler = object : PeripheralSpecEventHandler {
+private object BlinkyImpl: PeripheralSpecEventHandler, BlinkyState {
     /** Checks whether the byte array represents "ON" state. */
     private fun ByteArray.isOn() = isNotEmpty() && this[0] != 0.toByte()
     /** Converts the Boolean to a byte array. */
     private fun Boolean.toBytes(): ByteArray =
         if (this) byteArrayOf(0x01) else byteArrayOf(0x00)
 
-    /** Current state of the LED. */
-    private var isLedOn: Boolean = false
-    /**
-     * Current state of the Button.
-     */
-    private var isButtonPressed: Boolean = false
+    /** Handle of the Button characteristic. */
+    var buttonHandle: Int? = null
+
+    /** Handle of the LED characteristic. */
+    var ledHandle: Int? = null
+
+    // State
+    private val _ledState = MutableStateFlow(false)
+    override val led = _ledState.asStateFlow()
+    override var buttonState = false
+        set(value) {
+            field = value
+            Timber.i("[Blinky] Button pressed: $value")
+            buttonHandle?.let { handle ->
+                blinky.simulateValueUpdate(handle, value.toBytes())
+            }
+        }
 
     // Event handlers implementation
 
@@ -68,8 +89,8 @@ private val blinkyImpl: PeripheralSpecEventHandler = object : PeripheralSpecEven
 
     override fun onReset() {
         Timber.i("[Blinky] --- Booting up ---")
-        isLedOn = false
-        isButtonPressed = false
+        _ledState.update { false }
+        buttonState = false
     }
 
     override fun onServiceDiscoveryRequest(uuids: List<Uuid>): ServiceDiscoveryResult {
@@ -82,7 +103,7 @@ private val blinkyImpl: PeripheralSpecEventHandler = object : PeripheralSpecEven
         value: ByteArray
     ): WriteResponse {
         val on = value.isOn()
-        isLedOn = on
+        _ledState.update { on }
         Timber.i("[Blinky] LED ${if (on) "ON" else "OFF"}")
         return WriteResponse.Success
     }
@@ -93,8 +114,8 @@ private val blinkyImpl: PeripheralSpecEventHandler = object : PeripheralSpecEven
 
     override fun onReadRequest(characteristic: MockRemoteCharacteristic): ReadResponse =
         when (characteristic.instanceId) {
-            buttonHandle -> ReadResponse.Success(isButtonPressed.toBytes())
-            ledHandle -> ReadResponse.Success(isLedOn.toBytes())
+            buttonHandle -> ReadResponse.Success(buttonState.toBytes())
+            ledHandle -> ReadResponse.Success(led.value.toBytes())
             else -> ReadResponse.Failure(OperationStatus.ReadNotPermitted)
         }
 }
@@ -128,7 +149,7 @@ val blinky = PeripheralSpec
             maxAttMtu = 247,
             maxL2capMtu = 251,
             // Event handler is responsible for handling GATT requests.
-            eventHandler = blinkyImpl,
+            eventHandler = BlinkyImpl,
             // Note:
             // Uncommenting this line switches to a different "connectable" method, which
             // makes the peripheral "cached" (there's additional param "cachedServices" to provide).
@@ -144,12 +165,12 @@ val blinky = PeripheralSpec
             Service(
                 uuid = BlinkySpec.SERVICE_UUID,
             ) {
-                buttonHandle = Characteristic(
+                BlinkyImpl.buttonHandle = Characteristic(
                     uuid = BlinkySpec.BUTTON_CHARACTERISTIC_UUID,
                     properties = CharacteristicProperty.READ and CharacteristicProperty.NOTIFY,
                     permission = Permission.READ,
                 )
-                ledHandle = Characteristic(
+                BlinkyImpl.ledHandle = Characteristic(
                     uuid = BlinkySpec.LED_CHARACTERISTIC_UUID,
                     properties = CharacteristicProperty.READ and CharacteristicProperty.WRITE,
                     permissions = Permission.READ and Permission.WRITE,
@@ -161,7 +182,10 @@ val blinky = PeripheralSpec
 /**
  * A definition of another device, which advertises as an Eddystone beacon.
  *
- * This will not be scannable for the device, as it is using 'neverForLocation' flag.
+ * This will not be scannable for the device, as it is using 'neverForLocation' flag (using API 31+),
+ * but will be scannable on older environments.
+ *
+ * @see MockAndroidEnvironment
  */
 val beacon = PeripheralSpec.simulatePeripheral(
     identifier = "11:22:33:44:55:66",
@@ -169,7 +193,7 @@ val beacon = PeripheralSpec.simulatePeripheral(
 ) {
     advertising(
         parameters = LegacyAdvertisingSetParameters(
-            connectable = false,
+            connectable = true,
             interval = 1.seconds,
         ),
         // Note:

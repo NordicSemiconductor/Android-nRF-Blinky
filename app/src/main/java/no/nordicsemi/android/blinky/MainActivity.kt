@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import no.nordicsemi.android.blinky.ui.control.BlinkyDevice
 import no.nordicsemi.android.blinky.ui.control.BlinkyKey
 import no.nordicsemi.android.blinky.ui.control.blinkyEntry
+import no.nordicsemi.android.blinky.view.Overlay
 import no.nordicsemi.android.common.theme.NordicActivity
 import no.nordicsemi.android.common.theme.NordicTheme
 import no.nordicsemi.android.scanner.ScannerKey
@@ -48,7 +49,9 @@ class MainActivity: NordicActivity() {
             CompositionLocalProvider(values = LocalEnvironmentOwner provides environment) {
                 // Apply the Nordic theme. Swtch to MaterialTheme for default look & feel.
                 NordicTheme {
-                    App(identifier, name)
+                    Overlay {
+                        App(identifier, name)
+                    }
                 }
             }
         }
